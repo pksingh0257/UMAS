@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>UAMS - Login</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+  <div class="topbar">
+    <div class="brand">
+      <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="brand-icon">
+      <div>
+        <h1>ARMY INTERNAL SYSTEM</h1>
+        <p class="tagline">SECURE &bull; DISCIPLINED &bull; DEDICATED</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button id="theme-toggle-btn" class="theme-toggle">Light Mode</button>
+      <div class="classified-badge">CLASSIFIED<br>FOR AUTHORIZED PERSONNEL ONLY</div>
+    </div>
+  </div>
+
+  <div class="main-layout">
+
+    <div class="hero-panel">
+      <h2>STRENGTH IN UNITY<span>SECURITY IN EVERY ACTION</span></h2>
+      <p class="sub">A secure system for a stronger tomorrow</p>
+
+      <div class="feature-row">
+        <div class="feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z" />
+          </svg>
+          <h4>SECURE ACCESS</h4>
+          <p>Multi-layered security for authorized users only</p>
+        </div>
+        <div class="feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <circle cx="9" cy="8" r="3" />
+            <path d="M2 20c0-3 3-5 7-5s7 2 7 5" />
+            <circle cx="17" cy="9" r="2.5" />
+            <path d="M22 20c0-2.5-2-4-4.5-4.3" />
+          </svg>
+          <h4>ROLE BASED ACCESS</h4>
+          <p>Access system features based on user role</p>
+        </div>
+        <div class="feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <rect x="5" y="3" width="14" height="18" rx="2" />
+            <path d="M9 8h6M9 12h6M9 16h3" />
+          </svg>
+          <h4>AUDIT & MONITOR</h4>
+          <p>All activities are monitored and logged</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="login-panel">
+      <div class="login-card">
+        <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="emblem">
+
+        <h2>WELCOME BACK</h2>
+        <p class="sub">Sign in to continue to Unit Accounts Management System</p>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="error-msg">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+          {% csrf_token %}
+          <div class="field">
+            <label>USER ROLE</label>
+            <select name="role" required>
+              <option value="" selected disabled>Select Your Role</option>
+              <option value="HEAD_CLERK">Head Clerk</option>
+              <option value="ACCOUNTS_CLERK">Accounts Clerk</option>
+              <option value="ACCOUNTS_JCO">Accounts JCO</option>
+              <option value="ACCOUNTS_OFFICER">Accounts Officer</option>
+              <option value="CFA">Competent Financial Authority (CFA)</option>
+              <option value="ADMINISTRATOR">Administrator</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>USERNAME</label>
+            <input type="text" name="username" placeholder="Enter Username" required>
+          </div>
+
+          <div class="field">
+            <label>PASSWORD</label>
+            <input type="password" name="password" id="password" placeholder="Enter Password" required>
+          </div>
+
+          <div class="forgot-link">
+            <a href="#">Forgot Password?</a>
+          </div>
+
+          <button type="submit" class="login-btn">LOGIN</button>
+        </form>
+
+        <p class="help-line">Need help? Contact <a href="#">System Administrator</a></p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-strip">
+    <div><span class="label">PROJECT</span><span class="item">Unit Accounts Management System</span></div>
+    <div><span class="label">MODULE</span><span class="item">Authentication Module</span></div>
+    <div><span class="label">SCREEN</span><span class="item">Login Page</span></div>
+    <div><span class="label">VERSION</span><span class="item">1.0</span></div>
+    <div><span class="label">CLASSIFICATION</span><span class="item">CONFIDENTIAL</span></div>
+  </div>
+
+  <script src="{% static 'js/theme-toggle.js' %}"></script>
+</body>
+
+</html>
