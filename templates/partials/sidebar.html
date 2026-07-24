@@ -1,0 +1,78 @@
+{% load static %}
+<div class="sidebar">
+  <div class="logo-block">
+    <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest">
+    <h2>PROJECT <span>NEXUS</span></h2>
+    <p>Unit Procurement &amp;<br>Accounts Automation</p>
+  </div>
+  <hr>
+  <nav>
+    <a href="{% url 'dashboard' %}" class="{% if active_nav == 'dashboard' %}active{% endif %}">
+      <span class="icon">&#9635;</span> Dashboard
+    </a>
+
+    {% if role in 'HEAD_CLERK,ACCOUNTS_OFFICER,ADMINISTRATOR' %}
+      <a href="#" class="{% if active_nav == 'requirements' %}active{% endif %}">
+        <span class="icon">&#128196;</span> Requirements
+      </a>
+    {% endif %}
+
+    {% if role in 'CFA,ADMINISTRATOR' %}
+      <a href="#" class="{% if active_nav == 'approvals' %}active{% endif %}">
+        <span class="icon">&#9989;</span> Approvals
+      </a>
+    {% endif %}
+
+    {% if role in 'ACCOUNTS_CLERK,ACCOUNTS_JCO,ACCOUNTS_OFFICER,ADMINISTRATOR' %}
+      <a href="#" class="{% if active_nav == 'procurement' %}active{% endif %}">
+        <span class="icon">&#128722;</span> Procurement
+      </a>
+    {% endif %}
+
+    {% if role in 'ACCOUNTS_CLERK,ADMINISTRATOR' %}
+      <a href="#" class="{% if active_nav == 'quotations' %}active{% endif %}">
+        <span class="icon">&#128179;</span> Quotations
+      </a>
+        <a href="#" class="{% if active_nav == 'forms' %}active{% endif %}">
+        <span class="icon">&#128179;</span> Forms
+      </a>
+      <a href="#" class="{% if active_nav == 'comparative' %}active{% endif %}">
+        <span class="icon">&#128200;</span> Comparative Statement
+      </a>
+      <a href="#" class="{% if active_nav == 'purchase_orders' %}active{% endif %}">
+        <span class="icon">&#128203;</span> Purchase Orders
+      </a>
+    {% endif %}
+
+    {% if role in 'ACCOUNTS_JCO,ADMINISTRATOR' %}
+      <a href="#" class="{% if active_nav == 'inventory' %}active{% endif %}">
+        <span class="icon">&#128230;</span> Inventory
+      </a>
+    {% endif %}
+
+    {% if role in 'ACCOUNTS_OFFICER,ADMINISTRATOR' %}
+      <a href="#" class="{% if active_nav == 'payments' %}active{% endif %}">
+        <span class="icon">&#128179;</span> Payments
+      </a>
+    {% endif %}
+
+    {% if role in 'ACCOUNTS_OFFICER,CFA,ADMINISTRATOR' %}
+      <a href="#" class="{% if active_nav == 'reports' %}active{% endif %}">
+        <span class="icon">&#128202;</span> Reports
+      </a>
+    {% endif %}
+
+    {% if role == 'ADMINISTRATOR' %}
+      <a href="#" class="{% if active_nav == 'audit_trail' %}active{% endif %}">
+        <span class="icon">&#128065;</span> Audit Trail
+      </a>
+      <a href="#" class="{% if active_nav == 'administration' %}active{% endif %}">
+        <span class="icon">&#128100;</span> Administration
+      </a>
+    {% endif %}
+
+    <a href="#" class="{% if active_nav == 'settings' %}active{% endif %}">
+      <span class="icon">&#9881;</span> Settings
+    </a>
+  </nav>
+</div>

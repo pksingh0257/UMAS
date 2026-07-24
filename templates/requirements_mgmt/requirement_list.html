@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Requirements - UAMS</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<div class="app-layout">
+
+  {% include 'partials/sidebar.html' %}
+
+  <div class="main-content">
+
+    <div class="topbar">
+      <div class="brand">
+        <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="brand-icon">
+        <div>
+          <h1>ARMY INTERNAL SYSTEM</h1>
+          <p class="tagline">SECURE &bull; DISCIPLINED &bull; DEDICATED</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <a href="{% url 'dashboard' %}" class="theme-toggle" style="text-decoration:none;">&larr; Dashboard</a>
+        <button id="theme-toggle-btn" class="theme-toggle">Light Mode</button>
+        <a href="{% url 'logout' %}" class="theme-toggle" style="text-decoration:none;">Log Out</a>
+      </div>
+    </div>
+
+    <div class="dashboard-shell">
+      <div class="card">
+        <h2>Requirement Requests</h2>
+        {% for r in requests %}
+          <p style="color:var(--text-secondary); margin:10px 0; border-left:2px solid var(--border); padding-left:10px;">
+            <strong style="color:var(--text-primary);">{{ r.request_number }}</strong>
+            &mdash; {{ r.unit }} &mdash; Raised by {{ r.raised_by.username }} &mdash; {{ r.get_status_display }}
+            {% if r.submitted_at %}&mdash; {{ r.submitted_at|date:"d M Y, P" }}{% endif %}
+          </p>
+        {% empty %}
+          <p style="color:var(--text-secondary)">No Requirement Requests found.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="footer-strip">
+      <div><span class="label">PROJECT</span><span class="item">Project Nexus - Unit Accounts Management</span></div>
+      <div><span class="label">MODULE</span><span class="item">Requirements</span></div>
+      <div><span class="label">VERSION</span><span class="item">1.0</span></div>
+      <div><span class="label">CLASSIFICATION</span><span class="item">CONFIDENTIAL</span></div>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="{% static 'js/theme-toggle.js' %}"></script>
+</body>
+</html>

@@ -3,117 +3,58 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>{{ case.case_number }} - Procurement Case</title>
+  <title>Procurement Cases - UAMS</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
 
-  <div class="topbar">
-    <div class="brand">
-      <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="brand-icon">
-      <div>
-        <h1>ARMY INTERNAL SYSTEM</h1>
-        <p class="tagline">SECURE &bull; DISCIPLINED &bull; DEDICATED</p>
+<div class="app-layout">
+
+  {% include 'partials/sidebar.html' %}
+
+  <div class="main-content">
+
+    <div class="topbar">
+      <div class="brand">
+        <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="brand-icon">
+        <div>
+          <h1>ARMY INTERNAL SYSTEM</h1>
+          <p class="tagline">SECURE &bull; DISCIPLINED &bull; DEDICATED</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <a href="{% url 'dashboard' %}" class="theme-toggle" style="text-decoration:none;">&larr; Dashboard</a>
+        <button id="theme-toggle-btn" class="theme-toggle">Light Mode</button>
+        <a href="{% url 'logout' %}" class="theme-toggle" style="text-decoration:none;">Log Out</a>
       </div>
     </div>
-    <div class="topbar-right">
-      <a href="{% url 'dashboard' %}" class="theme-toggle" style="text-decoration:none;">&larr; Dashboard</a>
-      <button id="theme-toggle-btn" class="theme-toggle">Light Mode</button>
-      <a href="{% url 'logout' %}" class="theme-toggle" style="text-decoration:none;">Log Out</a>
-    </div>
-  </div>
 
-  <div class="dashboard-shell">
-
-    <div class="card">
-      <h2>{{ case.case_number }}</h2>
-      <p style="color:var(--text-secondary)">
-        Requirement Item: {{ case.requirement_item }} &nbsp;|&nbsp;
-        Current Stage: <strong style="color:var(--primary-red)">{{ case.get_current_stage_display }}</strong>
-        {% if case.is_closed %} &nbsp;|&nbsp; <strong style="color:var(--accent-blue)">CLOSED</strong>{% endif %}
-      </p>
-    </div>
-
-    {% if messages %}
-      {% for message in messages %}
-        <div class="error-msg" style="{% if message.tags == 'success' %}background: rgba(66,165,245,0.15); border-color: var(--accent-blue); color: var(--accent-blue);{% endif %}">
-          
-            {{ message }}
-        </div>
-      {% endfor %}
-    {% endif %}
-
-    {% if not case.is_closed %}
-    <div class="card">
-      <h3>Update Current Stage Data</h3>
-      <form method="POST">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="save_stage">
-        {% for field in stage_form %}
-          <div class="field">
-            <label>{{ field.label }}</label>
-            {{ field }}
-            {% if field.errors %}<p style="color:var(--primary-red); font-size:12px;">{{ field.errors }}</p>{% endif %}
-          </div>
+    <div class="dashboard-shell">
+      <div class="card">
+        <h2>Procurement Cases</h2>
+        {% for c in cases %}
+          <p style="color:var(--text-secondary); margin:10px 0; border-left:2px solid var(--border); padding-left:10px;">
+            <a href="{% url 'case_detail' c.case_number %}" style="color:var(--accent-blue); text-decoration:none; font-weight:600;">{{ c.case_number }}</a>
+            &mdash; {{ c.requirement_item }} &mdash; Stage: {{ c.get_current_stage_display }}
+            {% if c.is_closed %} &mdash; <strong style="color:var(--accent-blue)">CLOSED</strong>{% endif %}
+          </p>
         {% empty %}
-          <p style="color:var(--text-secondary)">No data fields required for this stage.</p>
+          <p style="color:var(--text-secondary)">No Procurement Cases found at your stages.</p>
         {% endfor %}
-        <button type="submit" class="login-btn" style="width:auto; padding:10px 24px;">Save Stage Data</button>
-      </form>
+      </div>
     </div>
 
-    <div class="card">
-      <h3>Advance to Next Stage</h3>
-      <p style="color:var(--text-secondary); font-size:13px;">
-        Requires all mandatory fields for the current stage to be filled in and saved above first.
-      </p>
-      <form method="POST">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="advance">
-        <button type="submit" class="login-btn" style="width:auto; padding:10px 24px;">Advance Case &rarr;</button>
-      </form>
-    </div>
-
-    <div class="card">
-      <h3>Return / Reject Case</h3>
-      <form method="POST">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="return_case">
-        <div class="field">
-          <label>Return To Stage</label>
-          {{ return_form.target_stage }}
-        </div>
-        <div class="field">
-          <label>Reason (required)</label>
-          {{ return_form.reason }}
-        </div>
-        <button type="submit" class="theme-toggle" style="cursor:pointer;">Return Case</button>
-      </form>
-    </div>
-    {% endif %}
-
-    <div class="card">
-      <h3>Case Timeline</h3>
-      {% for h in history %}
-        <p style="color:var(--text-secondary); margin:8px 0; border-left:2px solid var(--border); padding-left:10px;">
-          <strong style="color:var(--text-primary);">{{ h.from_stage }} &rarr; {{ h.to_stage }}</strong>
-          ({{ h.get_action_display }}) by {{ h.performed_by.username }} on {{ h.created_at|date:"d M Y, P" }}
-          {% if h.remarks %}<br><em>{{ h.remarks }}</em>{% endif %}
-        </p>
-      {% empty %}
-        <p style="color:var(--text-secondary)">No history yet.</p>
-      {% endfor %}
+    <div class="footer-strip">
+      <div><span class="label">PROJECT</span><span class="item">Project Nexus - Unit Accounts Management</span></div>
+      <div><span class="label">MODULE</span><span class="item">Procurement</span></div>
+      <div><span class="label">VERSION</span><span class="item">1.0</span></div>
+      <div><span class="label">CLASSIFICATION</span><span class="item">CONFIDENTIAL</span></div>
     </div>
 
   </div>
 
-  <div class="footer-strip">
-    <div><span class="label">PROJECT</span><span class="item">Project Nexus - Unit Accounts Management</span></div>
-    <div><span class="label">MODULE</span><span class="item">Procurement Case</span></div>
-    <div><span class="label">VERSION</span><span class="item">1.0</span></div>
-    <div><span class="label">CLASSIFICATION</span><span class="item">CONFIDENTIAL</span></div>
-  </div>
+</div>
 
-  <script src="{% static 'js/theme-toggle.js' %}"></script>
+<script src="{% static 'js/theme-toggle.js' %}"></script>
 </body>
 </html>

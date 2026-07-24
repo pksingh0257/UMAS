@@ -233,3 +233,80 @@ html[data-theme="light"] .hero-panel {
   position: relative;
   z-index: 1;
 }
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 28px 16px;
+}
+
+.sidebar .logo-block {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.sidebar .logo-block img {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+.sidebar .logo-block h2 {
+  font-size: 17px;
+  margin: 0;
+  letter-spacing: 1px;
+}
+.sidebar .logo-block h2 span {
+  color: var(--primary-red);
+}
+.sidebar .logo-block p {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 6px 0 0;
+  line-height: 1.4;
+}
+
+.sidebar hr {
+  border: none;
+  border-top: 1px dashed var(--border);
+  margin: 0 0 18px;
+}
+
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  color: var(--text-primary);
+  text-decoration: none;
+  margin-bottom: 6px;
+  font-size: 14px;
+  transition: background 0.15s ease;
+}
+.sidebar nav a:hover {
+  background: var(--bg);
+}
+.sidebar nav a.active {
+  background: var(--primary-red);
+  color: #fff;
+}
+.sidebar nav a .icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+}
