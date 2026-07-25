@@ -11,6 +11,12 @@
       <span class="icon">&#9635;</span> Dashboard
     </a>
 
+    {% if role in 'ACCOUNTS_CLERK,HEAD_CLERK' %}
+      <a href="#" class="{% if active_nav == 'requirements' %}active{% endif %}">
+        <span class="icon">&#128196;</span> Requirements
+      </a>
+    {% endif %}
+
     {% if role in 'HEAD_CLERK,ACCOUNTS_OFFICER,ADMINISTRATOR' %}
       <a href="#" class="{% if active_nav == 'requirements' %}active{% endif %}">
         <span class="icon">&#128196;</span> Requirements
