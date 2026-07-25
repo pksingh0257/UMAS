@@ -1,0 +1,256 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Nexus | Requirement Requests</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    {% include 'partials/sidebar.html' with active_nav='requirements' %}
+
+    <main class="main-content">
+
+        <!-- ================= Top Bar ================= -->
+
+        <div class="topbar">
+
+            <div class="brand">
+
+                <img src="{% static 'images/main-logo.png' %}"
+                     class="brand-icon"
+                     alt="Logo">
+
+                <div>
+
+                    <h1>PROJECT NEXUS</h1>
+
+                    <p class="tagline">
+                        UNIT PROCUREMENT & ACCOUNTS MANAGEMENT
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="topbar-right">
+
+                <a href="{% url 'dashboard' %}"
+                   class="theme-toggle"
+                   style="text-decoration:none;">
+
+                    ← Dashboard
+
+                </a>
+
+                <button
+                    id="theme-toggle-btn"
+                    class="theme-toggle">
+
+                    Light Mode
+
+                </button>
+
+                <a href="{% url 'logout' %}"
+                   class="theme-toggle"
+                   style="text-decoration:none;">
+
+                    Logout
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- ================= Dashboard ================= -->
+
+        <div class="dashboard-shell">
+
+            <!-- Header -->
+
+            <div class="section-card">
+
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;">
+
+                    <div>
+
+                        <h2 style="margin:0;">
+                            Requirement Requests
+                        </h2>
+
+                        <p style="margin-top:8px;color:var(--text-secondary);">
+
+                            View and monitor all procurement requirement requests.
+
+                        </p>
+
+                    </div>
+
+                    <div class="classified-badge">
+
+                        PROCUREMENT MODULE
+
+                        <br>
+
+                        CONFIDENTIAL
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Requirement List -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    Submitted Requirement Requests
+
+                </div>
+
+                {% for r in requests %}
+
+                <div class="activity-item">
+
+                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;">
+
+                        <div>
+
+                            <h4 style="margin:0;">
+
+                                {{ r.request_number }}
+
+                            </h4>
+
+                            <p style="margin:8px 0;">
+
+                                <strong>Unit:</strong>
+                                {{ r.unit }}
+
+                            </p>
+
+                            <p style="margin:4px 0;color:var(--text-secondary);">
+
+                                Raised By :
+                                {{ r.raised_by.username }}
+
+                            </p>
+
+                            {% if r.submitted_at %}
+
+                            <small style="color:var(--text-secondary);">
+
+                                Submitted :
+                                {{ r.submitted_at|date:"d M Y, P" }}
+
+                            </small>
+
+                            {% endif %}
+
+                        </div>
+
+                        <div>
+
+                            {% if r.get_status_display == "Approved" %}
+
+                                <span class="status-badge status-approved">
+
+                                    {{ r.get_status_display }}
+
+                                </span>
+
+                            {% elif r.get_status_display == "Rejected" %}
+
+                                <span class="status-badge status-rejected">
+
+                                    {{ r.get_status_display }}
+
+                                </span>
+
+                            {% elif r.get_status_display == "Pending" %}
+
+                                <span class="status-badge status-pending">
+
+                                    {{ r.get_status_display }}
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="status-badge status-draft">
+
+                                    {{ r.get_status_display }}
+
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <div class="activity-item">
+
+                    <p class="empty-message">
+
+                        No Requirement Requests Found.
+
+                    </p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <!-- ================= Footer ================= -->
+
+        <div class="footer-strip">
+
+            <div class="item">
+                <span class="label">PROJECT</span>
+                Project Nexus
+            </div>
+
+            <div class="item">
+                <span class="label">MODULE</span>
+                Requirement Requests
+            </div>
+
+            <div class="item">
+                <span class="label">VERSION</span>
+                v1.0
+            </div>
+
+            <div class="item">
+                <span class="label">CLASSIFICATION</span>
+                Confidential
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="{% static 'js/theme-toggle.js' %}"></script>
+
+</body>
+
+</html>

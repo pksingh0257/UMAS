@@ -1,3 +1,4 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -8,167 +9,157 @@
 </head>
 <body>
 
-  <div class="topbar">
-    <div class="brand">
-      <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="brand-icon">
-      <div>
-        <h1>ARMY INTERNAL SYSTEM</h1>
-        <p class="tagline">SECURE &bull; DISCIPLINED &bull; DEDICATED</p>
+<div class="app-layout">
+
+  {% include 'partials/sidebar.html' with active_nav='dashboard' %}
+
+  <div class="main-content">
+
+    <div class="topbar">
+      <div class="brand">
+        <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="brand-icon">
+        <div>
+          <h1>ARMY INTERNAL SYSTEM</h1>
+          <p class="tagline">SECURE &bull; DISCIPLINED &bull; DEDICATED</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button id="theme-toggle-btn" class="theme-toggle">Light Mode</button>
+        <a href="{% url 'logout' %}" class="theme-toggle" style="text-decoration:none;">Log Out</a>
       </div>
     </div>
-    <div class="topbar-right">
-      <button id="theme-toggle-btn" class="theme-toggle">Light Mode</button>
-      <a href="{% url 'logout' %}" class="theme-toggle" style="text-decoration:none;">Log Out</a>
+
+    <div class="dashboard-shell">
+
+      <div class="page-header">
+        <div>
+          <h2>Welcome, {{ user.username }}</h2>
+          <p>Role: {{ user.get_role_display }} &nbsp;|&nbsp; Status: {{ user.get_status_display }}</p>
+        </div>
+      </div>
+
+      <!-- Fund figures are placeholders until Fund Management module is built -->
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <div class="card-title-small">ATG AVAILABLE BALANCE</div>
+          <div class="card-value">&#8377;--</div>
+          <div class="card-description">Fund Management module pending</div>
+        </div>
+        <div class="dashboard-card">
+          <div class="card-title-small">TOTAL INCOME</div>
+          <div class="card-value">&#8377;--</div>
+          <div class="card-description">Fund Management module pending</div>
+        </div>
+        <div class="dashboard-card">
+          <div class="card-title-small">TOTAL EXPENDITURE</div>
+          <div class="card-value">&#8377;--</div>
+          <div class="card-description">Fund Management module pending</div>
+        </div>
+        <div class="dashboard-card">
+          <div class="card-title-small">PENDING APPROVALS</div>
+          <div class="card-value">{{ pending_approvals }}</div>
+          <div class="card-description">Requires attention</div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-heading">Requirement Summary</div>
+        <div class="list-item">
+          <p>Draft</p>
+          <span class="status-badge status-draft">{{ draft_count }}</span>
+        </div>
+        <div class="list-item">
+          <p>Submitted</p>
+          <span class="status-badge status-pending">{{ submitted_count }}</span>
+        </div>
+        <div class="list-item">
+          <p>Approved</p>
+          <span class="status-badge status-approved">{{ approved_count }}</span>
+        </div>
+        <div class="list-item">
+          <p>Rejected</p>
+          <span class="status-badge status-rejected">{{ rejected_count }}</span>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-heading">Requirement Approval Workflow</div>
+        {% if latest_case %}
+          <p style="color:var(--text-secondary); margin-bottom:16px;">
+            {{ latest_case.case_number }} &mdash; {{ latest_case.requirement_item }}
+          </p>
+          <p>
+            Current Stage:
+            <span class="status-badge status-pending">{{ latest_case.get_current_stage_display }}</span>
+          </p>
+        {% else %}
+          <p class="empty-message">No active case to display</p>
+        {% endif %}
+      </div>
+
+      <div class="section-card">
+        <div class="section-heading">Recent Activity</div>
+        {% for h in recent_activity %}
+          <div class="activity-item">
+            <h4>{{ h.from_stage }} &rarr; {{ h.to_stage }}</h4>
+            <p>{{ h.performed_by.username }} &bull; <a href="{% url 'case_detail' h.case.case_number %}">{{ h.case.case_number }}</a></p>
+            <small>{{ h.created_at|date:"d M Y, P" }}</small>
+          </div>
+        {% empty %}
+          <p class="empty-message">No recent activity.</p>
+        {% endfor %}
+      </div>
+
+      <div class="section-card">
+        <div class="page-header" style="margin-bottom:20px;">
+          <div class="section-heading" style="margin-bottom:0;">Active Requirements</div>
+          <a href="{% url 'requirement_list' %}" class="btn btn-secondary">View All Requirements</a>
+        </div>
+        <div class="table-card">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Requirement ID</th>
+                <th>Unit</th>
+                <th>Raised By</th>
+                <th>Status</th>
+                <th>Submitted</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in active_requirements %}
+              <tr>
+                <td>{{ r.request_number }}</td>
+                <td>{{ r.unit }}</td>
+                <td>{{ r.raised_by.username }}</td>
+                <td>
+                  <span class="status-badge {% if r.status == 'SUBMITTED' %}status-approved{% else %}status-draft{% endif %}">
+                    {{ r.get_status_display }}
+                  </span>
+                </td>
+                <td>{{ r.submitted_at|date:"d M Y, P"|default:"-" }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="5" class="empty-message">No requirements found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
-  </div>
 
-  <div class="dashboard-shell">
-
-    <div class="card">
-      <h2>Welcome, {{ user.username }}</h2>
-      <p style="color:var(--text-secondary)">Role: {{ user.get_role_display }} &nbsp;|&nbsp; Status: {{ user.get_status_display }}</p>
+    <div class="footer-strip">
+      <div><span class="label">PROJECT</span><span class="item">Project Nexus - Unit Accounts Management</span></div>
+      <div><span class="label">MODULE</span><span class="item">Dashboard</span></div>
+      <div><span class="label">VERSION</span><span class="item">1.0</span></div>
+      <div><span class="label">CLASSIFICATION</span><span class="item">CONFIDENTIAL</span></div>
     </div>
-
-    {% if role == 'ADMINISTRATOR' %}
-      <div class="card">
-        <h3>System Overview</h3>
-        <p style="color:var(--text-secondary)">
-          Users: {{ active_users }} active / {{ total_users }} total &nbsp;|&nbsp;
-          Units: {{ unit_count }} &nbsp;|&nbsp;
-          Fund Heads: {{ fund_head_count }} &nbsp;|&nbsp;
-          Item Categories: {{ item_category_count }}
-        </p>
-      </div>
-      <div class="card">
-        <h3>Recent Audit Activity</h3>
-        {% for h in recent_activity %}
-          <p style="color:var(--text-secondary); margin:6px 0;">
-            <strong style="color:var(--text-primary);">{{ h.case.case_number }}</strong>
-            &mdash; {{ h.from_stage }} &rarr; {{ h.to_stage }} ({{ h.get_action_display }})
-            by {{ h.performed_by.username }} on {{ h.created_at|date:"d M Y, P" }}
-          </p>
-        {% empty %}
-          <p style="color:var(--text-secondary)">No activity yet.</p>
-        {% endfor %}
-      </div>
-
-    {% elif role == 'HEAD_CLERK' %}
-      <div class="card">
-        <h3>My Requirement Requests</h3>
-        {% for r in my_requests %}
-          <p style="color:var(--text-secondary); margin:6px 0;">
-            <strong style="color:var(--text-primary);">{{ r.request_number }}</strong>
-            &mdash; {{ r.unit }} &mdash; {{ r.get_status_display }}
-          </p>
-        {% empty %}
-          <p style="color:var(--text-secondary)">You haven't raised any Requirement Requests yet.</p>
-        {% endfor %}
-      </div>
-
-    {% elif role == 'ACCOUNTS_CLERK' %}
-      <div class="card">
-        <h3>Cases Pending Your Action</h3>
-        {% for c in pending_cases %}
-          <p style="color:var(--text-secondary); margin:6px 0;">
-            <!-- <strong style="color:var(--text-primary);">{{ c.case_number }}</strong> -->
-            <a href="{% url 'case_detail' c.case_number %}" style="color:var(--accent-blue); text-decoration:none; font-weight:600;">{{ c.case_number }}</a>
-            &mdash; {{ c.requirement_item }} &mdash; Stage: {{ c.get_current_stage_display }}
-          </p>
-        {% empty %}
-          <p style="color:var(--text-secondary)">No cases currently pending at your stages.</p>
-        {% endfor %}
-      </div>
-      <div class="card">
-        <h3>Your Recent Activity</h3>
-        {% for h in recent_activity %}
-          <p style="color:var(--text-secondary); margin:6px 0;">
-            {{ h.case.case_number }} &mdash; {{ h.from_stage }} &rarr; {{ h.to_stage }} on {{ h.created_at|date:"d M Y, P" }}
-          </p>
-        {% empty %}
-          <p style="color:var(--text-secondary)">No activity yet.</p>
-        {% endfor %}
-      </div>
-
-    {% elif role == 'ACCOUNTS_JCO' %}
-      <div class="card">
-        <h3>Cases Pending Inspection Review</h3>
-        {% for c in pending_cases %}
-          <p style="color:var(--text-secondary); margin:6px 0;">
-            <!-- <strong style="color:var(--text-primary);">{{ c.case_number }}</strong> -->
-             <a href="{% url 'case_detail' c.case_number %}" style="color:var(--accent-blue); text-decoration:none; font-weight:600;">{{ c.case_number }}</a>
-            &mdash; {{ c.requirement_item }} &mdash; Stage: {{ c.get_current_stage_display }}
-          </p>
-        {% empty %}
-          <p style="color:var(--text-secondary)">No cases currently pending inspection.</p>
-        {% endfor %}
-      </div>
-      <div class="card">
-        <h3>Recently Forwarded / Returned</h3>
-        {% for h in recent_activity %}
-          <p style="color:var(--text-secondary); margin:6px 0;">
-            {{ h.case.case_number }} &mdash; {{ h.get_action_display }}: {{ h.from_stage }} &rarr; {{ h.to_stage }}
-          </p>
-        {% empty %}
-          <p style="color:var(--text-secondary)">No recent transitions.</p>
-        {% endfor %}
-      </div>
-
-    {% elif role == 'ACCOUNTS_OFFICER' %}
-      <div class="card">
-        <h3>Cases Pending Noting</h3>
-        {% for c in pending_cases %}
-          <p style="color:var(--text-secondary); margin:6px 0;">
-            <!-- <strong style="color:var(--text-primary);">{{ c.case_number }}</strong> -->
-             <a href="{% url 'case_detail' c.case_number %}" style="color:var(--accent-blue); text-decoration:none; font-weight:600;">{{ c.case_number }}</a>
-            &mdash; {{ c.requirement_item }}
-          </p>
-        {% empty %}
-          <p style="color:var(--text-secondary)">No cases currently pending noting.</p>
-        {% endfor %}
-      </div>
-      <div class="card">
-        <h3>Fund Heads</h3>
-        {% for f in fund_heads %}
-          <p style="color:var(--text-secondary); margin:6px 0;">{{ f.code }} &mdash; {{ f.name }}</p>
-        {% empty %}
-          <p style="color:var(--text-secondary)">No active fund heads.</p>
-        {% endfor %}
-      </div>
-
-    {% elif role == 'CFA' %}
-      <div class="card">
-        <h3>Cases Pending Approval / EAS / Sanction</h3>
-        {% for c in pending_cases %}
-          <p style="color:var(--text-secondary); margin:6px 0;">
-            <!-- <strong style="color:var(--text-primary);">{{ c.case_number }}</strong> -->
-             <a href="{% url 'case_detail' c.case_number %}" style="color:var(--accent-blue); text-decoration:none; font-weight:600;">{{ c.case_number }}</a>
-            &mdash; {{ c.requirement_item }} &mdash; Stage: {{ c.get_current_stage_display }}
-          </p>
-        {% empty %}
-          <p style="color:var(--text-secondary)">No cases currently awaiting your decision.</p>
-        {% endfor %}
-      </div>
-      <div class="card">
-        <h3>Your Recent Decisions</h3>
-        {% for h in recent_activity %}
-          <p style="color:var(--text-secondary); margin:6px 0;">
-            {{ h.case.case_number }} &mdash; {{ h.from_stage }} &rarr; {{ h.to_stage }} on {{ h.created_at|date:"d M Y, P" }}
-          </p>
-        {% empty %}
-          <p style="color:var(--text-secondary)">No decisions recorded yet.</p>
-        {% endfor %}
-      </div>
-    {% endif %}
 
   </div>
 
-  <div class="footer-strip">
-    <div><span class="label">PROJECT</span><span class="item">Project Nexus - Unit Accounts Management</span></div>
-    <div><span class="label">MODULE</span><span class="item">Dashboard</span></div>
-    <div><span class="label">VERSION</span><span class="item">1.0</span></div>
-    <div><span class="label">CLASSIFICATION</span><span class="item">CONFIDENTIAL</span></div>
-  </div>
+</div>
 
-  <script src="{% static 'js/theme-toggle.js' %}"></script>
+<script src="{% static 'js/theme-toggle.js' %}"></script>
 </body>
 </html>

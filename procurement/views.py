@@ -53,5 +53,38 @@ def case_detail(request, case_number):
         'history': history,
         'stage_form': stage_form,
         'return_form': return_form,
+        'role': request.user.role,
     }
     return render(request, 'procurement/case_detail.html', context)
+
+
+@login_required
+def case_list(request):
+    role = request.user.role
+    STAGE_MAP = {
+        'ACCOUNTS_CLERK': ['SURVEY', 'BID_BOQ', 'GEM_ORDER', 'CRAC', 'CRV'],
+        'ACCOUNTS_JCO': ['INSPECTION'],
+        'ACCOUNTS_OFFICER': ['NOTING'],
+        'CFA': ['APPROVAL', 'EAS', 'SANCTION'],
+    }
+    if role in STAGE_MAP:
+        cases = ProcurementCase.objects.filter(current_stage__in=STAGE_MAP[role])
+    else:
+        cases = ProcurementCase.objects.all()
+
+    return render(request, 'procurement/case_list.html', {
+        'cases': cases,
+        'role': role,
+        'active_nav': 'procurement',
+    })
+
+
+@login_required
+def audit_trail(request):
+    from .models import CaseStageHistory
+    history = CaseStageHistory.objects.select_related('case', 'performed_by').order_by('-created_at')[:100]
+    return render(request, 'procurement/audit_trail.html', {
+        'history': history,
+        'role': request.user.role,
+        'active_nav': 'audit_trail',
+    })

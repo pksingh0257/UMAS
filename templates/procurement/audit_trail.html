@@ -1,0 +1,383 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Nexus | Audit Trail</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    {% include 'partials/sidebar.html' with active_nav='audit_trail' %}
+
+    <main class="main-content">
+
+        <!-- ================= Top Navigation ================= -->
+
+        <div class="topbar">
+
+            <div class="brand">
+
+                <img src="{% static 'images/main-logo.png' %}"
+                     class="brand-icon"
+                     alt="Project Logo">
+
+                <div>
+
+                    <h1>PROJECT NEXUS</h1>
+
+                    <p class="tagline">
+
+                        UNIT PROCUREMENT & ACCOUNTS MANAGEMENT
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="topbar-right">
+
+                <a href="{% url 'dashboard' %}"
+                   class="theme-toggle"
+                   style="text-decoration:none;">
+
+                    ← Dashboard
+
+                </a>
+
+                <button id="theme-toggle-btn"
+                        class="theme-toggle">
+
+                    Light Mode
+
+                </button>
+
+                <a href="{% url 'logout' %}"
+                   class="theme-toggle"
+                   style="text-decoration:none;">
+
+                    Logout
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- ================= Dashboard Body ================= -->
+
+        <div class="dashboard-shell">
+
+            <!-- Page Header -->
+
+            <div class="section-card">
+
+                <div style="display:flex;
+                            justify-content:space-between;
+                            align-items:center;
+                            flex-wrap:wrap;
+                            gap:20px;">
+
+                    <div>
+
+                        <h2 style="margin:0;">
+
+                            System Audit Trail
+
+                        </h2>
+
+                        <p style="margin-top:10px;
+                                  color:var(--text-secondary);">
+
+                            Complete history of Procurement Case workflow.
+                            Displays the latest 100 recorded activities.
+
+                        </p>
+
+                    </div>
+
+                    <div class="classified-badge">
+
+                        SECURITY LOG
+
+                        <br>
+
+                        CONFIDENTIAL
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Statistics -->
+
+            <div class="dashboard-grid">
+
+                <div class="dashboard-card">
+
+                    <div class="card-title-small">
+
+                        Module
+
+                    </div>
+
+                    <div class="card-value">
+
+                        Audit
+
+                    </div>
+
+                    <small>System Monitoring</small>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <div class="card-title-small">
+
+                        Records
+
+                    </div>
+
+                    <div class="card-value">
+
+                        100
+
+                    </div>
+
+                    <small>Latest Entries Displayed</small>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <div class="card-title-small">
+
+                        Tracking
+
+                    </div>
+
+                    <div class="card-value">
+
+                        LIVE
+
+                    </div>
+
+                    <small>Workflow Monitoring</small>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <div class="card-title-small">
+
+                        Security
+
+                    </div>
+
+                    <div class="card-value">
+
+                        ENABLED
+
+                    </div>
+
+                    <small>Append Only Log</small>
+
+                </div>
+
+            </div>
+
+            <!-- Audit Timeline -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    Audit History
+
+                </div>
+
+                {% for h in history %}
+
+                <div class="activity-item">
+
+                    <div style="display:flex;
+                                justify-content:space-between;
+                                align-items:flex-start;
+                                flex-wrap:wrap;
+                                gap:20px;">
+
+                        <div style="flex:1;">
+
+                            <h4 style="margin:0;">
+
+                                <a href="{% url 'case_detail' h.case.case_number %}">
+
+                                    {{ h.case.case_number }}
+
+                                </a>
+
+                            </h4>
+
+                            <p style="margin:8px 0;">
+
+                                <strong>
+
+                                    {{ h.from_stage }}
+
+                                </strong>
+
+                                →
+
+                                <strong>
+
+                                    {{ h.to_stage }}
+
+                                </strong>
+
+                            </p>
+
+                            <p style="margin:5px 0;
+                                      color:var(--text-secondary);">
+
+                                Action :
+                                {{ h.get_action_display }}
+
+                            </p>
+
+                            <small style="color:var(--text-secondary);">
+
+                                Performed By :
+                                {{ h.performed_by.username }}
+
+                                •
+
+                                {{ h.created_at|date:"d M Y, P" }}
+
+                            </small>
+
+                            {% if h.remarks %}
+
+                            <div style="
+                                    margin-top:12px;
+                                    padding:12px;
+                                    border-left:4px solid var(--accent-blue);
+                                    background:var(--bg);
+                                    border-radius:6px;
+                                    color:var(--text-secondary);">
+
+                                <strong>Remarks</strong>
+
+                                <br>
+
+                                {{ h.remarks }}
+
+                            </div>
+
+                            {% endif %}
+
+                        </div>
+
+                        <div>
+
+                            <span class="status-badge status-approved">
+
+                                {{ h.get_action_display }}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <div class="activity-item">
+
+                    <p class="empty-message">
+
+                        No Audit Records Available.
+
+                    </p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <!-- ================= Footer ================= -->
+
+        <div class="footer-strip">
+
+            <div class="item">
+
+                <span class="label">
+
+                    PROJECT
+
+                </span>
+
+                Project Nexus
+
+            </div>
+
+            <div class="item">
+
+                <span class="label">
+
+                    MODULE
+
+                </span>
+
+                Audit Trail
+
+            </div>
+
+            <div class="item">
+
+                <span class="label">
+
+                    VERSION
+
+                </span>
+
+                v1.0
+
+            </div>
+
+            <div class="item">
+
+                <span class="label">
+
+                    CLASSIFICATION
+
+                </span>
+
+                Confidential
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="{% static 'js/theme-toggle.js' %}"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,138 @@
+{% load static %}
+
+<aside class="sidebar">
+
+    <!-- Logo -->
+    <div class="sidebar-brand text-center">
+        <img src="{% static 'images/main-logo.png' %}" alt="Logo" class="sidebar-logo">
+
+        <h4 class="mt-3 mb-1">
+            PROJECT <span class="text-danger">NEXUS</span>
+        </h4>
+
+        <small class="text-muted">
+            Unit Procurement &amp;<br>
+            Accounts Automation
+        </small>
+    </div>
+
+    <nav class="nav flex-column mt-4">
+
+        <!-- Dashboard -->
+        <a href="{% url 'dashboard' %}"
+           class="nav-link {% if active_nav == 'dashboard' %}active{% endif %}">
+            <span class="me-2">🏠</span>
+            Dashboard
+        </a>
+
+        <!-- Requirements -->
+        {% if role in 'HEAD_CLERK,ACCOUNTS_OFFICER,ADMINISTRATOR' %}
+        <a href="{% url 'requirement_list' %}"
+           class="nav-link {% if active_nav == 'requirements' %}active{% endif %}">
+            <span class="me-2">📄</span>
+            Requirements
+        </a>
+        {% endif %}
+
+        <!-- Approvals -->
+        {% if role in 'CFA,ADMINISTRATOR' %}
+        <a href="{% url 'case_list' %}"
+           class="nav-link {% if active_nav == 'approvals' %}active{% endif %}">
+            <span class="me-2">✅</span>
+            Approvals
+        </a>
+        {% endif %}
+
+        <!-- Procurement -->
+        {% if role in 'ACCOUNTS_CLERK,ACCOUNTS_JCO,ACCOUNTS_OFFICER,ADMINISTRATOR' %}
+        <a href="{% url 'case_list' %}"
+           class="nav-link {% if active_nav == 'procurement' %}active{% endif %}">
+            <span class="me-2">🛒</span>
+            Procurement
+        </a>
+        {% endif %}
+
+        <!-- Quotations -->
+        {% if role in 'ACCOUNTS_CLERK,ADMINISTRATOR' %}
+
+        <a href="#"
+           class="nav-link {% if active_nav == 'quotations' %}active{% endif %}">
+            <span class="me-2">💰</span>
+            Quotations
+        </a>
+
+        <a href="#"
+           class="nav-link {% if active_nav == 'comparative' %}active{% endif %}">
+            <span class="me-2">📊</span>
+            Comparative Statement
+        </a>
+
+        <a href="#"
+           class="nav-link {% if active_nav == 'purchase_orders' %}active{% endif %}">
+            <span class="me-2">📋</span>
+            Purchase Orders
+        </a>
+
+        {% endif %}
+
+        <!-- Inventory -->
+        {% if role in 'ACCOUNTS_JCO,ADMINISTRATOR' %}
+        <a href="#"
+           class="nav-link {% if active_nav == 'inventory' %}active{% endif %}">
+            <span class="me-2">📦</span>
+            Inventory
+        </a>
+        {% endif %}
+
+        <!-- Payments -->
+        {% if role in 'ACCOUNTS_OFFICER,ADMINISTRATOR' %}
+        <a href="#"
+           class="nav-link {% if active_nav == 'payments' %}active{% endif %}">
+            <span class="me-2">💳</span>
+            Payments
+        </a>
+        {% endif %}
+
+        <!-- Reports -->
+        {% if role in 'ACCOUNTS_OFFICER,CFA,ADMINISTRATOR' %}
+        <a href="#"
+           class="nav-link {% if active_nav == 'reports' %}active{% endif %}">
+            <span class="me-2">📈</span>
+            Reports
+        </a>
+        {% endif %}
+
+        <!-- Admin -->
+        {% if role == 'ADMINISTRATOR' %}
+
+        <a href="{% url 'audit_trail' %}"
+           class="nav-link {% if active_nav == 'audit_trail' %}active{% endif %}">
+            <span class="me-2">🔍</span>
+            Audit Trail
+        </a>
+
+        <a href="/admin/"
+           class="nav-link {% if active_nav == 'administration' %}active{% endif %}">
+            <span class="me-2">⚙️</span>
+            Administration
+        </a>
+
+        {% endif %}
+
+        <!-- Settings -->
+        <a href="#"
+           class="nav-link {% if active_nav == 'settings' %}active{% endif %}">
+            <span class="me-2">⚙️</span>
+            Settings
+        </a>
+
+        <!-- Logout -->
+        <a href="{% url 'logout' %}"
+           class="nav-link mt-4">
+            <span class="me-2">🚪</span>
+            Logout
+        </a>
+
+    </nav>
+
+</aside>

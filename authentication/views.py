@@ -38,57 +38,87 @@ OFFICER_STAGES = ['NOTING']
 CFA_STAGES = ['APPROVAL', 'EAS', 'SANCTION']
 
 
+def _build_workflow_steps(case):
+    """
+    Maps our 12-stage ProcurementCase workflow onto the 6 macro-phases
+    shown on the dashboard's workflow visual. Display-only grouping -
+    does not change the underlying model or business rules.
+    """
+    from procurement.models import ProcurementCase
+    seq = ProcurementCase.STAGE_SEQUENCE
+
+    groups = [
+        ('Requirement Created', 'Clerk', ['SURVEY']),
+        ('Head Clerk Check', 'Cross-check', ['BID_BOQ']),
+        ('Account Officer', 'Financial check', ['NOTING']),
+        ('CFA Approval', 'Final approval', ['APPROVAL', 'EAS', 'SANCTION']),
+        ('Procurement', 'Document processing', ['GEM_ORDER', 'INSPECTION', 'CRAC', 'CRV']),
+        ('Payment', 'Final payment', ['PAYMENT_TRACKING', 'CASE_CLOSED']),
+    ]
+
+    if not case:
+        return [{'label': g[0], 'sub': g[1], 'state': 'pending'} for g in groups]
+
+    current_idx = seq.index(case.current_stage)
+    steps = []
+    for label, sub, stage_names in groups:
+        group_last_idx = max(seq.index(s) for s in stage_names)
+        if current_idx > group_last_idx:
+            state = 'completed'
+        elif case.current_stage in stage_names:
+            state = 'current'
+        else:
+            state = 'pending'
+        steps.append({'label': label, 'sub': sub, 'state': state})
+    return steps
+
+
 @login_required
 def dashboard_view(request):
     from procurement.models import ProcurementCase, CaseStageHistory
     from requirements_mgmt.models import RequirementRequest
-    from masterdata.models import Unit, FundHead, ItemCategory
-    from authentication.models import User
 
     role = request.user.role
-    context = {'role': role}
 
-    if role == 'ADMINISTRATOR':
-        context['total_users'] = User.objects.count()
-        context['active_users'] = User.objects.filter(status='ACTIVE').count()
-        context['unit_count'] = Unit.objects.filter(is_active=True).count()
-        context['fund_head_count'] = FundHead.objects.filter(is_active=True).count()
-        context['item_category_count'] = ItemCategory.objects.filter(is_active=True).count()
-        context['recent_activity'] = CaseStageHistory.objects.select_related(
-            'case', 'performed_by'
-        ).order_by('-created_at')[:10]
+    # Requirement Summary counts (Draft / Submitted / Approved / Rejected).
+    # "Approved" = case has moved past the Approval stage or later.
+    # "Rejected" = case has at least one RETURN entry in its history.
+    draft_count = RequirementRequest.objects.filter(status='DRAFT').count()
+    submitted_count = RequirementRequest.objects.filter(status='SUBMITTED').count()
 
-    elif role == 'HEAD_CLERK':
-        context['my_requests'] = RequirementRequest.objects.filter(
-            raised_by=request.user
-        ).order_by('-created_at')[:10]
+    approved_stage_order = ProcurementCase.STAGE_SEQUENCE.index('APPROVAL')
+    all_cases = ProcurementCase.objects.all()
+    approved_count = sum(
+        1 for c in all_cases
+        if c.current_stage in ProcurementCase.STAGE_SEQUENCE
+        and ProcurementCase.STAGE_SEQUENCE.index(c.current_stage) > approved_stage_order
+    )
+    rejected_count = CaseStageHistory.objects.filter(action='RETURN').values('case').distinct().count()
 
-    elif role == 'ACCOUNTS_CLERK':
-        context['pending_cases'] = ProcurementCase.objects.filter(
-            current_stage__in=CLERK_STAGES, is_closed=False
-        ).select_related('requirement_item')
-        context['recent_activity'] = CaseStageHistory.objects.filter(
-            performed_by=request.user
-        ).order_by('-created_at')[:10]
+    pending_approvals = ProcurementCase.objects.filter(
+        current_stage__in=['APPROVAL', 'EAS', 'SANCTION'], is_closed=False
+    ).count()
 
-    elif role == 'ACCOUNTS_JCO':
-        context['pending_cases'] = ProcurementCase.objects.filter(
-            current_stage__in=JCO_STAGES, is_closed=False
-        ).select_related('requirement_item')
-        context['recent_activity'] = CaseStageHistory.objects.order_by('-created_at')[:10]
+    # Most recent open case, to drive the workflow-stepper visual.
+    latest_case = ProcurementCase.objects.filter(is_closed=False).order_by('-created_at').first()
+    workflow_steps = _build_workflow_steps(latest_case)
 
-    elif role == 'ACCOUNTS_OFFICER':
-        context['pending_cases'] = ProcurementCase.objects.filter(
-            current_stage__in=OFFICER_STAGES, is_closed=False
-        ).select_related('requirement_item')
-        context['fund_heads'] = FundHead.objects.filter(is_active=True)
+    recent_activity = CaseStageHistory.objects.select_related(
+        'case', 'performed_by'
+    ).order_by('-created_at')[:6]
 
-    elif role == 'CFA':
-        context['pending_cases'] = ProcurementCase.objects.filter(
-            current_stage__in=CFA_STAGES, is_closed=False
-        ).select_related('requirement_item')
-        context['recent_activity'] = CaseStageHistory.objects.filter(
-            performed_by=request.user
-        ).order_by('-created_at')[:10]
+    active_requirements = RequirementRequest.objects.select_related('unit', 'raised_by').order_by('-created_at')[:10]
 
+    context = {
+        'role': role,
+        'draft_count': draft_count,
+        'submitted_count': submitted_count,
+        'approved_count': approved_count,
+        'rejected_count': rejected_count,
+        'pending_approvals': pending_approvals,
+        'latest_case': latest_case,
+        'workflow_steps': workflow_steps,
+        'recent_activity': recent_activity,
+        'active_requirements': active_requirements,
+    }
     return render(request, 'authentication/dashboard.html', context)
