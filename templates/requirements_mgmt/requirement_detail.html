@@ -1,0 +1,159 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UAMS - {{ requirement.requirement_id }}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/requirement_form.css' %}">
+</head>
+<body>
+
+<div class="app-layout">
+
+  {% include 'partials/sidebar.html' with active_nav='requirements' %}
+
+  <div class="main-content">
+
+    <div class="topbar">
+      <div class="brand">
+        <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="brand-icon">
+        <div>
+          <h1>ARMY INTERNAL SYSTEM</h1>
+          <p class="tagline">SECURE &bull; DISCIPLINED &bull; DEDICATED</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button id="theme-toggle-btn" class="theme-toggle">Light Mode</button>
+        <a href="{% url 'logout' %}" class="theme-toggle" style="text-decoration:none;">Log Out</a>
+      </div>
+    </div>
+
+    <div class="dashboard-shell">
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="card rf-message">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <!-- ============ READ-ONLY DETAILS ============ -->
+      <div class="card">
+        <div class="rf-card-head">
+          <h2 style="margin:0;">{{ requirement.requirement_id }} <span class="badge badge-workflow">{{ requirement.get_workflow_status_display }}</span></h2>
+          {% if can_edit %}
+            <a href="{% url 'requirement_edit' requirement.pk %}" class="theme-toggle" style="text-decoration:none;">Edit</a>
+          {% endif %}
+        </div>
+
+        <div class="rf-grid-2" style="margin-top:16px;">
+          <div><span class="rf-label">Item Name</span><p>{{ requirement.item_name }}</p></div>
+          <div><span class="rf-label">Category</span><p>{{ requirement.category }}</p></div>
+          <div><span class="rf-label">Quantity</span><p>{{ requirement.quantity }}</p></div>
+          <div><span class="rf-label">Purpose</span><p>{{ requirement.purpose }}</p></div>
+          <div><span class="rf-label">Estimated Cost</span><p>{{ requirement.estimated_cost }}</p></div>
+          <div><span class="rf-label">Demanded By</span><p>{{ requirement.demanded_by }}</p></div>
+          <div><span class="rf-label">Purchase Mode</span><p>{{ requirement.get_purchase_mode_display }}</p></div>
+          <div><span class="rf-label">Priority</span><p>{{ requirement.get_priority_display }}</p></div>
+          <div><span class="rf-label">Raised By</span><p>{{ requirement.raised_by.username }}</p></div>
+          <div><span class="rf-label">Date &amp; Time</span><p>{{ requirement.created_at|date:"d M Y, P" }}</p></div>
+          <div><span class="rf-label">Approval Status</span><p><span class="badge badge-{{ requirement.simple_approval_status|lower }}">{{ requirement.simple_approval_status }}</span></p></div>
+          <div>
+            <span class="rf-label">Attachment</span>
+            <p>
+              {% if requirement.attachment %}
+                <a href="{{ requirement.attachment.url }}" style="color:var(--accent-blue);" target="_blank">{{ requirement.attachment.name }}</a>
+              {% else %}
+                <span style="color:var(--text-secondary);">None</span>
+              {% endif %}
+            </p>
+          </div>
+        </div>
+
+        {% if can_submit %}
+          <form method="post" action="{% url 'requirement_submit_to_ao' requirement.pk %}" style="margin-top:10px;">
+            {% csrf_token %}
+            <button type="submit" class="login-btn" style="width:auto; padding:10px 20px;">Send for AO Approval</button>
+          </form>
+        {% endif %}
+      </div>
+
+      <!-- ============ APPROVAL STATUS (both, always visible) ============ -->
+      <div class="card">
+        <h3 style="margin-top:0;">Approval Status</h3>
+        <div class="rf-grid-2">
+          <div>
+            <span class="rf-label">Account Officer</span>
+            <p><span class="badge badge-{{ requirement.ao_status|lower }}">{{ requirement.get_ao_status_display }}</span></p>
+            {% if requirement.ao_remarks %}<p style="color:var(--text-secondary); font-size:13px;">"{{ requirement.ao_remarks }}"</p>{% endif %}
+            {% if requirement.ao_acted_at %}<p style="color:var(--text-secondary); font-size:12px;">{{ requirement.ao_acted_by.username }} &middot; {{ requirement.ao_acted_at|date:"d M Y, P" }}</p>{% endif %}
+          </div>
+          <div>
+            <span class="rf-label">CFA</span>
+            <p><span class="badge badge-{{ requirement.cfa_status|lower }}">{{ requirement.get_cfa_status_display }}</span></p>
+            {% if requirement.cfa_remarks %}<p style="color:var(--text-secondary); font-size:13px;">"{{ requirement.cfa_remarks }}"</p>{% endif %}
+            {% if requirement.cfa_acted_at %}<p style="color:var(--text-secondary); font-size:12px;">{{ requirement.cfa_acted_by.username }} &middot; {{ requirement.cfa_acted_at|date:"d M Y, P" }}</p>{% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ AO DECISION FORM ============ -->
+      {% if ao_form %}
+        <div class="card">
+          <h3 style="margin-top:0;">Account Officer Review</h3>
+          <form method="post">
+            {% csrf_token %}
+            <div class="rf-grid-2">
+              <div class="field">
+                <label for="{{ ao_form.ao_status.id_for_label }}">Status</label>
+                {{ ao_form.ao_status }}
+              </div>
+              <div class="field">
+                <label for="{{ ao_form.ao_remarks.id_for_label }}">Remarks</label>
+                {{ ao_form.ao_remarks }}
+                {% if ao_form.ao_remarks.errors %}<p class="rf-error-text">{{ ao_form.ao_remarks.errors|join:", " }}</p>{% endif %}
+              </div>
+            </div>
+            <button type="submit" name="ao_submit" class="login-btn" style="width:auto; padding:10px 24px; margin-top:10px;">Submit Decision</button>
+          </form>
+        </div>
+      {% endif %}
+
+      <!-- ============ CFA DECISION FORM ============ -->
+      {% if cfa_form %}
+        <div class="card">
+          <h3 style="margin-top:0;">CFA Review</h3>
+          <form method="post">
+            {% csrf_token %}
+            <div class="rf-grid-2">
+              <div class="field">
+                <label for="{{ cfa_form.cfa_status.id_for_label }}">Status</label>
+                {{ cfa_form.cfa_status }}
+              </div>
+              <div class="field">
+                <label for="{{ cfa_form.cfa_remarks.id_for_label }}">Remarks</label>
+                {{ cfa_form.cfa_remarks }}
+                {% if cfa_form.cfa_remarks.errors %}<p class="rf-error-text">{{ cfa_form.cfa_remarks.errors|join:", " }}</p>{% endif %}
+              </div>
+            </div>
+            <button type="submit" name="cfa_submit" class="login-btn" style="width:auto; padding:10px 24px; margin-top:10px;">Submit Decision</button>
+          </form>
+        </div>
+      {% endif %}
+
+    </div>
+
+    <div class="footer-strip">
+      <div><span class="label">PROJECT</span><span class="item">Project Nexus - Unit Accounts Management</span></div>
+      <div><span class="label">MODULE</span><span class="item">Requirements</span></div>
+      <div><span class="label">VERSION</span><span class="item">1.0</span></div>
+      <div><span class="label">CLASSIFICATION</span><span class="item">CONFIDENTIAL</span></div>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="{% static 'js/theme-toggle.js' %}"></script>
+</body>
+</html>

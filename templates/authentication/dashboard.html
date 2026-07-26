@@ -63,8 +63,8 @@
           <h3>My Requirement Requests</h3>
           {% for r in my_requests %}
             <p style="color:var(--text-secondary); margin:6px 0;">
-              <strong style="color:var(--text-primary);">{{ r.request_number }}</strong>
-              &mdash; {{ r.unit }} &mdash; {{ r.get_status_display }}
+              <a href="{% url 'requirement_detail' r.pk %}" style="color:var(--text-primary); text-decoration:none; font-weight:600;">{{ r.requirement_id }}</a>
+              &mdash; {{ r.item_name }} &mdash; {{ r.simple_approval_status }}
             </p>
           {% empty %}
             <p style="color:var(--text-secondary)">You haven't raised any Requirement Requests yet.</p>

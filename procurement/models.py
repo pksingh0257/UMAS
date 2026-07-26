@@ -4,15 +4,17 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from core_base.models import CoreModel
 from masterdata.models import FundHead
-from requirements_mgmt.models import RequirementItem
+from requirements_mgmt.models import Requirement   # CHANGED: RequirementItem no longer exists
 
 
 class ProcurementCase(CoreModel):
     """
     The central entity of Project Nexus (Section 16). Exactly one case is
-    generated per Requirement Item. The current_stage field IS the
-    Workflow Engine's state (Section 17) - implemented here as a service
-    layer on the model rather than as separate user-facing screens.
+    generated per Requirement (flattened model - previously per Requirement
+    Item, back when Requirements had multiple items). The current_stage
+    field IS the Workflow Engine's state (Section 17) - implemented here
+    as a service layer on the model rather than as separate user-facing
+    screens.
     """
 
     STAGE_CHOICES = [
@@ -49,9 +51,18 @@ class ProcurementCase(CoreModel):
     CFA_ONLY_STAGES = {"APPROVAL", "EAS", "SANCTION"}
 
     case_number = models.CharField(max_length=30, unique=True, editable=False)
+
+    # CHANGED: was OneToOneField(RequirementItem, ...). requirements_mgmt
+    # flattened RequirementRequest+RequirementItem into a single
+    # `Requirement` model, so this now points there instead. Field NAME
+    # is left as `requirement_item` on purpose, to avoid breaking any
+    # other code in the project that already references
+    # `case.requirement_item` — rename it to `requirement` later if you
+    # do a project-wide search/replace.
     requirement_item = models.OneToOneField(
-        RequirementItem, on_delete=models.PROTECT, related_name="procurement_case"
+        Requirement, on_delete=models.PROTECT, related_name="procurement_case"
     )
+
     current_stage = models.CharField(
         max_length=20, choices=STAGE_CHOICES, default="SURVEY"
     )

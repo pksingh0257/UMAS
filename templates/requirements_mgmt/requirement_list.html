@@ -3,14 +3,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Requirements - UAMS</title>
+  <title>UAMS - Requirements</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/requirement_form.css' %}">
 </head>
 <body>
 
 <div class="app-layout">
 
-  {% include 'partials/sidebar.html' %}
+  {% include 'partials/sidebar.html' with active_nav='requirements' %}
 
   <div class="main-content">
 
@@ -23,25 +24,78 @@
         </div>
       </div>
       <div class="topbar-right">
-        <a href="{% url 'dashboard' %}" class="theme-toggle" style="text-decoration:none;">&larr; Dashboard</a>
         <button id="theme-toggle-btn" class="theme-toggle">Light Mode</button>
         <a href="{% url 'logout' %}" class="theme-toggle" style="text-decoration:none;">Log Out</a>
       </div>
     </div>
 
     <div class="dashboard-shell">
-      <div class="card">
-        <h2>Requirement Requests</h2>
-        {% for r in requests %}
-          <p style="color:var(--text-secondary); margin:10px 0; border-left:2px solid var(--border); padding-left:10px;">
-            <strong style="color:var(--text-primary);">{{ r.request_number }}</strong>
-            &mdash; {{ r.unit }} &mdash; Raised by {{ r.raised_by.username }} &mdash; {{ r.get_status_display }}
-            {% if r.submitted_at %}&mdash; {{ r.submitted_at|date:"d M Y, P" }}{% endif %}
-          </p>
-        {% empty %}
-          <p style="color:var(--text-secondary)">No Requirement Requests found.</p>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="card rf-message">{{ message }}</div>
         {% endfor %}
+      {% endif %}
+
+      <div class="card">
+        <div class="rf-card-head">
+          <h2 style="margin:0;">Requirements</h2>
+          <a href="{% url 'requirement_create' %}" class="login-btn" style="width:auto; padding:10px 20px; text-decoration:none; display:inline-block;">
+            + Create New Requirement
+          </a>
+        </div>
       </div>
+
+      <div class="card">
+        <div class="rf-table-wrap">
+          <table class="item-table">
+            <thead>
+              <tr>
+                <th>Requirement ID</th>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th style="width:60px;">Qty</th>
+                <th>Est. Cost</th>
+                <th>Priority</th>
+                <th>AO Status</th>
+                <th>CFA Status</th>
+                <th>Overall</th>
+                <th>Date</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in requirements %}
+                <tr>
+                  <td><a href="{% url 'requirement_detail' r.pk %}" style="color:var(--accent-blue); text-decoration:none;">{{ r.requirement_id }}</a></td>
+                  <td>{{ r.item_name }}</td>
+                  <td>{{ r.category }}</td>
+                  <td>{{ r.quantity }}</td>
+                  <td>{{ r.estimated_cost }}</td>
+                  <td><span class="badge badge-priority-{{ r.priority|lower }}">{{ r.get_priority_display }}</span></td>
+                  <td><span class="badge badge-{{ r.ao_status|lower }}">{{ r.get_ao_status_display }}</span></td>
+                  <td><span class="badge badge-{{ r.cfa_status|lower }}">{{ r.get_cfa_status_display }}</span></td>
+                  <td><span class="badge badge-{{ r.simple_approval_status|lower }}">{{ r.simple_approval_status }}</span></td>
+                  <td>{{ r.created_at|date:"d M Y" }}</td>
+                  <td style="white-space:nowrap;">
+                    <a href="{% url 'requirement_detail' r.pk %}" style="color:var(--accent-blue); text-decoration:none; margin-right:10px;">View</a>
+                    {% if r.is_editable and r.raised_by == user %}
+                      <a href="{% url 'requirement_edit' r.pk %}" style="color:var(--accent-blue); text-decoration:none; margin-right:10px;">Edit</a>
+                      <form method="post" action="{% url 'requirement_submit_to_ao' r.pk %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-add" style="padding:4px 10px; font-size:12px;">Send for AO Approval</button>
+                      </form>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="11" style="text-align:center; color:var(--text-secondary);">No requirements yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
 
     <div class="footer-strip">
