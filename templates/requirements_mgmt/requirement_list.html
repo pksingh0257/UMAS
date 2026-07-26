@@ -36,7 +36,7 @@
           <div class="card rf-message">{{ message }}</div>
         {% endfor %}
       {% endif %}
-
+      {% if role in 'ACCOUNTS_CLERK,HEAD_CLERK' %}
       <div class="card">
         <div class="rf-card-head">
           <h2 style="margin:0;">Requirements</h2>
@@ -45,6 +45,7 @@
           </a>
         </div>
       </div>
+       {% endif %}
 
       <div class="card">
         <div class="rf-table-wrap">
@@ -56,6 +57,7 @@
                 <th>Category</th>
                 <th style="width:60px;">Qty</th>
                 <th>Est. Cost</th>
+                <th>Wf. status</th>
                 <th>Priority</th>
                 <th>AO Status</th>
                 <th>CFA Status</th>
@@ -72,6 +74,7 @@
                   <td>{{ r.category }}</td>
                   <td>{{ r.quantity }}</td>
                   <td>{{ r.estimated_cost }}</td>
+                  <td>{{ r.workflow_status }}</td>
                   <td><span class="badge badge-priority-{{ r.priority|lower }}">{{ r.get_priority_display }}</span></td>
                   <td><span class="badge badge-{{ r.ao_status|lower }}">{{ r.get_ao_status_display }}</span></td>
                   <td><span class="badge badge-{{ r.cfa_status|lower }}">{{ r.get_cfa_status_display }}</span></td>
@@ -97,13 +100,7 @@
       </div>
 
     </div>
-
-    <div class="footer-strip">
-      <div><span class="label">PROJECT</span><span class="item">Project Nexus - Unit Accounts Management</span></div>
-      <div><span class="label">MODULE</span><span class="item">Requirements</span></div>
-      <div><span class="label">VERSION</span><span class="item">1.0</span></div>
-      <div><span class="label">CLASSIFICATION</span><span class="item">CONFIDENTIAL</span></div>
-    </div>
+    {% include 'partials/footer.html' %}
 
   </div>
 
