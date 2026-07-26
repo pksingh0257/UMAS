@@ -17,7 +17,7 @@
       </a>
     {% endif %}
 
-    {% if role in 'ACCOUNTS_CLERK,HEAD_CLERK' %}
+    {% if role in 'ACCOUNTS_CLERK,HEAD_CLERK,ADMINISTRATOR' %}
       <a href="{% url 'requirement_list' %}" class="{% if active_nav == 'requirements' %}active{% endif %}">
         <!-- <a href="">+ New Requirement Request</a>  -->
         <span class="icon">&#128196;</span> Requirements
