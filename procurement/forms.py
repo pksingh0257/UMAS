@@ -1,5 +1,5 @@
 from django import forms
-from .models import ProcurementCase
+from .models import ProcurementCase, NotingSheet
 
 
 class CaseStageDataForm(forms.ModelForm):
@@ -40,3 +40,54 @@ class CaseStageDataForm(forms.ModelForm):
 class ReturnCaseForm(forms.Form):
     target_stage = forms.ChoiceField(choices=ProcurementCase.STAGE_CHOICES)
     reason = forms.CharField(widget=forms.Textarea(attrs={'rows': 2}))
+
+
+# ============================================================
+# NEW — Noting Sheet forms (merged in from noting_forms.py)
+# ============================================================
+
+class NotingSheetForm(forms.ModelForm):
+    """
+    Only asks for what's genuinely new: A/U and the fund ledger figures.
+    Item Name / Qty / Unit Price / Approx Amount are auto-fetched from the
+    linked Requirement and shown read-only in the template — they aren't
+    form fields at all.
+    """
+
+    class Meta:
+        model = NotingSheet
+        fields = ["au", "amount_allotted", "amount_released", "amount_expended"]
+        widgets = {
+            "au": forms.TextInput(attrs={"placeholder": "e.g. Nos, Set, Kg"}),
+            "amount_allotted": forms.NumberInput(attrs={"min": 0, "step": "0.01"}),
+            "amount_released": forms.NumberInput(attrs={"min": 0, "step": "0.01"}),
+            "amount_expended": forms.NumberInput(attrs={"min": 0, "step": "0.01"}),
+        }
+
+
+class NotingAODecisionForm(forms.Form):
+    ao_status = forms.ChoiceField(choices=NotingSheet.DECISION_CHOICES, widget=forms.Select(), label="Status")
+    ao_remarks = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 3, "placeholder": "Remarks (required if returning)"}),
+        required=False, label="Remarks",
+    )
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get("ao_status") == "DENIED" and not cleaned.get("ao_remarks"):
+            self.add_error("ao_remarks", "Remarks are required when returning a noting sheet.")
+        return cleaned
+
+
+class NotingCFADecisionForm(forms.Form):
+    cfa_status = forms.ChoiceField(choices=NotingSheet.DECISION_CHOICES, widget=forms.Select(), label="Status")
+    cfa_remarks = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 3, "placeholder": "Remarks (required if returning)"}),
+        required=False, label="Remarks",
+    )
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get("cfa_status") == "DENIED" and not cleaned.get("cfa_remarks"):
+            self.add_error("cfa_remarks", "Remarks are required when returning a noting sheet.")
+        return cleaned

@@ -41,7 +41,7 @@ CFA_STAGES = ['APPROVAL', 'EAS', 'SANCTION']
 @login_required
 def dashboard_view(request):
     from procurement.models import ProcurementCase, CaseStageHistory
-    from requirements_mgmt.models import RequirementRequest
+    from requirements_mgmt.models import Requirement   # CHANGED: was RequirementRequest
     from masterdata.models import Unit, FundHead, ItemCategory
     from authentication.models import User
 
@@ -59,7 +59,10 @@ def dashboard_view(request):
         ).order_by('-created_at')[:10]
 
     elif role == 'HEAD_CLERK':
-        context['my_requests'] = RequirementRequest.objects.filter(
+        # CHANGED: RequirementRequest -> Requirement. That model has no
+        # `unit` field anymore (flattened model dropped it), so the
+        # dashboard template needs a small update too — see below.
+        context['my_requests'] = Requirement.objects.filter(
             raised_by=request.user
         ).order_by('-created_at')[:10]
 
