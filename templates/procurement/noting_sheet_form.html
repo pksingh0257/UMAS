@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UAMS - New Noting Sheet</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/requirement_form.css' %}">
+</head>
+<body>
+<div class="app-layout">
+  {% include 'partials/sidebar.html' with active_nav='procurement' %}
+  <div class="main-content">
+    <div class="topbar">
+      <div class="brand">
+        <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="brand-icon">
+        <div>
+          <h1>ARMY INTERNAL SYSTEM</h1>
+          <p class="tagline">SECURE &bull; DISCIPLINED &bull; DEDICATED</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button id="theme-toggle-btn" class="theme-toggle">Light Mode</button>
+        <a href="{% url 'logout' %}" class="theme-toggle" style="text-decoration:none;">Log Out</a>
+      </div>
+    </div>
+
+    <div class="dashboard-shell">
+
+      <div class="card">
+        <h2 style="margin-top:0;">New Noting Sheet</h2>
+        <p style="color:var(--text-secondary); margin:0;">For Requirement {{ requirement.requirement_id }} — Noting ID is assigned automatically on save.</p>
+      </div>
+
+      <!-- Auto-fetched fields, read-only -->
+      <div class="card">
+        <h3 style="margin-top:0;">From Requirement (auto-fetched)</h3>
+        <div class="rf-grid-3">
+          <div><span class="rf-label">Requirement ID</span><p>{{ requirement.requirement_id }}</p></div>
+          <div><span class="rf-label">Item Name</span><p>{{ requirement.item_name }}</p></div>
+          <div><span class="rf-label">Qty</span><p>{{ requirement.quantity }}</p></div>
+          <div><span class="rf-label">Unit Price</span><p>{{ requirement.estimated_cost }}</p></div>
+        </div>
+      </div>
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="card"><p class="rf-error-text">{{ form.non_field_errors }}</p></div>{% endif %}
+
+        <div class="card">
+          <h3 style="margin-top:0;">Noting Sheet Details</h3>
+          <div class="rf-grid-3">
+            <div class="field">
+              <label for="{{ form.au.id_for_label }}">A/U</label>
+              {{ form.au }}
+              {% if form.au.errors %}<p class="rf-error-text">{{ form.au.errors|join:", " }}</p>{% endif %}
+            </div>
+            <div class="field">
+              <label for="{{ form.amount_allotted.id_for_label }}">Amount Allotted</label>
+              {{ form.amount_allotted }}
+            </div>
+            <div class="field">
+              <label for="{{ form.amount_released.id_for_label }}">Amount Released</label>
+              {{ form.amount_released }}
+            </div>
+            <div class="field">
+              <label for="{{ form.amount_expended.id_for_label }}">Amount Expended (incl. this sheet)</label>
+              {{ form.amount_expended }}
+            </div>
+          </div>
+          <p style="color:var(--text-secondary); font-size:12px; margin-top:10px;">
+            Balance Amount Held is calculated automatically (Allotted − Expended) once saved.
+          </p>
+        </div>
+
+        <div class="rf-actions">
+          <a href="{% url 'procurement_select' %}?requirement={{ requirement.pk }}" class="theme-toggle" style="text-decoration:none;">Cancel</a>
+          <button type="submit" class="login-btn" style="width:auto; padding:12px 28px;">Create Noting Sheet</button>
+        </div>
+      </form>
+
+    </div>
+
+    <div class="footer-strip">
+      <div><span class="label">PROJECT</span><span class="item">Project Nexus - Unit Accounts Management</span></div>
+      <div><span class="label">MODULE</span><span class="item">Procurement</span></div>
+      <div><span class="label">VERSION</span><span class="item">1.0</span></div>
+      <div><span class="label">CLASSIFICATION</span><span class="item">CONFIDENTIAL</span></div>
+    </div>
+  </div>
+</div>
+<script src="{% static 'js/theme-toggle.js' %}"></script>
+</body>
+</html>

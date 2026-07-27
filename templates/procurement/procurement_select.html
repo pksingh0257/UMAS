@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UAMS - Create Procurement</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/requirement_form.css' %}">
+</head>
+<body>
+<div class="app-layout">
+  {% include 'partials/sidebar.html' with active_nav='procurement' %}
+  <div class="main-content">
+    <div class="topbar">
+      <div class="brand">
+        <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="brand-icon">
+        <div>
+          <h1>ARMY INTERNAL SYSTEM</h1>
+          <p class="tagline">SECURE &bull; DISCIPLINED &bull; DEDICATED</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button id="theme-toggle-btn" class="theme-toggle">Light Mode</button>
+        <a href="{% url 'logout' %}" class="theme-toggle" style="text-decoration:none;">Log Out</a>
+      </div>
+    </div>
+
+    <div class="dashboard-shell">
+
+      <div class="card">
+        <h2 style="margin-top:0;">Create Procurement</h2>
+        <form method="get" class="rf-grid-3" style="align-items:end;">
+          <div class="field" style="grid-column: span 2;">
+            <label for="requirement-select">Select Requirement <span style="color:var(--text-secondary); font-weight:400;">(only Approved)</span></label>
+            <select id="requirement-select" name="requirement" onchange="this.form.submit()">
+              <option value="">-- choose a requirement --</option>
+              {% for r in eligible %}
+                <option value="{{ r.pk }}" {% if selected and selected.pk == r.pk %}selected{% endif %}>
+                  {{ r.requirement_id }} — {{ r.item_name }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+        </form>
+        {% if not eligible %}
+          <p style="color:var(--text-secondary); margin-top:12px;">No approved requirements are currently awaiting procurement.</p>
+        {% endif %}
+      </div>
+
+      {% if selected %}
+        <div class="card">
+          <div class="rf-card-head">
+            <h3 style="margin:0;">{{ selected.requirement_id }} <span class="badge badge-approved">Requirement Selected</span></h3>
+          </div>
+          <div class="rf-grid-3" style="margin-top:14px;">
+            <div><span class="rf-label">Item Name</span><p>{{ selected.item_name }}</p></div>
+            <div><span class="rf-label">Category</span><p>{{ selected.category }}</p></div>
+            <div><span class="rf-label">Quantity</span><p>{{ selected.quantity }}</p></div>
+            <div><span class="rf-label">Estimated Cost</span><p>{{ selected.estimated_cost }}</p></div>
+            <div><span class="rf-label">Purpose</span><p>{{ selected.purpose }}</p></div>
+            <div><span class="rf-label">Demanded By</span><p>{{ selected.demanded_by }}</p></div>
+          </div>
+          <a href="{% url 'noting_sheet_create' selected.pk %}" class="login-btn" style="width:auto; padding:12px 24px; text-decoration:none; display:inline-block; margin-top:14px;">
+            Create Noting Sheet
+          </a>
+        </div>
+      {% endif %}
+
+    </div>
+
+    <div class="footer-strip">
+      <div><span class="label">PROJECT</span><span class="item">Project Nexus - Unit Accounts Management</span></div>
+      <div><span class="label">MODULE</span><span class="item">Procurement</span></div>
+      <div><span class="label">VERSION</span><span class="item">1.0</span></div>
+      <div><span class="label">CLASSIFICATION</span><span class="item">CONFIDENTIAL</span></div>
+    </div>
+  </div>
+</div>
+<script src="{% static 'js/theme-toggle.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UAMS - Procurement</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/requirement_form.css' %}">
+</head>
+<body>
+<div class="app-layout">
+  {% include 'partials/sidebar.html' with active_nav='procurement' %}
+  <div class="main-content">
+    <div class="topbar">
+      <div class="brand">
+        <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="brand-icon">
+        <div>
+          <h1>ARMY INTERNAL SYSTEM</h1>
+          <p class="tagline">SECURE &bull; DISCIPLINED &bull; DEDICATED</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button id="theme-toggle-btn" class="theme-toggle">Light Mode</button>
+        <a href="{% url 'logout' %}" class="theme-toggle" style="text-decoration:none;">Log Out</a>
+      </div>
+    </div>
+
+    <div class="dashboard-shell">
+
+      {% if messages %}
+        {% for message in messages %}<div class="card rf-message">{{ message }}</div>{% endfor %}
+      {% endif %}
+
+      <div class="stat-row">
+        <div class="card" style="text-align:center;">
+          <span class="rf-label">Total Procurement</span>
+          <p style="font-size:28px; font-weight:700; margin:8px 0 0;">{{ total_count }}</p>
+        </div>
+        <div class="card" style="text-align:center;">
+          <span class="rf-label">Pending Procurement</span>
+          <p style="font-size:28px; font-weight:700; margin:8px 0 0; color:var(--accent-blue);">{{ pending_count }}</p>
+        </div>
+        <div class="card" style="text-align:center;">
+          <span class="rf-label">Completed Procurement</span>
+          <p style="font-size:28px; font-weight:700; margin:8px 0 0; color:#2E7D53;">{{ completed_count }}</p>
+        </div>
+      </div>
+
+      <div class="section-head-row">
+        <h2>Noting Sheets</h2>
+        <a href="{% url 'procurement_select' %}" class="login-btn" style="width:auto; padding:10px 20px; text-decoration:none;">+ Create Procurement</a>
+      </div>
+
+      <div class="card">
+        <div class="rf-table-wrap">
+          <table class="item-table">
+            <thead>
+              <tr>
+                <th>S No</th>
+                <th>Noting ID / Req ID</th>
+                <th>Item Name</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for ns in noting_sheets %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>
+                    <a href="{% url 'noting_sheet_detail' ns.pk %}" style="color:var(--accent-blue); text-decoration:none;">{{ ns.noting_id }}</a>
+                    <br><span style="color:var(--text-secondary); font-size:11px;">{{ ns.requirement.requirement_id }}</span>
+                  </td>
+                  <td>{{ ns.item_name }}</td>
+                  <td><span class="badge badge-{{ ns.simple_approval_status|lower }}">{{ ns.simple_approval_status }}</span></td>
+                  <td>{{ ns.created_at|date:"d M Y" }}</td>
+                  <td><a href="{% url 'noting_sheet_detail' ns.pk %}" style="color:var(--accent-blue); text-decoration:none;">View</a></td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="6" style="text-align:center; color:var(--text-secondary);">No noting sheets yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-strip">
+      <div><span class="label">PROJECT</span><span class="item">Project Nexus - Unit Accounts Management</span></div>
+      <div><span class="label">MODULE</span><span class="item">Procurement</span></div>
+      <div><span class="label">VERSION</span><span class="item">1.0</span></div>
+      <div><span class="label">CLASSIFICATION</span><span class="item">CONFIDENTIAL</span></div>
+    </div>
+  </div>
+</div>
+<script src="{% static 'js/theme-toggle.js' %}"></script>
+</body>
+</html>

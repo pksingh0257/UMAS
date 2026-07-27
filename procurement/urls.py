@@ -2,7 +2,21 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.case_list, name='case_list'),
+    # NEW: "Procurement" in the sidebar now lands here (dashboard with
+    # Total/Pending/Completed cards + noting sheet table), per your mockup.
+    path('', views.procurement_dashboard, name='procurement_dashboard'),
+
+    # MOVED from '' to 'cases/'. Still works anywhere referenced via
+    # {% url 'case_list' %} since Django resolves by name, not path.
+    path('cases/', views.case_list, name='case_list'),
+
+    # NEW: noting sheet flow
+    path('select/', views.procurement_select, name='procurement_select'),
+    path('noting/new/<int:requirement_pk>/', views.noting_sheet_create, name='noting_sheet_create'),
+    path('noting/<int:pk>/', views.noting_sheet_detail, name='noting_sheet_detail'),
+    path('noting/<int:pk>/submit-ao/', views.noting_sheet_submit_to_ao, name='noting_sheet_submit_to_ao'),
+
+    # UNCHANGED
     path('audit-trail/', views.audit_trail, name='audit_trail'),
     path('case/<str:case_number>/', views.case_detail, name='case_detail'),
 ]

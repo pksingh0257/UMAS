@@ -238,3 +238,174 @@ class CaseStageHistory(CoreModel):
 
     def __str__(self):
         return f"{self.case.case_number}: {self.from_stage} -> {self.to_stage}"
+
+
+class NotingSheet(models.Model):
+    """
+    Created by a Clerk/Head Clerk against an APPROVED Requirement, to move
+    it into procurement. One Requirement -> at most one Noting Sheet
+    (OneToOne). Its own AO -> CFA approval mirrors requirements_mgmt's
+    Requirement model exactly, on purpose, for consistency.
+
+    Item Name / Qty / Unit Price are NOT duplicated here — they're read
+    live off the linked Requirement via properties below, since they're
+    locked once the Requirement is APPROVED anyway.
+    """
+
+    WORKFLOW_CHOICES = [
+        ("DRAFT", "Draft"),
+        ("PENDING_AO", "Pending Account Officer"),
+        ("AO_DENIED", "Returned by Account Officer"),
+        ("PENDING_CFA", "Pending CFA"),
+        ("CFA_DENIED", "Returned by CFA"),
+        ("APPROVED", "Approved"),
+    ]
+    DECISION_CHOICES = [
+        ("PENDING", "Pending"),
+        ("APPROVED", "Approved"),
+        ("DENIED", "Denied"),
+    ]
+
+    noting_id = models.CharField(max_length=30, unique=True, editable=False)
+
+    requirement = models.OneToOneField(
+        "requirements_mgmt.Requirement",
+        on_delete=models.PROTECT,
+        related_name="noting_sheet",
+    )
+
+    # A/U = unit of measure (Nos, Set, Kg, ...) — plain manual text entry.
+    au = models.CharField(max_length=50, verbose_name="A/U")
+
+    # Fund ledger snapshot — manually entered (no live Fund model wired in
+    # yet). Balance is calculated, not stored, to avoid drift.
+    amount_allotted = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    amount_released = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    amount_expended = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+
+    created_by = models.ForeignKey(
+        "authentication.User", on_delete=models.PROTECT, related_name="noting_sheets_created"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    workflow_status = models.CharField(max_length=20, choices=WORKFLOW_CHOICES, default="DRAFT")
+
+    ao_status = models.CharField(max_length=10, choices=DECISION_CHOICES, default="PENDING")
+    ao_remarks = models.TextField(blank=True, null=True)
+    ao_acted_by = models.ForeignKey(
+        "authentication.User", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="noting_sheets_ao_reviewed",
+    )
+    ao_acted_at = models.DateTimeField(null=True, blank=True)
+
+    cfa_status = models.CharField(max_length=10, choices=DECISION_CHOICES, default="PENDING")
+    cfa_remarks = models.TextField(blank=True, null=True)
+    cfa_acted_by = models.ForeignKey(
+        "authentication.User", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="noting_sheets_cfa_reviewed",
+    )
+    cfa_acted_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = "proc_noting_sheets"
+        ordering = ["-created_at"]
+        verbose_name = "Noting Sheet"
+        verbose_name_plural = "Noting Sheets"
+
+    def __str__(self):
+        return self.noting_id
+
+    # ---- Read-only pass-through fields from the Requirement ----
+    @property
+    def item_name(self):
+        return self.requirement.item_name
+
+    @property
+    def qty(self):
+        return self.requirement.quantity
+
+    @property
+    def unit_price(self):
+        return self.requirement.estimated_cost
+
+    @property
+    def approx_amount(self):
+        """Qty * Unit Price. estimated_cost is stored as text, so this can
+        fail if a non-numeric value was ever entered — returns None rather
+        than crashing the page in that case."""
+        try:
+            return self.qty * float(self.unit_price)
+        except (TypeError, ValueError):
+            return None
+
+    @property
+    def balance_amount(self):
+        return self.amount_allotted - self.amount_expended
+
+    @property
+    def is_editable(self):
+        return self.workflow_status in ("DRAFT", "AO_DENIED", "CFA_DENIED")
+
+    @property
+    def simple_approval_status(self):
+        if self.workflow_status == "APPROVED":
+            return "Approved"
+        if self.workflow_status in ("AO_DENIED", "CFA_DENIED"):
+            return "Declined"
+        return "Pending"
+
+    def save(self, *args, **kwargs):
+        if not self.noting_id:
+            yr = timezone.now().year
+            last = (
+                NotingSheet.objects.filter(noting_id__startswith=f"NS-{yr}-")
+                .order_by("-noting_id")
+                .first()
+            )
+            seq = 1
+            if last:
+                try:
+                    seq = int(last.noting_id.split("-")[-1]) + 1
+                except ValueError:
+                    seq = 1
+            self.noting_id = f"NS-{yr}-{seq:05d}"
+        super().save(*args, **kwargs)
+
+    # ---- Workflow transitions (identical pattern to Requirement) ----
+
+    def submit_to_ao(self):
+        if not self.is_editable:
+            raise ValidationError("This noting sheet is not currently submittable.")
+        self.workflow_status = "PENDING_AO"
+        self.ao_status = "PENDING"
+        self.ao_remarks = None
+        self.ao_acted_by = None
+        self.ao_acted_at = None
+        self.save()
+
+    def ao_decide(self, user, decision, remarks=""):
+        if self.workflow_status != "PENDING_AO":
+            raise ValidationError("This noting sheet is not awaiting Account Officer review.")
+        self.ao_status = decision
+        self.ao_remarks = remarks
+        self.ao_acted_by = user
+        self.ao_acted_at = timezone.now()
+        if decision == "APPROVED":
+            self.workflow_status = "PENDING_CFA"
+        elif decision == "DENIED":
+            self.workflow_status = "AO_DENIED"
+        self.save()
+
+    def cfa_decide(self, user, decision, remarks=""):
+        if self.workflow_status != "PENDING_CFA":
+            raise ValidationError("This noting sheet is not awaiting CFA review.")
+        self.cfa_status = decision
+        self.cfa_remarks = remarks
+        self.cfa_acted_by = user
+        self.cfa_acted_at = timezone.now()
+        if decision == "APPROVED":
+            self.workflow_status = "APPROVED"
+        elif decision == "DENIED":
+            self.workflow_status = "CFA_DENIED"
+        self.save()
