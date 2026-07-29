@@ -345,3 +345,27 @@ html[data-theme="light"] .hero-panel {
 .section-head-row h2 {
   margin: 0;
 }
+
+/* ---------- Detail page: main content + right-side document panel ---------- */
+/* Used on noting sheet / EAS detail pages: left column holds the record
+   details + approval status + review forms, right column is a slim
+   sticky panel listing what's been uploaded/generated for this record. */
+.detail-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+.detail-side .card {
+  position: sticky;
+  top: 20px;
+}
+.doc-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+@media (max-width: 900px) {
+  .detail-layout { grid-template-columns: 1fr; }
+}

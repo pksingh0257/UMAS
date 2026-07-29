@@ -3,8 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from requirements_mgmt.models import Requirement
-from .models import ProcurementCase, NotingSheet
-from .forms import CaseStageDataForm, ReturnCaseForm, NotingSheetForm, NotingAODecisionForm, NotingCFADecisionForm
+from .models import ProcurementCase, NotingSheet, EAS
+from .forms import (
+    CaseStageDataForm, ReturnCaseForm, NotingSheetForm, NotingAODecisionForm,
+    NotingCFADecisionForm, EASForm, EASAODecisionForm, EASCFADecisionForm,
+)
 
 
 # ============================================================
@@ -229,4 +232,126 @@ def noting_sheet_detail(request, pk):
         "ao_form": ao_form,
         "cfa_form": cfa_form,
         "can_submit": noting_sheet.is_editable and noting_sheet.created_by == request.user,
+    })
+
+# ============================================================
+# NEW VIEWS — EAS workflow
+# ============================================================
+
+@login_required
+def eas_create(request, noting_sheet_pk):
+    """
+    "Create EAS" — only reachable once the linked Noting Sheet is fully
+    CFA-approved (workflow_status == "APPROVED"), matching the mockup
+    where the button only appears at that point.
+
+    Submitting the form both saves the EAS AND sends it straight to AO
+    review in one step — the mockup shows a single "Send For Approval"
+    button, not a separate save-then-submit flow.
+    """
+    noting_sheet = get_object_or_404(NotingSheet, pk=noting_sheet_pk, workflow_status="APPROVED")
+
+    if hasattr(noting_sheet, "eas"):
+        messages.info(request, "An EAS already exists for this noting sheet.")
+        return redirect("eas_detail", pk=noting_sheet.eas.pk)
+
+    if request.method == "POST":
+        form = EASForm(request.POST)
+        if form.is_valid():
+            eas = form.save(commit=False)
+            eas.noting_sheet = noting_sheet
+            eas.created_by = request.user
+            eas.save()
+            eas.submit_to_ao()
+            messages.success(request, "EAS created and sent for Account Officer approval.")
+            return redirect("eas_detail", pk=eas.pk)
+    else:
+        form = EASForm()
+
+    return render(request, "procurement/eas_form.html", {
+        "form": form,
+        "noting_sheet": noting_sheet,
+        "role": request.user.role,
+        "active_nav": "procurement",
+    })
+
+
+@login_required
+def eas_edit(request, pk):
+    """
+    Only reachable while editable (DRAFT / AO_DENIED / CFA_DENIED), and
+    only by the person who created it — same convention used for
+    Requirement and NotingSheet. Resubmitting routes back through AO
+    review, same as NotingSheet's resubmission default.
+    """
+    eas = get_object_or_404(EAS, pk=pk)
+    if not eas.is_editable or eas.created_by != request.user:
+        messages.error(request, "This EAS can't be edited right now.")
+        return redirect("eas_detail", pk=pk)
+
+    if request.method == "POST":
+        form = EASForm(request.POST, instance=eas)
+        if form.is_valid():
+            form.save()
+            eas.submit_to_ao()
+            messages.success(request, "EAS updated and re-sent for Account Officer approval.")
+            return redirect("eas_detail", pk=pk)
+    else:
+        form = EASForm(instance=eas)
+
+    return render(request, "procurement/eas_form.html", {
+        "form": form,
+        "noting_sheet": eas.noting_sheet,
+        "eas": eas,
+        "role": request.user.role,
+        "active_nav": "procurement",
+    })
+
+
+@login_required
+def eas_detail(request, pk):
+    eas = get_object_or_404(EAS, pk=pk)
+    role = request.user.role
+
+    ao_form = None
+    cfa_form = None
+    can_act_as_ao = role == "ACCOUNTS_OFFICER" and eas.workflow_status == "PENDING_AO"
+    can_act_as_cfa = role == "CFA" and eas.workflow_status == "PENDING_CFA"
+
+    if request.method == "POST":
+        if can_act_as_ao and "ao_submit" in request.POST:
+            ao_form = EASAODecisionForm(request.POST)
+            if ao_form.is_valid():
+                eas.ao_decide(
+                    user=request.user,
+                    decision=ao_form.cleaned_data["ao_status"],
+                    remarks=ao_form.cleaned_data["ao_remarks"],
+                )
+                messages.success(request, "Account Officer decision recorded.")
+                return redirect("eas_detail", pk=pk)
+
+        elif can_act_as_cfa and "cfa_submit" in request.POST:
+            cfa_form = EASCFADecisionForm(request.POST)
+            if cfa_form.is_valid():
+                eas.cfa_decide(
+                    user=request.user,
+                    decision=cfa_form.cleaned_data["cfa_status"],
+                    remarks=cfa_form.cleaned_data["cfa_remarks"],
+                )
+                messages.success(request, "CFA decision recorded.")
+                return redirect("eas_detail", pk=pk)
+
+    if ao_form is None and can_act_as_ao:
+        ao_form = EASAODecisionForm(initial={"ao_status": "PENDING"})
+    if cfa_form is None and can_act_as_cfa:
+        cfa_form = EASCFADecisionForm(initial={"cfa_status": "PENDING"})
+
+    return render(request, "procurement/eas_detail.html", {
+        "eas": eas,
+        "noting_sheet": eas.noting_sheet,
+        "role": role,
+        "active_nav": "procurement",
+        "ao_form": ao_form,
+        "cfa_form": cfa_form,
+        "can_edit": eas.is_editable and eas.created_by == request.user,
     })
