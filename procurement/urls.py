@@ -16,6 +16,11 @@ urlpatterns = [
     path('noting/<int:pk>/', views.noting_sheet_detail, name='noting_sheet_detail'),
     path('noting/<int:pk>/submit-ao/', views.noting_sheet_submit_to_ao, name='noting_sheet_submit_to_ao'),
 
+    # NEW: EAS flow (created from an APPROVED noting sheet)
+    path('eas/new/<int:noting_sheet_pk>/', views.eas_create, name='eas_create'),
+    path('eas/<int:pk>/', views.eas_detail, name='eas_detail'),
+    path('eas/<int:pk>/edit/', views.eas_edit, name='eas_edit'),
+
     # UNCHANGED
     path('audit-trail/', views.audit_trail, name='audit_trail'),
     path('case/<str:case_number>/', views.case_detail, name='case_detail'),

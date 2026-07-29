@@ -409,3 +409,146 @@ class NotingSheet(models.Model):
         elif decision == "DENIED":
             self.workflow_status = "CFA_DENIED"
         self.save()
+
+class EAS(models.Model):
+    """
+    Expenditure/Approval Sanction sheet — created once a NotingSheet is
+    fully CFA-approved (mirrors your mockup: "Create EAS" only appears
+    then). One NotingSheet -> at most one EAS (OneToOne). Uses the
+    identical AO -> CFA workflow as NotingSheet/Requirement, on purpose,
+    for consistency.
+
+    file_no / eas_id are plain EDITABLE TEXT for now, not auto-generated —
+    switch these to an auto-numbering save() (like Requirement/NotingSheet
+    use) once the exact numbering scheme is confirmed.
+    """
+
+    WORKFLOW_CHOICES = NotingSheet.WORKFLOW_CHOICES
+    DECISION_CHOICES = NotingSheet.DECISION_CHOICES
+
+    noting_sheet = models.OneToOneField(
+        NotingSheet, on_delete=models.PROTECT, related_name="eas"
+    )
+
+    # ---- Plain editable text for now (see docstring) ----
+    file_no = models.CharField(max_length=100, verbose_name="File No")
+    eas_id = models.CharField(max_length=100, verbose_name="EAS ID")
+
+    dsc_goods = models.CharField(max_length=250, verbose_name="DSC (Description) of Goods")
+    name_supplier = models.CharField(max_length=250, verbose_name="Name of Supplier")
+    purpose_broad = models.CharField(max_length=250, verbose_name="Purpose - Broad")
+    designation_cfa = models.CharField(max_length=150, verbose_name="Designation of CFA")
+    qty_sanctioned = models.PositiveIntegerField(verbose_name="Qty Sanctioned")
+    amount_sanction = models.DecimalField(max_digits=15, decimal_places=2, verbose_name="Amount Sanction")
+    cost_per_unit = models.DecimalField(max_digits=15, decimal_places=2, verbose_name="Cost Per Unit")
+    other_charges = models.CharField(
+        max_length=250, blank=True, null=True,
+        verbose_name="Other Associated Charges (e.g. freight)",
+    )
+    total_amount_words = models.CharField(max_length=500, verbose_name="Total Amount (in words)")
+
+    availability_fund = models.CharField(max_length=250, verbose_name="Availability of Fund")
+    sub_details_heads = models.CharField(max_length=250, verbose_name="Sub Details / Heads")
+    reference_no = models.CharField(max_length=150, verbose_name="Reference No")
+    name_paying_agent = models.CharField(max_length=250, verbose_name="Name of Paying Agency")
+    date_time = models.DateField(verbose_name="Date")
+    station = models.CharField(max_length=150)
+
+    # "Unit – Fetch From Database unit list" — plain text for now; no Unit
+    # master table wired in yet (same situation as fund_head elsewhere).
+    unit = models.CharField(max_length=150, verbose_name="Unit")
+
+    # System defaults from the mockup ("Type_id=, status_id=0") — not
+    # exposed on the form, kept for whatever downstream logic expects them.
+    type_id = models.CharField(max_length=50, blank=True, default="")
+    status_id = models.IntegerField(default=0)
+
+    created_by = models.ForeignKey(
+        "authentication.User", on_delete=models.PROTECT, related_name="eas_created"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    workflow_status = models.CharField(max_length=20, choices=WORKFLOW_CHOICES, default="DRAFT")
+
+    ao_status = models.CharField(max_length=10, choices=DECISION_CHOICES, default="PENDING")
+    ao_remarks = models.TextField(blank=True, null=True)
+    ao_acted_by = models.ForeignKey(
+        "authentication.User", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="eas_ao_reviewed",
+    )
+    ao_acted_at = models.DateTimeField(null=True, blank=True)
+
+    cfa_status = models.CharField(max_length=10, choices=DECISION_CHOICES, default="PENDING")
+    cfa_remarks = models.TextField(blank=True, null=True)
+    cfa_acted_by = models.ForeignKey(
+        "authentication.User", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="eas_cfa_reviewed",
+    )
+    cfa_acted_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = "proc_eas"
+        ordering = ["-created_at"]
+        verbose_name = "EAS"
+        verbose_name_plural = "EAS"
+
+    def __str__(self):
+        return self.eas_id or f"EAS #{self.pk}"
+
+    @property
+    def case_file_no(self):
+        """Always mirrors File No (mockup: "Case_File_No = Same as File
+        Number") — a property rather than a stored field so it can never
+        drift out of sync if file_no is edited later."""
+        return self.file_no
+
+    @property
+    def is_editable(self):
+        return self.workflow_status in ("DRAFT", "AO_DENIED", "CFA_DENIED")
+
+    @property
+    def simple_approval_status(self):
+        if self.workflow_status == "APPROVED":
+            return "Approved"
+        if self.workflow_status in ("AO_DENIED", "CFA_DENIED"):
+            return "Declined"
+        return "Pending"
+
+    # ---- Workflow transitions (identical pattern to NotingSheet) ----
+
+    def submit_to_ao(self):
+        if not self.is_editable:
+            raise ValidationError("This EAS is not currently submittable.")
+        self.workflow_status = "PENDING_AO"
+        self.ao_status = "PENDING"
+        self.ao_remarks = None
+        self.ao_acted_by = None
+        self.ao_acted_at = None
+        self.save()
+
+    def ao_decide(self, user, decision, remarks=""):
+        if self.workflow_status != "PENDING_AO":
+            raise ValidationError("This EAS is not awaiting Account Officer review.")
+        self.ao_status = decision
+        self.ao_remarks = remarks
+        self.ao_acted_by = user
+        self.ao_acted_at = timezone.now()
+        if decision == "APPROVED":
+            self.workflow_status = "PENDING_CFA"
+        elif decision == "DENIED":
+            self.workflow_status = "AO_DENIED"
+        self.save()
+
+    def cfa_decide(self, user, decision, remarks=""):
+        if self.workflow_status != "PENDING_CFA":
+            raise ValidationError("This EAS is not awaiting CFA review.")
+        self.cfa_status = decision
+        self.cfa_remarks = remarks
+        self.cfa_acted_by = user
+        self.cfa_acted_at = timezone.now()
+        if decision == "APPROVED":
+            self.workflow_status = "APPROVED"
+        elif decision == "DENIED":
+            self.workflow_status = "CFA_DENIED"
+        self.save()

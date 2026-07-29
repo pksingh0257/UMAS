@@ -1,5 +1,5 @@
 from django import forms
-from .models import ProcurementCase, NotingSheet
+from .models import ProcurementCase, NotingSheet, EAS
 
 
 class CaseStageDataForm(forms.ModelForm):
@@ -90,4 +90,63 @@ class NotingCFADecisionForm(forms.Form):
         cleaned = super().clean()
         if cleaned.get("cfa_status") == "DENIED" and not cleaned.get("cfa_remarks"):
             self.add_error("cfa_remarks", "Remarks are required when returning a noting sheet.")
+        return cleaned
+
+# ============================================================
+# NEW — EAS forms
+# ============================================================
+
+class EASForm(forms.ModelForm):
+    """
+    Tabular create/edit form for the EAS sheet (Field Name / Value
+    layout). file_no and eas_id are plain editable text for now — switch
+    to auto-generated later once the numbering scheme is confirmed.
+    case_file_no, type_id, and status_id are deliberately NOT on this
+    form: case_file_no always mirrors file_no (see EAS.case_file_no
+    property), and type_id/status_id are system defaults set at creation.
+    """
+
+    class Meta:
+        model = EAS
+        fields = [
+            "file_no", "eas_id", "dsc_goods", "name_supplier",
+            "purpose_broad", "designation_cfa", "qty_sanctioned",
+            "amount_sanction", "cost_per_unit", "other_charges",
+            "total_amount_words", "availability_fund", "sub_details_heads",
+            "reference_no", "name_paying_agent", "date_time", "station",
+            "unit",
+        ]
+        widgets = {
+            "date_time": forms.DateInput(attrs={"type": "date"}),
+            "qty_sanctioned": forms.NumberInput(attrs={"min": 0}),
+            "amount_sanction": forms.NumberInput(attrs={"min": 0, "step": "0.01"}),
+            "cost_per_unit": forms.NumberInput(attrs={"min": 0, "step": "0.01"}),
+        }
+
+
+class EASAODecisionForm(forms.Form):
+    ao_status = forms.ChoiceField(choices=EAS.DECISION_CHOICES, widget=forms.Select(), label="Status")
+    ao_remarks = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 3, "placeholder": "Remarks (required if returning)"}),
+        required=False, label="Remarks",
+    )
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get("ao_status") == "DENIED" and not cleaned.get("ao_remarks"):
+            self.add_error("ao_remarks", "Remarks are required when returning an EAS.")
+        return cleaned
+
+
+class EASCFADecisionForm(forms.Form):
+    cfa_status = forms.ChoiceField(choices=EAS.DECISION_CHOICES, widget=forms.Select(), label="Status")
+    cfa_remarks = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 3, "placeholder": "Remarks (required if returning)"}),
+        required=False, label="Remarks",
+    )
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get("cfa_status") == "DENIED" and not cleaned.get("cfa_remarks"):
+            self.add_error("cfa_remarks", "Remarks are required when returning an EAS.")
         return cleaned
