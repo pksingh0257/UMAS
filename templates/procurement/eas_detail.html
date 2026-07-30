@@ -11,19 +11,7 @@
 <div class="app-layout">
   {% include 'partials/sidebar.html' with active_nav='procurement' %}
   <div class="main-content">
-    <div class="topbar">
-      <div class="brand">
-        <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="brand-icon">
-        <div>
-          <h1>ARMY INTERNAL SYSTEM</h1>
-          <p class="tagline">SECURE &bull; DISCIPLINED &bull; DEDICATED</p>
-        </div>
-      </div>
-      <div class="topbar-right">
-        <button id="theme-toggle-btn" class="theme-toggle">Light Mode</button>
-        <a href="{% url 'logout' %}" class="theme-toggle" style="text-decoration:none;">Log Out</a>
-      </div>
-    </div>
+ {% include 'partials/header.html' with active_nav='procurement' %}
 
     <div class="dashboard-shell">
 
@@ -81,12 +69,6 @@
         <h3 style="margin-top:0;">Approval Status</h3>
         <div class="rf-grid-2">
           <div>
-            <span class="rf-label">Account Officer</span>
-            <p><span class="badge badge-{{ eas.ao_status|lower }}">{{ eas.get_ao_status_display }}</span></p>
-            {% if eas.ao_remarks %}<p style="color:var(--text-secondary); font-size:13px;">"{{ eas.ao_remarks }}"</p>{% endif %}
-            {% if eas.ao_acted_at %}<p style="color:var(--text-secondary); font-size:12px;">{{ eas.ao_acted_by.username }} &middot; {{ eas.ao_acted_at|date:"d M Y, P" }}</p>{% endif %}
-          </div>
-          <div>
             <span class="rf-label">CFA</span>
             <p><span class="badge badge-{{ eas.cfa_status|lower }}">{{ eas.get_cfa_status_display }}</span></p>
             {% if eas.cfa_remarks %}<p style="color:var(--text-secondary); font-size:13px;">"{{ eas.cfa_remarks }}"</p>{% endif %}
@@ -94,24 +76,6 @@
           </div>
         </div>
       </div>
-
-      {% if ao_form %}
-        <div class="card">
-          <h3 style="margin-top:0;">Account Officer Review</h3>
-          <form method="post">
-            {% csrf_token %}
-            <div class="rf-grid-2">
-              <div class="field"><label for="{{ ao_form.ao_status.id_for_label }}">Status</label>{{ ao_form.ao_status }}</div>
-              <div class="field">
-                <label for="{{ ao_form.ao_remarks.id_for_label }}">Remarks</label>
-                {{ ao_form.ao_remarks }}
-                {% if ao_form.ao_remarks.errors %}<p class="rf-error-text">{{ ao_form.ao_remarks.errors|join:", " }}</p>{% endif %}
-              </div>
-            </div>
-            <button type="submit" name="ao_submit" class="login-btn" style="width:auto; padding:10px 24px; margin-top:10px;">Submit Decision</button>
-          </form>
-        </div>
-      {% endif %}
 
       {% if cfa_form %}
         <div class="card">
@@ -136,11 +100,27 @@
       <div class="detail-side">
         <div class="card">
           <h3 style="margin-top:0;">Document Uploaded</h3>
-          <div class="doc-badges">
+
+          <div class="doc-item">
             <span class="badge badge-approved">Noting Sheet</span>
-            <span class="badge badge-{{ eas.simple_approval_status|lower }}">EAS</span>
+            <div class="doc-actions">
+              <a href="{% url 'noting_sheet_detail' noting_sheet.pk %}">View</a>
+              {% if noting_sheet.workflow_status == "APPROVED" %}
+                <a href="{% url 'noting_sheet_download_pdf' noting_sheet.pk %}">Download PDF</a>
+              {% endif %}
+            </div>
           </div>
-          <p style="margin-top:14px;"><a href="{% url 'noting_sheet_detail' noting_sheet.pk %}" style="color:var(--accent-blue); text-decoration:none;">&larr; Back to Noting Sheet</a></p>
+
+          <div class="doc-item">
+            <span class="badge badge-{{ eas.simple_approval_status|lower }}">EAS</span>
+            <div class="doc-actions">
+              {% if eas.workflow_status == "APPROVED" %}
+                <a href="{% url 'eas_download_pdf' eas.pk %}">Download PDF</a>
+              {% else %}
+                <span style="font-size:12px; color:var(--text-secondary);">Download available once approved</span>
+              {% endif %}
+            </div>
+          </div>
         </div>
       </div>
 

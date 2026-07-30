@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @page { size: A4; margin: 2cm; }
+  body { font-family: Helvetica, Arial, sans-serif; font-size: 11pt; color: #1C1F26; }
+  h1 { font-size: 17pt; margin: 0 0 4px; }
+  .meta { color: #607D8B; font-size: 9pt; margin-bottom: 18px; }
+  .status {
+    display: inline-block; padding: 3px 10px; border: 1px solid #2E7D53;
+    color: #2E7D53; border-radius: 10px; font-size: 9pt;
+  }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+  th, td { border: 1px solid #CFD8DC; padding: 6px 10px; text-align: left; font-size: 10pt; }
+  th { background: #F5F9FF; width: 28%; font-weight: bold; }
+  .section-title {
+    font-size: 12pt; font-weight: bold; margin: 20px 0 6px;
+    border-bottom: 1px solid #CFD8DC; padding-bottom: 4px;
+  }
+  .footer { color: #90A4AE; font-size: 8pt; margin-top: 30px; text-align: center; }
+</style>
+</head>
+<body>
+
+  <h1>EAS &mdash; {{ eas.file_no }}</h1>
+  <p class="meta">
+    Status: <span class="status">{{ eas.get_workflow_status_display }}</span>
+    &middot; Noting Sheet: {{ noting_sheet.noting_id }}
+    &middot; Requirement: {{ noting_sheet.requirement.requirement_id }}
+    &middot; Generated {% now "d M Y, P" %}
+  </p>
+
+  <table>
+    <tr><th>File No</th><td>{{ eas.file_no }}</td></tr>
+    <tr><th>EAS ID</th><td>{{ eas.eas_id }}</td></tr>
+    <tr><th>Case File No</th><td>{{ eas.case_file_no }}</td></tr>
+    <tr><th>DSC (Description) of Goods</th><td>{{ eas.dsc_goods }}</td></tr>
+    <tr><th>Name of Supplier</th><td>{{ eas.name_supplier }}</td></tr>
+    <tr><th>Purpose - Broad</th><td>{{ eas.purpose_broad }}</td></tr>
+    <tr><th>Designation of CFA</th><td>{{ eas.designation_cfa }}</td></tr>
+    <tr><th>Qty Sanctioned</th><td>{{ eas.qty_sanctioned }}</td></tr>
+    <tr><th>Amount Sanction</th><td>{{ eas.amount_sanction }}</td></tr>
+    <tr><th>Cost Per Unit</th><td>{{ eas.cost_per_unit }}</td></tr>
+    <tr><th>Other Associated Charges</th><td>{{ eas.other_charges|default:"—" }}</td></tr>
+    <tr><th>Total Amount (in words)</th><td>{{ eas.total_amount_words }}</td></tr>
+    <tr><th>Availability of Fund</th><td>{{ eas.availability_fund }}</td></tr>
+    <tr><th>Sub Details / Heads</th><td>{{ eas.sub_details_heads }}</td></tr>
+    <tr><th>Reference No</th><td>{{ eas.reference_no }}</td></tr>
+    <tr><th>Name of Paying Agency</th><td>{{ eas.name_paying_agent }}</td></tr>
+    <tr><th>Date</th><td>{{ eas.date_time|date:"d M Y" }}</td></tr>
+    <tr><th>Station</th><td>{{ eas.station }}</td></tr>
+    <tr><th>Unit</th><td>{{ eas.unit }}</td></tr>
+  </table>
+
+  <div class="section-title">Approval Status</div>
+  <table>
+    <tr>
+      <th>Account Officer</th>
+      <td>
+        {{ eas.get_ao_status_display }}
+        {% if eas.ao_remarks %} &mdash; "{{ eas.ao_remarks }}"{% endif %}
+        {% if eas.ao_acted_by %}<br>{{ eas.ao_acted_by.username }} &middot; {{ eas.ao_acted_at|date:"d M Y, P" }}{% endif %}
+      </td>
+    </tr>
+    <tr>
+      <th>CFA</th>
+      <td>
+        {{ eas.get_cfa_status_display }}
+        {% if eas.cfa_remarks %} &mdash; "{{ eas.cfa_remarks }}"{% endif %}
+        {% if eas.cfa_acted_by %}<br>{{ eas.cfa_acted_by.username }} &middot; {{ eas.cfa_acted_at|date:"d M Y, P" }}{% endif %}
+      </td>
+    </tr>
+  </table>
+
+  <p class="footer">Project Nexus &mdash; Unit Accounts Management &middot; Procurement Module &middot; CONFIDENTIAL</p>
+
+</body>
+</html>

@@ -2,12 +2,31 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
 from requirements_mgmt.models import Requirement
 from .models import ProcurementCase, NotingSheet, EAS
 from .forms import (
-    CaseStageDataForm, ReturnCaseForm, NotingSheetForm, NotingAODecisionForm,
-    NotingCFADecisionForm, EASForm, EASAODecisionForm, EASCFADecisionForm,
+    CaseStageDataForm, ReturnCaseForm, NotingSheetForm,
+    NotingCFADecisionForm, EASForm, EASCFADecisionForm,
 )
+
+
+def render_pdf(template_name, context, filename):
+    """
+    Renders a Django template to a downloadable PDF using xhtml2pdf.
+    Kept deliberately simple (no external CSS files, no flex/grid) since
+    xhtml2pdf's CSS support is limited to CSS 2.1 — the PDF templates use
+    plain tables/inline styles rather than reusing style.css.
+    """
+    html = render_to_string(template_name, context)
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    if pisa_status.err:
+        return HttpResponse("There was an error generating the PDF.", status=500)
+    return response
 
 
 # ============================================================
@@ -171,7 +190,7 @@ def noting_sheet_create(request, requirement_pk):
 
 
 @login_required
-def noting_sheet_submit_to_ao(request, pk):
+def noting_sheet_submit_for_approval(request, pk):
     noting_sheet = get_object_or_404(NotingSheet, pk=pk)
     if noting_sheet.created_by != request.user:
         messages.error(request, "You can only submit noting sheets you created.")
@@ -179,8 +198,8 @@ def noting_sheet_submit_to_ao(request, pk):
 
     if request.method == "POST":
         try:
-            noting_sheet.submit_to_ao()
-            messages.success(request, f"{noting_sheet.noting_id} sent for Account Officer approval.")
+            noting_sheet.submit_for_approval()
+            messages.success(request, f"{noting_sheet.noting_id} sent for CFA approval.")
         except ValidationError as e:
             messages.error(request, str(e))
 
@@ -189,27 +208,16 @@ def noting_sheet_submit_to_ao(request, pk):
 
 @login_required
 def noting_sheet_detail(request, pk):
+    """CFA-only approval — Account Officer review has been removed from
+    this flow (see NotingSheet.submit_for_approval in models.py)."""
     noting_sheet = get_object_or_404(NotingSheet, pk=pk)
     role = request.user.role
 
-    ao_form = None
     cfa_form = None
-    can_act_as_ao = role == "ACCOUNTS_OFFICER" and noting_sheet.workflow_status == "PENDING_AO"
     can_act_as_cfa = role == "CFA" and noting_sheet.workflow_status == "PENDING_CFA"
 
     if request.method == "POST":
-        if can_act_as_ao and "ao_submit" in request.POST:
-            ao_form = NotingAODecisionForm(request.POST)
-            if ao_form.is_valid():
-                noting_sheet.ao_decide(
-                    user=request.user,
-                    decision=ao_form.cleaned_data["ao_status"],
-                    remarks=ao_form.cleaned_data["ao_remarks"],
-                )
-                messages.success(request, "Account Officer decision recorded.")
-                return redirect("noting_sheet_detail", pk=pk)
-
-        elif can_act_as_cfa and "cfa_submit" in request.POST:
+        if can_act_as_cfa and "cfa_submit" in request.POST:
             cfa_form = NotingCFADecisionForm(request.POST)
             if cfa_form.is_valid():
                 noting_sheet.cfa_decide(
@@ -220,8 +228,6 @@ def noting_sheet_detail(request, pk):
                 messages.success(request, "CFA decision recorded.")
                 return redirect("noting_sheet_detail", pk=pk)
 
-    if ao_form is None and can_act_as_ao:
-        ao_form = NotingAODecisionForm(initial={"ao_status": "PENDING"})
     if cfa_form is None and can_act_as_cfa:
         cfa_form = NotingCFADecisionForm(initial={"cfa_status": "PENDING"})
 
@@ -229,7 +235,6 @@ def noting_sheet_detail(request, pk):
         "noting_sheet": noting_sheet,
         "role": role,
         "active_nav": "procurement",
-        "ao_form": ao_form,
         "cfa_form": cfa_form,
         "can_submit": noting_sheet.is_editable and noting_sheet.created_by == request.user,
     })
@@ -262,8 +267,8 @@ def eas_create(request, noting_sheet_pk):
             eas.noting_sheet = noting_sheet
             eas.created_by = request.user
             eas.save()
-            eas.submit_to_ao()
-            messages.success(request, "EAS created and sent for Account Officer approval.")
+            eas.submit_for_approval()
+            messages.success(request, "EAS created and sent for CFA approval.")
             return redirect("eas_detail", pk=eas.pk)
     else:
         form = EASForm()
@@ -279,10 +284,9 @@ def eas_create(request, noting_sheet_pk):
 @login_required
 def eas_edit(request, pk):
     """
-    Only reachable while editable (DRAFT / AO_DENIED / CFA_DENIED), and
-    only by the person who created it — same convention used for
-    Requirement and NotingSheet. Resubmitting routes back through AO
-    review, same as NotingSheet's resubmission default.
+    Only reachable while editable (DRAFT / CFA_DENIED), and only by the
+    person who created it — same convention used for Requirement and
+    NotingSheet. Resubmitting goes straight back to CFA (CFA-only flow).
     """
     eas = get_object_or_404(EAS, pk=pk)
     if not eas.is_editable or eas.created_by != request.user:
@@ -293,8 +297,8 @@ def eas_edit(request, pk):
         form = EASForm(request.POST, instance=eas)
         if form.is_valid():
             form.save()
-            eas.submit_to_ao()
-            messages.success(request, "EAS updated and re-sent for Account Officer approval.")
+            eas.submit_for_approval()
+            messages.success(request, "EAS updated and re-sent for CFA approval.")
             return redirect("eas_detail", pk=pk)
     else:
         form = EASForm(instance=eas)
@@ -310,27 +314,16 @@ def eas_edit(request, pk):
 
 @login_required
 def eas_detail(request, pk):
+    """CFA-only approval — Account Officer review has been removed from
+    this flow (see EAS.submit_for_approval in models.py)."""
     eas = get_object_or_404(EAS, pk=pk)
     role = request.user.role
 
-    ao_form = None
     cfa_form = None
-    can_act_as_ao = role == "ACCOUNTS_OFFICER" and eas.workflow_status == "PENDING_AO"
     can_act_as_cfa = role == "CFA" and eas.workflow_status == "PENDING_CFA"
 
     if request.method == "POST":
-        if can_act_as_ao and "ao_submit" in request.POST:
-            ao_form = EASAODecisionForm(request.POST)
-            if ao_form.is_valid():
-                eas.ao_decide(
-                    user=request.user,
-                    decision=ao_form.cleaned_data["ao_status"],
-                    remarks=ao_form.cleaned_data["ao_remarks"],
-                )
-                messages.success(request, "Account Officer decision recorded.")
-                return redirect("eas_detail", pk=pk)
-
-        elif can_act_as_cfa and "cfa_submit" in request.POST:
+        if can_act_as_cfa and "cfa_submit" in request.POST:
             cfa_form = EASCFADecisionForm(request.POST)
             if cfa_form.is_valid():
                 eas.cfa_decide(
@@ -341,8 +334,6 @@ def eas_detail(request, pk):
                 messages.success(request, "CFA decision recorded.")
                 return redirect("eas_detail", pk=pk)
 
-    if ao_form is None and can_act_as_ao:
-        ao_form = EASAODecisionForm(initial={"ao_status": "PENDING"})
     if cfa_form is None and can_act_as_cfa:
         cfa_form = EASCFADecisionForm(initial={"cfa_status": "PENDING"})
 
@@ -351,7 +342,36 @@ def eas_detail(request, pk):
         "noting_sheet": eas.noting_sheet,
         "role": role,
         "active_nav": "procurement",
-        "ao_form": ao_form,
         "cfa_form": cfa_form,
         "can_edit": eas.is_editable and eas.created_by == request.user,
     })
+
+
+# ============================================================
+# NEW VIEWS — PDF downloads
+# ============================================================
+
+@login_required
+def noting_sheet_download_pdf(request, pk):
+    noting_sheet = get_object_or_404(NotingSheet, pk=pk)
+    if noting_sheet.workflow_status != "APPROVED":
+        messages.error(request, "This Noting Sheet can only be downloaded once it's fully approved.")
+        return redirect("noting_sheet_detail", pk=pk)
+    return render_pdf(
+        "procurement/pdf/noting_sheet_pdf.html",
+        {"noting_sheet": noting_sheet},
+        f"{noting_sheet.noting_id}.pdf",
+    )
+
+
+@login_required
+def eas_download_pdf(request, pk):
+    eas = get_object_or_404(EAS, pk=pk)
+    if eas.workflow_status != "APPROVED":
+        messages.error(request, "This EAS can only be downloaded once it's fully approved.")
+        return redirect("eas_detail", pk=pk)
+    return render_pdf(
+        "procurement/pdf/eas_pdf.html",
+        {"eas": eas, "noting_sheet": eas.noting_sheet},
+        f"{eas.eas_id or eas.pk}.pdf",
+    )

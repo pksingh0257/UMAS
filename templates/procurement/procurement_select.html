@@ -11,19 +11,7 @@
 <div class="app-layout">
   {% include 'partials/sidebar.html' with active_nav='procurement' %}
   <div class="main-content">
-    <div class="topbar">
-      <div class="brand">
-        <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="brand-icon">
-        <div>
-          <h1>ARMY INTERNAL SYSTEM</h1>
-          <p class="tagline">SECURE &bull; DISCIPLINED &bull; DEDICATED</p>
-        </div>
-      </div>
-      <div class="topbar-right">
-        <button id="theme-toggle-btn" class="theme-toggle">Light Mode</button>
-        <a href="{% url 'logout' %}" class="theme-toggle" style="text-decoration:none;">Log Out</a>
-      </div>
-    </div>
+{% include 'partials/header.html' with active_nav='procurement' %}
 
     <div class="dashboard-shell">
 

@@ -66,6 +66,9 @@ class NotingSheetForm(forms.ModelForm):
 
 
 class NotingAODecisionForm(forms.Form):
+    # LEGACY — Account Officer review was removed from the Noting Sheet
+    # flow (now CFA-only, see NotingSheet.submit_for_approval). Kept only
+    # in case any pre-existing PENDING_AO records need manual handling.
     ao_status = forms.ChoiceField(choices=NotingSheet.DECISION_CHOICES, widget=forms.Select(), label="Status")
     ao_remarks = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 3, "placeholder": "Remarks (required if returning)"}),
@@ -125,6 +128,8 @@ class EASForm(forms.ModelForm):
 
 
 class EASAODecisionForm(forms.Form):
+    # LEGACY — same reason as NotingAODecisionForm above; EAS approval
+    # is now CFA-only (see EAS.submit_for_approval).
     ao_status = forms.ChoiceField(choices=EAS.DECISION_CHOICES, widget=forms.Select(), label="Status")
     ao_remarks = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 3, "placeholder": "Remarks (required if returning)"}),

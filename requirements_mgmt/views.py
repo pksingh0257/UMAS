@@ -5,24 +5,31 @@ from django.core.exceptions import ValidationError
 from .models import Requirement
 from .forms import RequirementForm, AODecisionForm, CFADecisionForm
 
-
-@login_required
+login_required
 def requirement_list(request):
     """
     Everyone sees the same table (per your spec: 'display both approvals'),
     scoped a little by role so people aren't drowning in irrelevant rows.
     """
     role = request.user.role
-    if role in ("HEAD_CLERK", "ACCOUNTS_CLERK"):
-        requirements = Requirement.objects.filter(raised_by=request.user)
-    else:
-        requirements = Requirement.objects.all()
 
-    return render(request, "requirements_mgmt/requirement_list.html", {
+    if role in ("HEAD_CLERK", "ACCOUNTS_CLERK"):
+        requirements = Requirement.objects.filter(
+            raised_by=request.user
+        ).order_by("-created_at")
+    else:
+        requirements = Requirement.objects.all().order_by("-created_at")
+
+    context = {
         "requirements": requirements,
+        "total_count": requirements.count(),
+        "pending_count": requirements.exclude(workflow_status="APPROVED").count(),
+        "completed_count": requirements.filter(workflow_status="APPROVED").count(),
         "role": role,
         "active_nav": "requirements",
-    })
+    }
+
+    return render(request, "requirements_mgmt/requirement_list.html", context)
 
 
 @login_required

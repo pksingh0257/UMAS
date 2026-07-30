@@ -72,20 +72,11 @@ def fund_entry_create(request):
 
         if form.is_valid():
             try:
-                entry = create_fund_entry(
-                    created_by=request.user,
-                    **form.cleaned_data,
-                )
+                entry = create_fund_entry(created_by=request.user,**form.cleaned_data,)
 
-                messages.success(
-                    request,
-                    "Fund Entry created successfully as Draft.",
-                )
+                messages.success(request,"Fund Entry created successfully as Draft.",)
 
-                return redirect(
-                    "finance:fund-entry-detail",
-                    pk=entry.pk,
-                )
+                return redirect("finance:fund-entry-detail",pk=entry.pk,)
 
             except ValidationError as error:
                 form.add_error(None, error)
@@ -96,50 +87,12 @@ def fund_entry_create(request):
     return render(
         request,
         "finance/fund_entry_form.html",
-        {"form": form},
-    )
-
-@login_required
-def fund_entry_detail(request, pk):
-    """
-    Display one Fund Entry according to the logged-in user's role.
-    """
-
-    role = getattr(request.user, "role", None)
-
-    queryset = FundEntry.objects.select_related(
-        "financial_year",
-        "sub_head",
-        "sub_head__fund_head",
-        "created_by",
-        "modified_by",
-        "cfa_acted_by",
-    )
-
-    if role == "ACCOUNTS_OFFICER":
-        entry = get_object_or_404(
-            queryset,
-            pk=pk,
-            created_by=request.user,
-        )
-
-    elif role == "CFA":
-        entry = get_object_or_404(
-            queryset,
-            pk=pk,
-        )
-
-    else:
-        raise PermissionDenied(
-            "You are not authorised to view this Fund Entry."
-        )
-
-    return render(
-        request,
-        "finance/fund_entry_detail.html",
         {
-            "entry": entry,
-            "role": role,
+            "form": form,
+            # ADDED — sidebar.html reads `role`; this view previously
+            # never passed it, so every role-gated nav item disappeared
+            # on this page.
+            "role": request.user.role,
         },
     )
 

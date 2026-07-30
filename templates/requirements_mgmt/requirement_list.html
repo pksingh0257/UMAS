@@ -15,22 +15,24 @@
 
   <div class="main-content">
 
-    <div class="topbar">
-      <div class="brand">
-        <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="brand-icon">
-        <div>
-          <h1>ARMY INTERNAL SYSTEM</h1>
-          <p class="tagline">SECURE &bull; DISCIPLINED &bull; DEDICATED</p>
-        </div>
-      </div>
-      <div class="topbar-right">
-        <button id="theme-toggle-btn" class="theme-toggle">Light Mode</button>
-        <a href="{% url 'logout' %}" class="theme-toggle" style="text-decoration:none;">Log Out</a>
-      </div>
-    </div>
+ {% include 'partials/header.html' with active_nav='requirements' %}
+    
 
     <div class="dashboard-shell">
-
+      <div class="stat-row">
+        <div class="card" style="text-align:center;">
+          <span class="rf-label">Total Requirements</span>
+          <p style="font-size:28px; font-weight:700; margin:8px 0 0;">{{ total_count }}</p>
+        </div>
+        <div class="card" style="text-align:center;">
+          <span class="rf-label">Pending Requirements</span>
+          <p style="font-size:28px; font-weight:700; margin:8px 0 0; color:var(--accent-blue);">{{ pending_count }}</p>
+        </div>
+        <div class="card" style="text-align:center;">
+          <span class="rf-label">Completed Requirements</span>
+          <p style="font-size:28px; font-weight:700; margin:8px 0 0; color:#2E7D53;">{{ completed_count }}</p>
+        </div>
+      </div>
       {% if messages %}
         {% for message in messages %}
           <div class="card rf-message">{{ message }}</div>
