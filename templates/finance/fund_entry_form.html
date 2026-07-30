@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>UAMS - {{ page_title|default:"Create Fund Entry" }}</title>
+
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/finance_form.css' %}">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+  {% include 'partials/sidebar.html' with active_nav='funds' %}
+
+  <main class="main-content">
+
+    <div class="page-content">
+
+      <div class="finance-form-container">
+
+        <div class="finance-form-card">
+
+          <div class="finance-form-header">
+
+            <div>
+              <h1>{{ page_title|default:"Create Fund Entry" }}</h1>
+
+              <p>
+                Enter the fund details below. The entry will initially be
+                saved as a draft.
+              </p>
+            </div>
+
+          </div>
+
+          <form method="post" novalidate>
+
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="form-alert form-alert-error">
+                {{ form.non_field_errors }}
+              </div>
+            {% endif %}
+
+            <div class="finance-form-grid">
+
+              {% for field in form %}
+
+                <div class="finance-form-group">
+
+                  <label for="{{ field.id_for_label }}">
+
+                    {{ field.label }}
+
+                    {% if field.field.required %}
+                      <span class="required-mark">*</span>
+                    {% endif %}
+
+                  </label>
+
+                  {{ field }}
+
+                  {% if field.help_text %}
+                    <small class="field-help">
+                      {{ field.help_text }}
+                    </small>
+                  {% endif %}
+
+                  {% for error in field.errors %}
+                    <small class="field-error">
+                      {{ error }}
+                    </small>
+                  {% endfor %}
+
+                </div>
+
+              {% endfor %}
+
+            </div>
+
+            <div class="finance-form-actions">
+
+              <button type="submit" class="primary-action">
+                Save as Draft
+              </button>
+
+              <a
+                href="{% url 'finance:fund-entry-list' %}"
+                class="secondary-action"
+              >
+                Cancel
+              </a>
+
+            </div>
+
+          </form>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    {% include 'partials/footer.html' %}
+
+  </main>
+
+</div>
+
+<script src="{% static 'js/theme-toggle.js' %}"></script>
+
+</body>
+</html>

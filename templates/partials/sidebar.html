@@ -12,7 +12,7 @@
     </a>
 
       {% if role in 'ACCOUNTS_OFFICER,ADMINISTRATOR,ACCOUNTS_CLERK,HEAD_CLERK,CFA' %}
-     <a href="#" class="{% if active_nav == 'quotations' %}active{% endif %}">
+     <a href="{% url 'finance:fund-entry-list' %}" class="{% if active_nav == 'quotations' %}active{% endif %}">
         <span class="icon">&#128179;</span> Funds
       </a>
     {% endif %}

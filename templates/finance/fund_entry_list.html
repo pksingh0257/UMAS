@@ -1,0 +1,313 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Fund Entries - UAMS</title>
+
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+  <style>
+    .fund-page-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+
+    .fund-page-head h2 {
+      margin: 0 0 6px;
+    }
+
+    .fund-page-head p {
+      margin: 0;
+      color: var(--text-secondary);
+    }
+
+    .fund-create-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 18px;
+      border-radius: 8px;
+      background: var(--primary-red);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .fund-create-btn:hover {
+      opacity: 0.92;
+    }
+
+    .fund-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 18px;
+    }
+
+    .fund-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .fund-table th,
+    .fund-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    .fund-table th {
+      background: var(--bg);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .fund-table tbody tr:hover {
+      background: var(--bg);
+    }
+
+    .fund-view-link {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .fund-status {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .status-draft {
+      color: #d89b00;
+      background: rgba(255, 193, 7, 0.14);
+    }
+
+    .status-pending {
+      color: var(--accent-blue);
+      background: rgba(30, 136, 229, 0.14);
+    }
+
+    .status-approved {
+      color: #4caf50;
+      background: rgba(76, 175, 80, 0.14);
+    }
+
+    .status-returned,
+    .status-rejected {
+      color: var(--primary-red);
+      background: rgba(198, 40, 40, 0.14);
+    }
+
+    .fund-empty {
+      padding: 35px !important;
+      text-align: center !important;
+      color: var(--text-secondary) !important;
+    }
+
+    @media (max-width: 700px) {
+      .fund-page-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app-layout">
+
+    {% include 'partials/sidebar.html' with active_nav='funds' %}
+
+    <div class="main-content">
+
+      <div class="topbar">
+
+        <div class="brand">
+
+          <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="brand-icon">
+
+          <div>
+            <h1>Unit Account Management System</h1>
+
+            <p class="tagline">
+              SECURE &bull; CONFIDENTIAL
+            </p>
+          </div>
+
+        </div>
+
+        <div class="topbar-right">
+
+          <a href="{% url 'dashboard' %}" class="theme-toggle" style="text-decoration:none;">
+            Dashboard
+          </a>
+
+          <button id="theme-toggle-btn" type="button" class="theme-toggle">
+            Light Mode
+          </button>
+
+          <a href="{% url 'logout' %}" class="theme-toggle" style="text-decoration:none;">
+            Log Out
+          </a>
+
+        </div>
+
+      </div>
+
+      <div class="page-content">
+
+        <div class="dashboard-shell">
+
+          {% if messages %}
+          {% for message in messages %}
+          <div class="card">
+            <p>{{ message }}</p>
+          </div>
+          {% endfor %}
+          {% endif %}
+
+          <div class="card">
+
+            <div class="fund-page-head">
+
+              <div>
+                <h2>Fund Entries</h2>
+
+                <p>
+                  Manage Opening Balance and Additional Credit entries.
+                </p>
+              </div>
+
+              {% if role == "ACCOUNTS_OFFICER" %}
+
+              <a href="{% url 'finance:fund-entry-create' %}" class="fund-create-btn">
+                + Create Fund Entry
+              </a>
+
+              {% endif %}
+
+            </div>
+
+            <div class="fund-table-wrap">
+
+              <table class="fund-table">
+
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Financial Year</th>
+                    <th>Sub Head</th>
+                    <th>Entry Type</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+
+                  {% for entry in entries %}
+
+                  <tr>
+
+                    <td>{{ entry.entry_date }}</td>
+
+                    <td>{{ entry.financial_year }}</td>
+
+                    <td>{{ entry.sub_head.code }}</td>
+
+                    <td>{{ entry.get_entry_type_display }}</td>
+
+                    <td>₹{{ entry.amount }}</td>
+
+                    <td>
+
+                      {% if entry.status == "DRAFT" %}
+                      <span class="fund-status status-draft">
+                        {{ entry.get_status_display }}
+                      </span>
+
+                      {% elif entry.status == "PENDING_CFA" %}
+                      <span class="fund-status status-pending">
+                        {{ entry.get_status_display }}
+                      </span>
+
+                      {% elif entry.status == "APPROVED" %}
+                      <span class="fund-status status-approved">
+                        {{ entry.get_status_display }}
+                      </span>
+
+                      {% elif entry.status == "RETURNED" %}
+                      <span class="fund-status status-returned">
+                        {{ entry.get_status_display }}
+                      </span>
+
+                      {% elif entry.status == "REJECTED" %}
+                      <span class="fund-status status-rejected">
+                        {{ entry.get_status_display }}
+                      </span>
+
+                      {% else %}
+                      {{ entry.get_status_display }}
+                      {% endif %}
+
+                    </td>
+
+                    <td>
+
+                      <a href="{% url 'finance:fund-entry-detail' entry.pk %}" class="fund-view-link">
+                        View
+                      </a>
+
+                    </td>
+
+                  </tr>
+
+                  {% empty %}
+
+                  <tr>
+                    <td colspan="7" class="fund-empty">
+                      No Fund Entries found.
+                    </td>
+                  </tr>
+
+                  {% endfor %}
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      {% include 'partials/footer.html' %}
+
+    </div>
+
+  </div>
+
+  <script src="{% static 'js/theme-toggle.js' %}"></script>
+
+</body>
+
+</html>
