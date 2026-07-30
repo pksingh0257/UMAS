@@ -65,6 +65,46 @@ body {
 }
 .theme-toggle:hover { border-color: var(--primary-red); }
 
+.profile-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 14px 5px 5px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: var(--surface);
+}
+.profile-avatar {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--primary-red);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+.profile-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.profile-role {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+@media (max-width: 640px) {
+  .profile-role { display: none; }
+}
+
 .main-layout {
   display: flex;
   min-height: calc(100vh - 160px);
@@ -365,6 +405,26 @@ html[data-theme="light"] .hero-panel {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 10px;
+}
+.doc-item {
+  margin-bottom: 14px;
+}
+.doc-item:last-child {
+  margin-bottom: 0;
+}
+.doc-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+.doc-actions a {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-blue);
+  text-decoration: none;
+}
+.doc-actions a:hover {
+  text-decoration: underline;
 }
 @media (max-width: 900px) {
   .detail-layout { grid-template-columns: 1fr; }

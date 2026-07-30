@@ -372,19 +372,26 @@ class NotingSheet(models.Model):
             self.noting_id = f"NS-{yr}-{seq:05d}"
         super().save(*args, **kwargs)
 
-    # ---- Workflow transitions (identical pattern to Requirement) ----
+    # ---- Workflow transitions ----
+    # CHANGED: approval is now CFA-only — Account Officer review has been
+    # dropped from the flow. submit_for_approval() sends the sheet
+    # straight to PENDING_CFA (replaces the old submit_to_ao()). ao_decide()
+    # is kept below, unused, only so any pre-existing PENDING_AO records
+    # from before this change can still be resolved manually if needed —
+    # nothing in the current flow reaches PENDING_AO anymore.
 
-    def submit_to_ao(self):
+    def submit_for_approval(self):
         if not self.is_editable:
             raise ValidationError("This noting sheet is not currently submittable.")
-        self.workflow_status = "PENDING_AO"
-        self.ao_status = "PENDING"
-        self.ao_remarks = None
-        self.ao_acted_by = None
-        self.ao_acted_at = None
+        self.workflow_status = "PENDING_CFA"
+        self.cfa_status = "PENDING"
+        self.cfa_remarks = None
+        self.cfa_acted_by = None
+        self.cfa_acted_at = None
         self.save()
 
     def ao_decide(self, user, decision, remarks=""):
+        # LEGACY — no longer reachable from the current flow (see note above).
         if self.workflow_status != "PENDING_AO":
             raise ValidationError("This noting sheet is not awaiting Account Officer review.")
         self.ao_status = decision
@@ -515,19 +522,24 @@ class EAS(models.Model):
             return "Declined"
         return "Pending"
 
-    # ---- Workflow transitions (identical pattern to NotingSheet) ----
+    # ---- Workflow transitions ----
+    # CHANGED: approval is now CFA-only — Account Officer review has been
+    # dropped from the flow, same as NotingSheet. submit_for_approval()
+    # sends straight to PENDING_CFA. ao_decide() kept unused for any
+    # legacy PENDING_AO records only.
 
-    def submit_to_ao(self):
+    def submit_for_approval(self):
         if not self.is_editable:
             raise ValidationError("This EAS is not currently submittable.")
-        self.workflow_status = "PENDING_AO"
-        self.ao_status = "PENDING"
-        self.ao_remarks = None
-        self.ao_acted_by = None
-        self.ao_acted_at = None
+        self.workflow_status = "PENDING_CFA"
+        self.cfa_status = "PENDING"
+        self.cfa_remarks = None
+        self.cfa_acted_by = None
+        self.cfa_acted_at = None
         self.save()
 
     def ao_decide(self, user, decision, remarks=""):
+        # LEGACY — no longer reachable from the current flow (see note above).
         if self.workflow_status != "PENDING_AO":
             raise ValidationError("This EAS is not awaiting Account Officer review.")
         self.ao_status = decision

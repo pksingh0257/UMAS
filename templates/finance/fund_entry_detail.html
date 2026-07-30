@@ -1,0 +1,868 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    UAMS - {{ page_title|default:"Fund Entry Details" }}
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="{% static 'css/style.css' %}"
+  >
+
+  <style>
+    /* =========================================================
+       FUND ENTRY DETAIL PAGE
+       Temporary page-level CSS
+       ========================================================= */
+
+    .finance-main-content {
+      display: flex;
+      flex-direction: column;
+      width: calc(100% - 280px);
+      min-height: 100vh;
+      margin-left: 280px;
+      background: #f3f6fa;
+    }
+
+    .finance-page-content {
+      flex: 1;
+      width: 100%;
+      padding: 28px;
+    }
+
+    .finance-page-container {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Page header */
+
+    .finance-page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .finance-page-eyebrow {
+      margin: 0 0 5px;
+      color: #c62828;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+    }
+
+    .finance-page-title {
+      margin: 0 0 7px;
+      color: #1e293b;
+      font-family: Arial, sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .finance-page-description {
+      margin: 0;
+      color: #667085;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .finance-back-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 9px 16px;
+      border: 1px solid #cfd6df;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #344054;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+    }
+
+    .finance-back-button:hover {
+      background: #f7f8fa;
+      border-color: #aeb7c4;
+    }
+
+    /* Main card */
+
+    .finance-card {
+      overflow: hidden;
+      background: #ffffff;
+      border: 1px solid #d8dee8;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.07);
+    }
+
+    .finance-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px 24px;
+      border-bottom: 1px solid #e2e7ee;
+    }
+
+    .finance-card-title {
+      margin: 0;
+      color: #1e293b;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .finance-entry-id {
+      color: #667085;
+      font-size: 13px;
+    }
+
+    .finance-card-body {
+      padding: 24px;
+    }
+
+    /* Status badge */
+
+    .finance-status-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 11px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.25px;
+      white-space: nowrap;
+    }
+
+    .status-draft {
+      background: #fff4d6;
+      color: #9a6700;
+    }
+
+    .status-pending {
+      background: #e7f0ff;
+      color: #1457b8;
+    }
+
+    .status-approved {
+      background: #e7f6ed;
+      color: #167443;
+    }
+
+    .status-returned {
+      background: #fff3cd;
+      color: #8a6200;
+    }
+
+    .status-rejected {
+      background: #fdeaea;
+      color: #b42318;
+    }
+
+    /* Details grid */
+
+    .finance-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .finance-detail-item {
+      min-height: 82px;
+      padding: 15px 16px;
+      border: 1px solid #e0e5ec;
+      border-radius: 9px;
+      background: #f9fafc;
+    }
+
+    .finance-detail-item.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .finance-detail-label {
+      display: block;
+      margin-bottom: 7px;
+      color: #667085;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.35px;
+      text-transform: uppercase;
+    }
+
+    .finance-detail-value {
+      display: block;
+      color: #1e293b;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .finance-amount-value {
+      color: #167443;
+      font-size: 20px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Workflow panel */
+
+    .finance-workflow-panel {
+      margin-top: 24px;
+      padding: 20px;
+      border: 1px solid #d8dee8;
+      border-radius: 10px;
+      background: #ffffff;
+    }
+
+    .finance-workflow-title {
+      margin: 0 0 7px;
+      color: #1e293b;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .finance-workflow-description {
+      margin: 0 0 18px;
+      color: #667085;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* Form */
+
+    .finance-form-group {
+      margin-bottom: 18px;
+    }
+
+    .finance-form-label {
+      display: block;
+      margin-bottom: 7px;
+      color: #344054;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .finance-form-control {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 12px;
+      border: 1px solid #cfd6df;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #1e293b;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+
+    .finance-form-control:focus {
+      outline: none;
+      border-color: #c62828;
+      box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.12);
+    }
+
+    /* Buttons */
+
+    .finance-action-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .finance-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 9px 17px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.1s ease;
+    }
+
+    .finance-btn:active {
+      transform: translateY(1px);
+    }
+
+    .finance-btn-primary {
+      background: #c62828;
+      border-color: #c62828;
+      color: #ffffff;
+    }
+
+    .finance-btn-primary:hover {
+      background: #a91f1f;
+      border-color: #a91f1f;
+    }
+
+    .finance-btn-success {
+      background: #198754;
+      border-color: #198754;
+      color: #ffffff;
+    }
+
+    .finance-btn-success:hover {
+      background: #146c43;
+      border-color: #146c43;
+    }
+
+    .finance-btn-warning {
+      background: #e3a008;
+      border-color: #e3a008;
+      color: #ffffff;
+    }
+
+    .finance-btn-warning:hover {
+      background: #bd8300;
+      border-color: #bd8300;
+    }
+
+    .finance-btn-danger {
+      background: #c62828;
+      border-color: #c62828;
+      color: #ffffff;
+    }
+
+    .finance-btn-danger:hover {
+      background: #a91f1f;
+      border-color: #a91f1f;
+    }
+
+    /* Empty workflow state */
+
+    .finance-no-action {
+      padding: 16px;
+      border: 1px dashed #cfd6df;
+      border-radius: 8px;
+      background: #f9fafc;
+      color: #667085;
+      font-size: 13px;
+    }
+
+    /* Dark theme */
+
+    body.dark-theme .finance-main-content,
+    [data-theme="dark"] .finance-main-content {
+      background: #191d25;
+    }
+
+    body.dark-theme .finance-page-title,
+    body.dark-theme .finance-card-title,
+    body.dark-theme .finance-detail-value,
+    body.dark-theme .finance-workflow-title,
+    body.dark-theme .finance-form-label,
+    [data-theme="dark"] .finance-page-title,
+    [data-theme="dark"] .finance-card-title,
+    [data-theme="dark"] .finance-detail-value,
+    [data-theme="dark"] .finance-workflow-title,
+    [data-theme="dark"] .finance-form-label {
+      color: #f3f4f6;
+    }
+
+    body.dark-theme .finance-page-description,
+    body.dark-theme .finance-entry-id,
+    body.dark-theme .finance-detail-label,
+    body.dark-theme .finance-workflow-description,
+    [data-theme="dark"] .finance-page-description,
+    [data-theme="dark"] .finance-entry-id,
+    [data-theme="dark"] .finance-detail-label,
+    [data-theme="dark"] .finance-workflow-description {
+      color: #aeb7c4;
+    }
+
+    body.dark-theme .finance-card,
+    body.dark-theme .finance-workflow-panel,
+    body.dark-theme .finance-back-button,
+    [data-theme="dark"] .finance-card,
+    [data-theme="dark"] .finance-workflow-panel,
+    [data-theme="dark"] .finance-back-button {
+      background: #222730;
+      border-color: #373f4c;
+    }
+
+    body.dark-theme .finance-detail-item,
+    body.dark-theme .finance-no-action,
+    [data-theme="dark"] .finance-detail-item,
+    [data-theme="dark"] .finance-no-action {
+      background: #1c2129;
+      border-color: #373f4c;
+    }
+
+    body.dark-theme .finance-card-header,
+    [data-theme="dark"] .finance-card-header {
+      border-color: #373f4c;
+    }
+
+    body.dark-theme .finance-back-button,
+    [data-theme="dark"] .finance-back-button {
+      color: #f3f4f6;
+    }
+
+    body.dark-theme .finance-form-control,
+    [data-theme="dark"] .finance-form-control {
+      background: #181d24;
+      border-color: #444d5b;
+      color: #f3f4f6;
+    }
+
+    /* Responsive */
+
+    @media (max-width: 991px) {
+      .finance-main-content {
+        width: 100%;
+        margin-left: 0;
+      }
+
+      .finance-page-content {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .finance-page-header {
+        flex-direction: column;
+      }
+
+      .finance-detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .finance-detail-item.full-width {
+        grid-column: auto;
+      }
+
+      .finance-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .finance-action-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .finance-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app-layout">
+
+  {% include 'partials/sidebar.html' with active_nav='funds' %}
+
+  <main class="finance-main-content">
+
+    <div class="finance-page-content">
+
+      <div class="finance-page-container">
+
+        <div class="finance-page-header">
+
+          <div>
+            <p class="finance-page-eyebrow">
+              Finance Management
+            </p>
+
+            <h1 class="finance-page-title">
+              Fund Entry Details
+            </h1>
+
+            <p class="finance-page-description">
+              Review the fund entry, current approval status and authorised
+              workflow actions.
+            </p>
+          </div>
+
+          <a
+            href="{% url 'finance:fund-entry-list' %}"
+            class="finance-back-button"
+          >
+            ← Back to Fund Entries
+          </a>
+
+        </div>
+
+        <section class="finance-card">
+
+          <div class="finance-card-header">
+
+            <div>
+              <h2 class="finance-card-title">
+                Entry Information
+              </h2>
+
+              <span class="finance-entry-id">
+                Entry ID: {{ entry.pk }}
+              </span>
+            </div>
+
+            {% if entry.status == "DRAFT" %}
+
+              <span class="finance-status-badge status-draft">
+                {{ entry.get_status_display }}
+              </span>
+
+            {% elif entry.status == "PENDING_CFA" %}
+
+              <span class="finance-status-badge status-pending">
+                {{ entry.get_status_display }}
+              </span>
+
+            {% elif entry.status == "APPROVED" %}
+
+              <span class="finance-status-badge status-approved">
+                {{ entry.get_status_display }}
+              </span>
+
+            {% elif entry.status == "RETURNED" %}
+
+              <span class="finance-status-badge status-returned">
+                {{ entry.get_status_display }}
+              </span>
+
+            {% elif entry.status == "REJECTED" %}
+
+              <span class="finance-status-badge status-rejected">
+                {{ entry.get_status_display }}
+              </span>
+
+            {% else %}
+
+              <span class="finance-status-badge">
+                {{ entry.get_status_display }}
+              </span>
+
+            {% endif %}
+
+          </div>
+
+          <div class="finance-card-body">
+
+            <div class="finance-detail-grid">
+
+              <div class="finance-detail-item">
+                <span class="finance-detail-label">
+                  Financial Year
+                </span>
+
+                <span class="finance-detail-value">
+                  {{ entry.financial_year }}
+                </span>
+              </div>
+
+              <div class="finance-detail-item">
+                <span class="finance-detail-label">
+                  Entry Type
+                </span>
+
+                <span class="finance-detail-value">
+                  {{ entry.get_entry_type_display }}
+                </span>
+              </div>
+
+              <div class="finance-detail-item">
+                <span class="finance-detail-label">
+                  Fund Head
+                </span>
+
+                <span class="finance-detail-value">
+                  {{ entry.sub_head.fund_head }}
+                </span>
+              </div>
+
+              <div class="finance-detail-item">
+                <span class="finance-detail-label">
+                  Sub Head
+                </span>
+
+                <span class="finance-detail-value">
+                  {{ entry.sub_head }}
+                </span>
+              </div>
+
+              <div class="finance-detail-item">
+                <span class="finance-detail-label">
+                  Amount
+                </span>
+
+                <span class="finance-detail-value finance-amount-value">
+                  ₹{{ entry.amount|floatformat:2 }}
+                </span>
+              </div>
+
+              <div class="finance-detail-item">
+                <span class="finance-detail-label">
+                  Entry Date
+                </span>
+
+                <span class="finance-detail-value">
+                  {{ entry.entry_date|date:"d M Y" }}
+                </span>
+              </div>
+
+              <div class="finance-detail-item">
+                <span class="finance-detail-label">
+                  Source
+                </span>
+
+                <span class="finance-detail-value">
+                  {{ entry.source|default:"—" }}
+                </span>
+              </div>
+
+              <div class="finance-detail-item">
+                <span class="finance-detail-label">
+                  Authority Number
+                </span>
+
+                <span class="finance-detail-value">
+                  {{ entry.authority_number|default:"—" }}
+                </span>
+              </div>
+
+              <div class="finance-detail-item">
+                <span class="finance-detail-label">
+                  Authority Date
+                </span>
+
+                <span class="finance-detail-value">
+                  {% if entry.authority_date %}
+                    {{ entry.authority_date|date:"d M Y" }}
+                  {% else %}
+                    —
+                  {% endif %}
+                </span>
+              </div>
+
+              <div class="finance-detail-item">
+                <span class="finance-detail-label">
+                  Current Status
+                </span>
+
+                <span class="finance-detail-value">
+                  {{ entry.get_status_display }}
+                </span>
+              </div>
+
+              <div class="finance-detail-item full-width">
+                <span class="finance-detail-label">
+                  Remarks
+                </span>
+
+                <span class="finance-detail-value">
+                  {{ entry.remarks|default:"—"|linebreaksbr }}
+                </span>
+              </div>
+
+              <div class="finance-detail-item full-width">
+                <span class="finance-detail-label">
+                  CFA Remarks
+                </span>
+
+                <span class="finance-detail-value">
+                  {{ entry.cfa_remarks|default:"—"|linebreaksbr }}
+                </span>
+              </div>
+
+            </div>
+
+            {% if role == "ACCOUNTS_OFFICER" %}
+
+              {% if entry.status == "DRAFT" or entry.status == "RETURNED" %}
+
+                <div class="finance-workflow-panel">
+
+                  <h3 class="finance-workflow-title">
+                    Submit for CFA Approval
+                  </h3>
+
+                  <p class="finance-workflow-description">
+                    Verify all fund details before submitting. Once submitted,
+                    the entry will be placed before the CFA for a decision.
+                  </p>
+
+                  <form
+                    method="post"
+                    action="{% url 'finance:fund-entry-submit' entry.pk %}"
+                  >
+
+                    {% csrf_token %}
+
+                    <div class="finance-action-row">
+
+                      <button
+                        type="submit"
+                        class="finance-btn finance-btn-primary"
+                      >
+                        Submit to CFA
+                      </button>
+
+                    </div>
+
+                  </form>
+
+                </div>
+
+              {% else %}
+
+                <div class="finance-workflow-panel">
+
+                  <h3 class="finance-workflow-title">
+                    Workflow Status
+                  </h3>
+
+                  <div class="finance-no-action">
+                    No action is currently available for the Account Officer
+                    at this stage.
+                  </div>
+
+                </div>
+
+              {% endif %}
+
+            {% elif role == "CFA" %}
+
+              {% if entry.status == "PENDING_CFA" %}
+
+                <div class="finance-workflow-panel">
+
+                  <h3 class="finance-workflow-title">
+                    CFA Decision
+                  </h3>
+
+                  <p class="finance-workflow-description">
+                    Review the entry and record your decision. Remarks should
+                    clearly mention the reason when returning or rejecting an
+                    entry.
+                  </p>
+
+                  <form
+                    method="post"
+                    action="{% url 'finance:fund-entry-cfa-decision' entry.pk %}"
+                  >
+
+                    {% csrf_token %}
+
+                    <div class="finance-form-group">
+
+                      <label
+                        for="cfa-remarks"
+                        class="finance-form-label"
+                      >
+                        CFA Remarks
+                      </label>
+
+                      <textarea
+                        id="cfa-remarks"
+                        name="remarks"
+                        class="finance-form-control"
+                        rows="4"
+                        placeholder="Enter remarks for approval, return or rejection"
+                      ></textarea>
+
+                    </div>
+
+                    <div class="finance-action-row">
+
+                      <button
+                        type="submit"
+                        name="decision"
+                        value="APPROVED"
+                        class="finance-btn finance-btn-success"
+                      >
+                        Approve
+                      </button>
+
+                      <button
+                        type="submit"
+                        name="decision"
+                        value="RETURNED"
+                        class="finance-btn finance-btn-warning"
+                      >
+                        Return
+                      </button>
+
+                      <button
+                        type="submit"
+                        name="decision"
+                        value="REJECTED"
+                        class="finance-btn finance-btn-danger"
+                      >
+                        Reject
+                      </button>
+
+                    </div>
+
+                  </form>
+
+                </div>
+
+              {% else %}
+
+                <div class="finance-workflow-panel">
+
+                  <h3 class="finance-workflow-title">
+                    Workflow Status
+                  </h3>
+
+                  <div class="finance-no-action">
+                    No CFA decision is currently required for this entry.
+                  </div>
+
+                </div>
+
+              {% endif %}
+
+            {% endif %}
+
+          </div>
+
+        </section>
+
+      </div>
+
+    </div>
+
+    {% include 'partials/footer.html' %}
+
+  </main>
+
+
+
+<script src="{% static 'js/theme-toggle.js' %}"></script>
+
+</body>
+</html>

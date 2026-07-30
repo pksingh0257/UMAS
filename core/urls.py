@@ -8,4 +8,5 @@ urlpatterns = [
     path('procurement/', include('procurement.urls')),
     path('requirements/', include('requirements_mgmt.urls')),
     path('', include('authentication.urls')),
+    path('finance/', include('finance.urls')),
 ]

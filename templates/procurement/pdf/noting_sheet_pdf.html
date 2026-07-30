@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @page { size: A4; margin: 2cm; }
+  body { font-family: Helvetica, Arial, sans-serif; font-size: 11pt; color: #1C1F26; }
+  h1 { font-size: 17pt; margin: 0 0 4px; }
+  .meta { color: #607D8B; font-size: 9pt; margin-bottom: 18px; }
+  .status {
+    display: inline-block; padding: 3px 10px; border: 1px solid #2E7D53;
+    color: #2E7D53; border-radius: 10px; font-size: 9pt;
+  }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+  th, td { border: 1px solid #CFD8DC; padding: 6px 10px; text-align: left; font-size: 10pt; }
+  th { background: #F5F9FF; width: 32%; font-weight: bold; }
+  .section-title {
+    font-size: 12pt; font-weight: bold; margin: 20px 0 6px;
+    border-bottom: 1px solid #CFD8DC; padding-bottom: 4px;
+  }
+  .footer { color: #90A4AE; font-size: 8pt; margin-top: 30px; text-align: center; }
+</style>
+</head>
+<body>
+
+  <h1>Noting Sheet &mdash; {{ noting_sheet.noting_id }}</h1>
+  <p class="meta">
+    Status: <span class="status">{{ noting_sheet.get_workflow_status_display }}</span>
+    &middot; Generated {% now "d M Y, P" %}
+  </p>
+
+  <table>
+    <tr><th>Requirement ID</th><td>{{ noting_sheet.requirement.requirement_id }}</td></tr>
+    <tr><th>Item Name</th><td>{{ noting_sheet.item_name }}</td></tr>
+    <tr><th>A/U</th><td>{{ noting_sheet.au }}</td></tr>
+    <tr><th>Qty</th><td>{{ noting_sheet.qty }}</td></tr>
+    <tr><th>Unit Price</th><td>{{ noting_sheet.unit_price }}</td></tr>
+    <tr><th>Approx Amount</th><td>{{ noting_sheet.approx_amount|default:"—" }}</td></tr>
+    <tr><th>Amount Allotted</th><td>{{ noting_sheet.amount_allotted }}</td></tr>
+    <tr><th>Amount Released</th><td>{{ noting_sheet.amount_released }}</td></tr>
+    <tr><th>Amount Expended</th><td>{{ noting_sheet.amount_expended }}</td></tr>
+    <tr><th>Balance Held</th><td>{{ noting_sheet.balance_amount }}</td></tr>
+    <tr><th>Created By</th><td>{{ noting_sheet.created_by.username }}</td></tr>
+    <tr><th>Date</th><td>{{ noting_sheet.created_at|date:"d M Y, P" }}</td></tr>
+  </table>
+
+  <div class="section-title">Approval Status</div>
+  <table>
+    <tr>
+      <th>Account Officer</th>
+      <td>
+        {{ noting_sheet.get_ao_status_display }}
+        {% if noting_sheet.ao_remarks %} &mdash; "{{ noting_sheet.ao_remarks }}"{% endif %}
+        {% if noting_sheet.ao_acted_by %}<br>{{ noting_sheet.ao_acted_by.username }} &middot; {{ noting_sheet.ao_acted_at|date:"d M Y, P" }}{% endif %}
+      </td>
+    </tr>
+    <tr>
+      <th>CFA</th>
+      <td>
+        {{ noting_sheet.get_cfa_status_display }}
+        {% if noting_sheet.cfa_remarks %} &mdash; "{{ noting_sheet.cfa_remarks }}"{% endif %}
+        {% if noting_sheet.cfa_acted_by %}<br>{{ noting_sheet.cfa_acted_by.username }} &middot; {{ noting_sheet.cfa_acted_at|date:"d M Y, P" }}{% endif %}
+      </td>
+    </tr>
+  </table>
+
+  <p class="footer">Project Nexus &mdash; Unit Accounts Management &middot; Procurement Module &middot; CONFIDENTIAL</p>
+
+</body>
+</html>
