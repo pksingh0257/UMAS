@@ -48,9 +48,11 @@
             <div><span class="rf-label">Purpose</span><p>{{ selected.purpose }}</p></div>
             <div><span class="rf-label">Demanded By</span><p>{{ selected.demanded_by }}</p></div>
           </div>
+          {% if role in 'ACCOUNTS_CLERK,HEAD_CLERK,ADMINISTRATOR' %}
           <a href="{% url 'noting_sheet_create' selected.pk %}" class="login-btn" style="width:auto; padding:12px 24px; text-decoration:none; display:inline-block; margin-top:14px;">
             Create Noting Sheet
           </a>
+          {% elif %}
         </div>
       {% endif %}
 

@@ -10,3 +10,8 @@ urlpatterns = [
     path('', include('authentication.urls')),
     path('finance/', include('finance.urls')),
 ]
+
+# Serves uploaded files (Attachments, Sanction/Contract/Invoice PDFs) in
+# development. MUST come after urlpatterns is defined above — Python
+# reads top to bottom, so `+=` needs the list to already exist.
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

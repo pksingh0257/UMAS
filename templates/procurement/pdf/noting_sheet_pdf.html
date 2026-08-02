@@ -19,9 +19,30 @@
     border-bottom: 1px solid #CFD8DC; padding-bottom: 4px;
   }
   .footer { color: #90A4AE; font-size: 8pt; margin-top: 30px; text-align: center; }
+
+  .toolbar {
+    display: flex; justify-content: flex-end; gap: 10px;
+    margin-bottom: 16px;
+  }
+  .toolbar button, .toolbar a {
+    font-family: inherit; font-size: 10pt; font-weight: 600;
+    padding: 8px 18px; border-radius: 6px; cursor: pointer;
+    text-decoration: none; display: inline-block;
+  }
+  .btn-print { background: #C62828; color: #fff; border: none; }
+  .btn-back { background: transparent; color: #1C1F26; border: 1px solid #CFD8DC; }
+
+  @media print {
+    .toolbar { display: none; }
+  }
 </style>
 </head>
 <body>
+
+  <div class="toolbar no-print">
+    <a class="btn-back" href="javascript:window.close();">Close</a>
+    <button class="btn-print" onclick="window.print()">Print / Save as PDF</button>
+  </div>
 
   <h1>Noting Sheet &mdash; {{ noting_sheet.noting_id }}</h1>
   <p class="meta">

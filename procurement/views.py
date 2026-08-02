@@ -2,31 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-from xhtml2pdf import pisa
 from requirements_mgmt.models import Requirement
 from .models import ProcurementCase, NotingSheet, EAS
 from .forms import (
     CaseStageDataForm, ReturnCaseForm, NotingSheetForm,
-    NotingCFADecisionForm, EASForm, EASCFADecisionForm,
+    NotingCFADecisionForm, EASForm, EASCFADecisionForm, EASDocumentUploadForm,
 )
-
-
-def render_pdf(template_name, context, filename):
-    """
-    Renders a Django template to a downloadable PDF using xhtml2pdf.
-    Kept deliberately simple (no external CSS files, no flex/grid) since
-    xhtml2pdf's CSS support is limited to CSS 2.1 — the PDF templates use
-    plain tables/inline styles rather than reusing style.css.
-    """
-    html = render_to_string(template_name, context)
-    response = HttpResponse(content_type="application/pdf")
-    response["Content-Disposition"] = f'attachment; filename="{filename}"'
-    pisa_status = pisa.CreatePDF(html, dest=response)
-    if pisa_status.err:
-        return HttpResponse("There was an error generating the PDF.", status=500)
-    return response
 
 
 # ============================================================
@@ -353,25 +334,66 @@ def eas_detail(request, pk):
 
 @login_required
 def noting_sheet_download_pdf(request, pk):
+    """
+    Renders a plain, print-friendly page — no server-side PDF library.
+    The page has a "Print / Save as PDF" button that calls the browser's
+    native print dialog, where choosing "Save as PDF" produces the file.
+    This replaced an xhtml2pdf-based version that kept failing.
+    """
     noting_sheet = get_object_or_404(NotingSheet, pk=pk)
     if noting_sheet.workflow_status != "APPROVED":
         messages.error(request, "This Noting Sheet can only be downloaded once it's fully approved.")
         return redirect("noting_sheet_detail", pk=pk)
-    return render_pdf(
-        "procurement/pdf/noting_sheet_pdf.html",
-        {"noting_sheet": noting_sheet},
-        f"{noting_sheet.noting_id}.pdf",
-    )
+    return render(request, "procurement/pdf/noting_sheet_pdf.html", {"noting_sheet": noting_sheet})
 
 
 @login_required
 def eas_download_pdf(request, pk):
+    """Same approach as noting_sheet_download_pdf above — plain printable page."""
     eas = get_object_or_404(EAS, pk=pk)
     if eas.workflow_status != "APPROVED":
         messages.error(request, "This EAS can only be downloaded once it's fully approved.")
         return redirect("eas_detail", pk=pk)
-    return render_pdf(
-        "procurement/pdf/eas_pdf.html",
-        {"eas": eas, "noting_sheet": eas.noting_sheet},
-        f"{eas.eas_id or eas.pk}.pdf",
-    )
+    return render(request, "procurement/pdf/eas_pdf.html", {"eas": eas, "noting_sheet": eas.noting_sheet})
+
+
+# ============================================================
+# NEW VIEW — Sanction / Contract / Invoice document uploads
+# ============================================================
+
+EAS_DOCUMENT_FIELDS = {
+    "sanction": "sanction_document",
+    "contract": "contract_document",
+    "invoice": "invoice_document",
+}
+
+
+@login_required
+def eas_upload_document(request, pk, doc_type):
+    """
+    Handles the Sanction / Contract / Invoice upload forms on the EAS
+    detail page. Only reachable once the EAS is APPROVED (enforced here,
+    not just hidden in the template) — mirrors the same server-side gate
+    used for the Noting Sheet/EAS PDF downloads.
+    """
+    eas = get_object_or_404(EAS, pk=pk)
+    field_name = EAS_DOCUMENT_FIELDS.get(doc_type)
+
+    if field_name is None:
+        messages.error(request, "Unknown document type.")
+        return redirect("eas_detail", pk=pk)
+
+    if eas.workflow_status != "APPROVED":
+        messages.error(request, "Documents can only be uploaded once the EAS is approved.")
+        return redirect("eas_detail", pk=pk)
+
+    if request.method == "POST":
+        form = EASDocumentUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            setattr(eas, field_name, form.cleaned_data["document"])
+            eas.save()
+            messages.success(request, f"{doc_type.title()} document uploaded.")
+        else:
+            messages.error(request, "; ".join(form.errors.get("document", ["Upload failed — PDF files only."])))
+
+    return redirect("eas_detail", pk=pk)

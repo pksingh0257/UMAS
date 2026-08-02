@@ -11,7 +11,19 @@
 <div class="app-layout">
   {% include 'partials/sidebar.html' with active_nav='procurement' %}
   <div class="main-content">
- {% include 'partials/header.html' with active_nav='procurement' %}
+    <div class="topbar">
+      <div class="brand">
+        <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="brand-icon">
+        <div>
+          <h1>ARMY INTERNAL SYSTEM</h1>
+          <p class="tagline">SECURE &bull; DISCIPLINED &bull; DEDICATED</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button id="theme-toggle-btn" class="theme-toggle">Light Mode</button>
+        <a href="{% url 'logout' %}" class="theme-toggle" style="text-decoration:none;">Log Out</a>
+      </div>
+    </div>
 
     <div class="dashboard-shell">
 
@@ -99,7 +111,7 @@
             <span class="badge badge-approved">Noting Sheet</span>
             <div class="doc-actions">
               {% if noting_sheet.workflow_status == "APPROVED" %}
-                <a href="{% url 'noting_sheet_download_pdf' noting_sheet.pk %}">Download PDF</a>
+                <a href="{% url 'noting_sheet_download_pdf' noting_sheet.pk %}" target="_blank">View / Print PDF</a>
               {% else %}
                 <span style="font-size:12px; color:var(--text-secondary);">Download available once approved</span>
               {% endif %}
@@ -112,7 +124,7 @@
               <div class="doc-actions">
                 <a href="{% url 'eas_detail' noting_sheet.eas.pk %}">View</a>
                 {% if noting_sheet.eas.workflow_status == "APPROVED" %}
-                  <a href="{% url 'eas_download_pdf' noting_sheet.eas.pk %}">Download PDF</a>
+                  <a href="{% url 'eas_download_pdf' noting_sheet.eas.pk %}" target="_blank">View / Print PDF</a>
                 {% endif %}
               </div>
             </div>

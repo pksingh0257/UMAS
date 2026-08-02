@@ -6,6 +6,9 @@
   <title>UAMS - {% if is_edit %}Edit{% else %}New{% endif %} Requirement</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <link rel="stylesheet" href="{% static 'css/requirement_form.css' %}">
+  <style>
+    
+  </style>
 </head>
 <body>
 
@@ -59,25 +62,42 @@
               {{ form.purpose }}
               {% if form.purpose.errors %}<p class="rf-error-text">{{ form.purpose.errors|join:", " }}</p>{% endif %}
             </div>
-
-            <div class="field">
-              <label for="{{ form.estimated_cost.id_for_label }}">Estimated Cost</label>
-              {{ form.estimated_cost }}
-              {% if form.estimated_cost.errors %}<p class="rf-error-text">{{ form.estimated_cost.errors|join:", " }}</p>{% endif %}
+           <div class="field">
+              <label for="{{ form.fund_head.id_for_label }}">Fund</label>
+              {{ form.fund_head }}
+              {% if form.fund_head.errors %}<p class="rf-error-text">{{ form.fund_head.errors|join:", " }}</p>{% endif %}
             </div>
 
             <div class="field">
-              <label for="{{ form.demanded_by.id_for_label }}">Demanded By</label>
-              {{ form.demanded_by }}
-              {% if form.demanded_by.errors %}<p class="rf-error-text">{{ form.demanded_by.errors|join:", " }}</p>{% endif %}
+              <label for="{{ form.sub_head.id_for_label }}">Sub Head</label>
+              {{ form.sub_head }}
+              {% if form.sub_head.errors %}<p class="rf-error-text">{{ form.sub_head.errors|join:", " }}</p>{% endif %}
             </div>
 
+
+            <div class="field">
+              <label for="{{ form.cost_per_unit.id_for_label }}">Cost Per Unit</label>
+              {{ form.cost_per_unit }}
+              {% if form.cost_per_unit.errors %}<p class="rf-error-text">{{ form.cost_per_unit.errors|join:", " }}</p>{% endif %}
+            </div>
             <div class="field">
               <label for="{{ form.quantity.id_for_label }}">Quantity</label>
               {{ form.quantity }}
               {% if form.quantity.errors %}<p class="rf-error-text">{{ form.quantity.errors|join:", " }}</p>{% endif %}
             </div>
-
+            <div class="field">
+              <label for="{{ form.estimated_cost.id_for_label }}">
+                Estimated Cost
+                <span style="color:var(--text-secondary); font-weight:400;">(auto: Cost Per Unit &times; Quantity)</span>
+              </label>
+              {{ form.estimated_cost }}
+              {% if form.estimated_cost.errors %}<p class="rf-error-text">{{ form.estimated_cost.errors|join:", " }}</p>{% endif %}
+            </div>
+            <div class="field">
+              <label for="{{ form.demanded_by.id_for_label }}">Demanded By</label>
+              {{ form.demanded_by }}
+              {% if form.demanded_by.errors %}<p class="rf-error-text">{{ form.demanded_by.errors|join:", " }}</p>{% endif %}
+            </div>
             <div class="field">
               <label for="{{ form.purchase_mode.id_for_label }}">Purchase Mode</label>
               {{ form.purchase_mode }}
@@ -94,11 +114,6 @@
               <label for="{{ form.attachment.id_for_label }}">Attachment <span style="color:var(--text-secondary); font-weight:400;">(max 2MB)</span></label>
               {{ form.attachment }}
               {% if form.attachment.errors %}<p class="rf-error-text">{{ form.attachment.errors|join:", " }}</p>{% endif %}
-              {% if is_edit and requirement.attachment %}
-                <p style="font-size:12px; margin-top:6px;">
-                  Current: <a href="{{ requirement.attachment.url }}" style="color:var(--accent-blue);" target="_blank">{{ requirement.attachment.name }}</a>
-                </p>
-              {% endif %}
             </div>
 
             <!-- Date Time: auto, read-only display only -->
@@ -138,5 +153,71 @@
 </div>
 
 <script src="{% static 'js/theme-toggle.js' %}"></script>
+<script>
+  // Fund -> Sub Head cascading filter. Every Sub Head <option> already
+  // carries data-fund-head="<fund id>" (added server-side by
+  // SubHeadSelect in forms.py). Filtering client-side avoids an AJAX
+  // round-trip for what's a small masterdata table.
+  (function () {
+    var fundSelect = document.getElementById('{{ form.fund_head.id_for_label }}');
+    var subSelect = document.getElementById('{{ form.sub_head.id_for_label }}');
+    if (!fundSelect || !subSelect) return;
+
+    function filterSubHeads(preserveCurrent) {
+      var selectedFund = fundSelect.value;
+      var currentValue = subSelect.value;
+      var currentStillValid = false;
+
+      Array.prototype.forEach.call(subSelect.options, function (opt) {
+        if (!opt.value) { opt.hidden = false; return; } // keep "Select Sub Head" visible
+        var matches = !selectedFund || opt.getAttribute('data-fund-head') === selectedFund;
+        opt.hidden = !matches;
+        if (matches && opt.value === currentValue) currentStillValid = true;
+      });
+
+      if (!preserveCurrent || !currentStillValid) {
+        subSelect.value = "";
+      }
+    }
+
+    fundSelect.addEventListener('change', function () { filterSubHeads(false); });
+    // On page load (e.g. editing an existing Requirement), keep the
+    // already-saved Sub Head selected if it still matches the saved Fund.
+    filterSubHeads(true);
+  })();
+
+  // Attachment remove button: the checkbox is what Django's
+  // ClearableFileInput actually reads on save; this just gives visible
+  // feedback (strikethrough + note) when it's toggled.
+  document.querySelectorAll('.attachment-clear-checkbox').forEach(function (checkbox) {
+    checkbox.addEventListener('change', function () {
+      var wrapper = checkbox.closest('.attachment-current');
+      if (wrapper) wrapper.classList.toggle('attachment-marked-removed', checkbox.checked);
+    });
+  });
+
+  // Estimated Cost = Cost Per Unit x Quantity, recalculated live.
+  // estimated_cost stays a normal editable field (not readonly/disabled,
+  // since disabled inputs don't get submitted at all) — this just fills
+  // it in automatically; the user can still hand-edit it afterward if
+  // they need to override the computed value for some reason.
+  (function () {
+    var costInput = document.getElementById('{{ form.cost_per_unit.id_for_label }}');
+    var qtyInput = document.getElementById('{{ form.quantity.id_for_label }}');
+    var estimatedInput = document.getElementById('{{ form.estimated_cost.id_for_label }}');
+    if (!costInput || !qtyInput || !estimatedInput) return;
+
+    function recalc() {
+      var cost = parseFloat(costInput.value);
+      var qty = parseFloat(qtyInput.value);
+      if (!isNaN(cost) && !isNaN(qty)) {
+        estimatedInput.value = (cost * qty).toFixed(2);
+      }
+    }
+
+    costInput.addEventListener('input', recalc);
+    qtyInput.addEventListener('input', recalc);
+  })();
+</script>
 </body>
 </html>

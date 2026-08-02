@@ -22,6 +22,7 @@ urlpatterns = [
     path('eas/<int:pk>/', views.eas_detail, name='eas_detail'),
     path('eas/<int:pk>/edit/', views.eas_edit, name='eas_edit'),
     path('eas/<int:pk>/download/', views.eas_download_pdf, name='eas_download_pdf'),
+    path('eas/<int:pk>/upload/<str:doc_type>/', views.eas_upload_document, name='eas_upload_document'),
 
     # UNCHANGED
     path('audit-trail/', views.audit_trail, name='audit_trail'),
