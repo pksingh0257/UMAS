@@ -34,11 +34,15 @@
           {% endif %}
         </div>
 
-        <div class="rf-grid-2" style="margin-top:16px;">
+        <div class="rf-grid-3" style="margin-top:16px;">
           <div><span class="rf-label">Item Name</span><p>{{ requirement.item_name }}</p></div>
           <div><span class="rf-label">Category</span><p>{{ requirement.category }}</p></div>
           <div><span class="rf-label">Quantity</span><p>{{ requirement.quantity }}</p></div>
           <div><span class="rf-label">Purpose</span><p>{{ requirement.purpose }}</p></div>
+          <!-- NEW: Fund, Sub Head, Cost Per Unit -->
+          <div><span class="rf-label">Fund</span><p>{{ requirement.fund_head }}</p></div>
+          <div><span class="rf-label">Sub Head</span><p>{{ requirement.sub_head }}</p></div>
+          <div><span class="rf-label">Cost Per Unit</span><p>{{ requirement.cost_per_unit }}</p></div>
           <div><span class="rf-label">Estimated Cost</span><p>{{ requirement.estimated_cost }}</p></div>
           <div><span class="rf-label">Demanded By</span><p>{{ requirement.demanded_by }}</p></div>
           <div><span class="rf-label">Purchase Mode</span><p>{{ requirement.get_purchase_mode_display }}</p></div>

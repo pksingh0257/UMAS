@@ -69,12 +69,35 @@ class Requirement(models.Model):
     quantity = models.PositiveIntegerField()
     purpose = models.CharField(max_length=250)
     estimated_cost = models.CharField(max_length=250)
+
+    # NEW: distinct from estimated_cost (which reads as a total/lump-sum
+    # figure elsewhere in the app, e.g. NotingSheet.unit_price pulls from
+    # it). Same plain-text convention as estimated_cost — CharField, not
+    # Decimal — for consistency. Optional so adding it doesn't require a
+    # default for existing rows.
+    cost_per_unit = models.CharField(max_length=250, blank=True, null=True)
+
     demanded_by = models.CharField(max_length=250, help_text="Who this item is being demanded for")
 
-    # "Select Fund" — excluded from the form for now per your note
-    # ("escape this field"). Field kept on the model, optional, so it's
-    # easy to wire back in later without another migration.
-    fund_head = models.CharField(max_length=150, blank=True, null=True)
+    # CHANGED: "Select Fund" is no longer excluded — wired in as a proper
+    # FK to masterdata.FundHead, plus a new sub_head FK (cascading pair,
+    # filtered client-side in requirement_form.html). Both left optional
+    # (null=True, blank=True) for now, same cautious default used
+    # elsewhere in this model — tighten to required later if needed.
+    fund_head = models.ForeignKey(
+        "masterdata.FundHead",
+        on_delete=models.PROTECT,
+        related_name="requirements",
+        null=True,
+        blank=True,
+    )
+    sub_head = models.ForeignKey(
+        "masterdata.SubHead",
+        on_delete=models.PROTECT,
+        related_name="requirements",
+        null=True,
+        blank=True,
+    )
 
     purchase_mode = models.CharField(max_length=10, choices=PURCHASE_MODE_CHOICES)
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default="MEDIUM")

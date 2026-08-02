@@ -188,6 +188,7 @@ html[data-theme="light"] .hero-panel {
   color: var(--primary-red);
   letter-spacing: 1px;
   margin-bottom: 6px;
+  font-weight: bold;
 }
 .field select, .field input {
   width: 100%;

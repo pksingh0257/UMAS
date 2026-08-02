@@ -118,6 +118,21 @@ class FundEntry(CoreModel):
         related_name="fund_entries",
     )
 
+    # Human-readable ID: {SubHead code}-{Financial Year start year}-{7-digit
+    # sequence}, e.g. ATG-2026-0000001. Sequence is scoped per sub_head +
+    # financial_year combination (mirrors REQ-YYYY-NNNNN / NS-YYYY-NNNNN
+    # elsewhere in the project, just with an extra scoping level since the
+    # prefix itself varies by sub head). null=True (not just blank) so
+    # existing rows can be migrated without a uniqueness clash on an empty
+    # string — see save() below, which fills it in on first save.
+    entry_number = models.CharField(
+        max_length=40,
+        unique=True,
+        editable=False,
+        null=True,
+        blank=True,
+    )
+
     entry_type = models.CharField(
         max_length=25,
         choices=ENTRY_TYPE_CHOICES,
@@ -241,6 +256,28 @@ class FundEntry(CoreModel):
 
         if errors:
             raise ValidationError(errors)
+
+    def save(self, *args, **kwargs):
+        if not self.entry_number:
+            year = self.financial_year.start_date.year
+            prefix = f"{self.sub_head.code}-{year}-"
+
+            last = (
+                FundEntry.objects.filter(entry_number__startswith=prefix)
+                .order_by("-entry_number")
+                .first()
+            )
+
+            seq = 1
+            if last:
+                try:
+                    seq = int(last.entry_number.split("-")[-1]) + 1
+                except ValueError:
+                    seq = 1
+
+            self.entry_number = f"{prefix}{seq:07d}"
+
+        super().save(*args, **kwargs)
 
     def submit(self, user):
         """
@@ -523,4 +560,3 @@ class FundTransaction(CoreModel):
             return self.amount
 
         return Decimal("0.00")
-

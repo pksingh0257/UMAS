@@ -525,7 +525,7 @@
               </h2>
 
               <span class="finance-entry-id">
-                Entry ID: {{ entry.pk }}
+                Entry ID: {{ entry.entry_number|default:entry.pk }}
               </span>
             </div>
 
