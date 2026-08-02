@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator
 from django.utils import timezone
 from core_base.models import CoreModel
 from masterdata.models import FundHead
@@ -469,6 +470,25 @@ class EAS(models.Model):
     # exposed on the form, kept for whatever downstream logic expects them.
     type_id = models.CharField(max_length=50, blank=True, default="")
     status_id = models.IntegerField(default=0)
+
+    # ---- Post-approval document uploads (Sanction / Contract / Invoice) ----
+    # Only meaningful, and only shown in the UI, once the EAS itself is
+    # APPROVED — these are real uploaded files (not generated PDFs like
+    # the Noting Sheet/EAS downloads), so they're plain FileFields,
+    # PDF-only, one per document type. All optional/nullable since they
+    # get filled in over time, not all at once.
+    sanction_document = models.FileField(
+        upload_to="eas_documents/sanction/", null=True, blank=True,
+        validators=[FileExtensionValidator(allowed_extensions=["pdf"])],
+    )
+    contract_document = models.FileField(
+        upload_to="eas_documents/contract/", null=True, blank=True,
+        validators=[FileExtensionValidator(allowed_extensions=["pdf"])],
+    )
+    invoice_document = models.FileField(
+        upload_to="eas_documents/invoice/", null=True, blank=True,
+        validators=[FileExtensionValidator(allowed_extensions=["pdf"])],
+    )
 
     created_by = models.ForeignKey(
         "authentication.User", on_delete=models.PROTECT, related_name="eas_created"

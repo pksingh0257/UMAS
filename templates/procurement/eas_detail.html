@@ -11,7 +11,19 @@
 <div class="app-layout">
   {% include 'partials/sidebar.html' with active_nav='procurement' %}
   <div class="main-content">
- {% include 'partials/header.html' with active_nav='procurement' %}
+    <div class="topbar">
+      <div class="brand">
+        <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="brand-icon">
+        <div>
+          <h1>ARMY INTERNAL SYSTEM</h1>
+          <p class="tagline">SECURE &bull; DISCIPLINED &bull; DEDICATED</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button id="theme-toggle-btn" class="theme-toggle">Light Mode</button>
+        <a href="{% url 'logout' %}" class="theme-toggle" style="text-decoration:none;">Log Out</a>
+      </div>
+    </div>
 
     <div class="dashboard-shell">
 
@@ -95,6 +107,58 @@
         </div>
       {% endif %}
 
+      {% if eas.workflow_status == "APPROVED" %}
+
+        <div class="card">
+          <h3 style="margin-top:0;">Sanction</h3>
+          {% if eas.sanction_document %}
+            <p style="color:var(--text-secondary); font-size:13px;">
+              Uploaded: <a href="{{ eas.sanction_document.url }}" target="_blank" style="color:var(--accent-blue); text-decoration:none;">{{ eas.sanction_document.name|cut:"eas_documents/sanction/" }}</a>
+            </p>
+          {% else %}
+            <p style="color:var(--text-secondary); font-size:13px;">No file uploaded yet.</p>
+          {% endif %}
+          <form method="post" action="{% url 'eas_upload_document' eas.pk 'sanction' %}" enctype="multipart/form-data" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:10px;">
+            {% csrf_token %}
+            <input type="file" name="document" accept="application/pdf" required>
+            <button type="submit" class="login-btn" style="width:auto; padding:8px 20px;">{% if eas.sanction_document %}Replace{% else %}Upload{% endif %}</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0;">Contract</h3>
+          {% if eas.contract_document %}
+            <p style="color:var(--text-secondary); font-size:13px;">
+              Uploaded: <a href="{{ eas.contract_document.url }}" target="_blank" style="color:var(--accent-blue); text-decoration:none;">{{ eas.contract_document.name|cut:"eas_documents/contract/" }}</a>
+            </p>
+          {% else %}
+            <p style="color:var(--text-secondary); font-size:13px;">No file uploaded yet.</p>
+          {% endif %}
+          <form method="post" action="{% url 'eas_upload_document' eas.pk 'contract' %}" enctype="multipart/form-data" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:10px;">
+            {% csrf_token %}
+            <input type="file" name="document" accept="application/pdf" required>
+            <button type="submit" class="login-btn" style="width:auto; padding:8px 20px;">{% if eas.contract_document %}Replace{% else %}Upload{% endif %}</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0;">Invoice</h3>
+          {% if eas.invoice_document %}
+            <p style="color:var(--text-secondary); font-size:13px;">
+              Uploaded: <a href="{{ eas.invoice_document.url }}" target="_blank" style="color:var(--accent-blue); text-decoration:none;">{{ eas.invoice_document.name|cut:"eas_documents/invoice/" }}</a>
+            </p>
+          {% else %}
+            <p style="color:var(--text-secondary); font-size:13px;">No file uploaded yet.</p>
+          {% endif %}
+          <form method="post" action="{% url 'eas_upload_document' eas.pk 'invoice' %}" enctype="multipart/form-data" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:10px;">
+            {% csrf_token %}
+            <input type="file" name="document" accept="application/pdf" required>
+            <button type="submit" class="login-btn" style="width:auto; padding:8px 20px;">{% if eas.invoice_document %}Replace{% else %}Upload{% endif %}</button>
+          </form>
+        </div>
+
+      {% endif %}
+
       </div>
 
       <div class="detail-side">
@@ -106,7 +170,7 @@
             <div class="doc-actions">
               <a href="{% url 'noting_sheet_detail' noting_sheet.pk %}">View</a>
               {% if noting_sheet.workflow_status == "APPROVED" %}
-                <a href="{% url 'noting_sheet_download_pdf' noting_sheet.pk %}">Download PDF</a>
+                <a href="{% url 'noting_sheet_download_pdf' noting_sheet.pk %}" target="_blank">View / Print PDF</a>
               {% endif %}
             </div>
           </div>
@@ -115,9 +179,45 @@
             <span class="badge badge-{{ eas.simple_approval_status|lower }}">EAS</span>
             <div class="doc-actions">
               {% if eas.workflow_status == "APPROVED" %}
-                <a href="{% url 'eas_download_pdf' eas.pk %}">Download PDF</a>
+                <a href="{% url 'eas_download_pdf' eas.pk %}" target="_blank">View / Print PDF</a>
               {% else %}
                 <span style="font-size:12px; color:var(--text-secondary);">Download available once approved</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="doc-item">
+            <span class="badge badge-{% if eas.sanction_document %}approved{% else %}pending{% endif %}">Sanction</span>
+            <div class="doc-actions">
+              {% if eas.sanction_document %}
+                <a href="{{ eas.sanction_document.url }}" target="_blank">View</a>
+                <a href="{{ eas.sanction_document.url }}" download>Download PDF</a>
+              {% else %}
+                <span style="font-size:12px; color:var(--text-secondary);">Not uploaded yet</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="doc-item">
+            <span class="badge badge-{% if eas.contract_document %}approved{% else %}pending{% endif %}">Contract</span>
+            <div class="doc-actions">
+              {% if eas.contract_document %}
+                <a href="{{ eas.contract_document.url }}" target="_blank">View</a>
+                <a href="{{ eas.contract_document.url }}" download>Download PDF</a>
+              {% else %}
+                <span style="font-size:12px; color:var(--text-secondary);">Not uploaded yet</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="doc-item">
+            <span class="badge badge-{% if eas.invoice_document %}approved{% else %}pending{% endif %}">Invoice</span>
+            <div class="doc-actions">
+              {% if eas.invoice_document %}
+                <a href="{{ eas.invoice_document.url }}" target="_blank">View</a>
+                <a href="{{ eas.invoice_document.url }}" download>Download PDF</a>
+              {% else %}
+                <span style="font-size:12px; color:var(--text-secondary);">Not uploaded yet</span>
               {% endif %}
             </div>
           </div>

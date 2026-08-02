@@ -139,6 +139,10 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.PBKDF2PasswordHasher",
 ]
 
+# Media
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Session Security Lifespan (15 Mins / 900 Secs)
 SESSION_COOKIE_AGE = 900
 SESSION_SAVE_EVERY_REQUEST = True

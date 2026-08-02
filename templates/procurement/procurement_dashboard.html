@@ -36,7 +36,9 @@
 
       <div class="section-head-row">
         <h2>Noting Sheets</h2>
+        {% if role in 'ACCOUNTS_CLERK,HEAD_CLERK,ADMINISTRATOR' %}
         <a href="{% url 'procurement_select' %}" class="login-btn" style="width:auto; padding:10px 20px; text-decoration:none;">+ Create Procurement</a>
+        {% endif %}
       </div>
 
       <div class="card">

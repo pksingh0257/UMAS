@@ -1,4 +1,5 @@
 from django import forms
+from django.core.validators import FileExtensionValidator
 from .models import ProcurementCase, NotingSheet, EAS
 
 
@@ -155,3 +156,16 @@ class EASCFADecisionForm(forms.Form):
         if cleaned.get("cfa_status") == "DENIED" and not cleaned.get("cfa_remarks"):
             self.add_error("cfa_remarks", "Remarks are required when returning an EAS.")
         return cleaned
+
+
+class EASDocumentUploadForm(forms.Form):
+    """
+    One shared form for all three post-approval uploads (Sanction /
+    Contract / Invoice) — the view decides which EAS field to save it to
+    based on the doc_type in the URL, so this form only needs to know
+    it's a PDF.
+    """
+    document = forms.FileField(
+        validators=[FileExtensionValidator(allowed_extensions=["pdf"])],
+        widget=forms.ClearableFileInput(attrs={"accept": "application/pdf"}),
+    )

@@ -140,7 +140,7 @@ class FundTransactionAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         # Financial transactions must never be deleted.
-        return False
+        return True
 
     @admin.display(
         description="Fund",
