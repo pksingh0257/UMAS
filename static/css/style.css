@@ -429,3 +429,255 @@ html[data-theme="light"] .hero-panel {
 @media (max-width: 900px) {
   .detail-layout { grid-template-columns: 1fr; }
 }
+
+
+
+/* =====================================================================
+   FUNDS MODULE — Dashboard / Fund Head Detail / Sub Head Detail
+   Append this block to style.css. Uses the existing theme variables
+   (--surface, --bg, --border, --primary-red, --accent-blue,
+   --text-primary, --text-secondary) so it follows dark/light mode
+   automatically.
+   ===================================================================== */
+
+/* ---------- Page heading block ---------- */
+.fd-page-head,
+.fhd-title,
+.shd-title { margin-bottom: 20px; }
+.fd-page-head h2 { margin: 0 0 4px; }
+.fd-page-head p { margin: 0; color: var(--text-secondary); }
+
+.fhd-back,
+.shd-back {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+.fhd-back:hover,
+.shd-back:hover { color: var(--accent-blue); }
+
+.fhd-title,
+.shd-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 0;
+}
+
+/* ---------- Fund Head summary cards (Public Fund / Regimental Fund) ---------- */
+.fd-fund-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-bottom: 22px;
+}
+@media (max-width: 900px) {
+  .fd-fund-grid { grid-template-columns: 1fr; }
+}
+
+.fd-fund-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  position: relative;
+}
+
+.fd-fund-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.fd-fund-card-head h3 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+.fd-fund-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(66, 165, 245, 0.14);
+  color: var(--accent-blue);
+  font-size: 17px;
+  flex-shrink: 0;
+}
+
+.fd-balance-label {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+.fd-balance-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: #4caf50;
+  margin: 4px 0 18px;
+}
+
+.fd-mini-row { display: flex; gap: 36px; margin-bottom: 18px; }
+.fd-mini-label {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+.fd-mini-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 2px;
+}
+
+.fd-view-btn {
+  display: inline-block;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+}
+.fd-view-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+
+/* ---------- Fund Entries section (dashboard bottom card) ---------- */
+.fd-entries-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.fd-entries-head h3 { margin: 0 0 4px; }
+.fd-entries-head p { margin: 0; color: var(--text-secondary); font-size: 13px; }
+
+.fd-create-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 11px 18px;
+  border-radius: 8px;
+  background: var(--primary-red);
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.fd-create-btn:hover { opacity: 0.9; }
+
+/* ---------- Fund Head Detail summary strip ---------- */
+.fhd-summary-card,
+.shd-summary-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+.fhd-summary-item .label,
+.shd-summary-item .label {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.fhd-summary-item .value,
+.shd-summary-item .value {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 2px;
+}
+.fhd-summary-item.balance .value,
+.shd-summary-item.balance .value {
+  color: #4caf50;
+  font-size: 24px;
+}
+
+/* ---------- Shared tables (Sub-Head Wise Balance / Transactions / Fund Entries) ---------- */
+table.fd-table,
+table.fhd-table,
+table.shd-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+table.fd-table th, table.fd-table td,
+table.fhd-table th, table.fhd-table td,
+table.shd-table th, table.shd-table td {
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  color: var(--text-primary);
+  font-size: 13.5px;
+}
+table.fd-table th,
+table.fhd-table th,
+table.shd-table th {
+  background: var(--bg);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+table.fd-table tbody tr:hover,
+table.fhd-table tbody tr:hover,
+table.shd-table tbody tr:hover {
+  background: var(--bg);
+}
+
+.fd-view-link,
+.fhd-link {
+  color: var(--accent-blue);
+  text-decoration: none;
+  font-weight: 700;
+}
+.fd-view-link:hover,
+.fhd-link:hover { text-decoration: underline; }
+
+.fd-empty,
+.fhd-empty,
+.shd-empty {
+  padding: 28px !important;
+  text-align: center !important;
+  color: var(--text-secondary) !important;
+}
+
+/* ---------- Sub Head Detail: pseudo-tabs + debit/credit tags ---------- */
+.shd-tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.shd-tab {
+  padding: 10px 16px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: default;
+  border-bottom: 2px solid transparent;
+}
+.shd-tab.active {
+  color: var(--primary-red);
+  border-bottom-color: var(--primary-red);
+}
+
+.shd-debit { color: var(--primary-red); font-weight: 700; }
+.shd-credit { color: #4caf50; font-weight: 700; }

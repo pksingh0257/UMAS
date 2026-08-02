@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UAMS - Funds Dashboard</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+   <!-- <link rel="stylesheet" href="{% static 'css/style_funds_addon.css' %}"> -->
+</head>
+<body>
+
+<div class="app-layout">
+
+  {% include 'partials/sidebar.html' with active_nav='funds' %}
+
+  <div class="main-content">
+    {% include 'partials/header.html' with active_nav='funds' %}
+
+    <div class="dashboard-shell">
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="card"><p>{{ message }}</p></div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="fd-page-head">
+        <h2>Funds Dashboard</h2>
+        <p>Overview of funds and recent entries.</p>
+      </div>
+
+      <div class="fd-fund-grid">
+        {% for fh in fund_heads %}
+          <div class="fd-fund-card">
+            <div class="fd-fund-card-head">
+              <h3>{{ fh.fund_head.name }}</h3>
+              <div class="fd-fund-icon">&#128179;</div>
+            </div>
+            <div class="fd-balance-label">Available Balance</div>
+            <div class="fd-balance-value">&#8377;{{ fh.available_balance|floatformat:2 }}</div>
+            <div class="fd-mini-row">
+              <div>
+                <div class="fd-mini-label">Total Credit</div>
+                <div class="fd-mini-value">&#8377;{{ fh.total_credit|floatformat:2 }}</div>
+              </div>
+              <div>
+                <div class="fd-mini-label">Total Expenditure</div>
+                <div class="fd-mini-value">&#8377;{{ fh.total_expenditure|floatformat:2 }}</div>
+              </div>
+            </div>
+            <a href="{% url 'finance:fund-head-detail' fh.fund_head.pk %}" class="fd-view-btn">View Details &rarr;</a>
+          </div>
+        {% empty %}
+          <div class="fd-fund-card">
+            <p style="color:var(--text-secondary);">No active Fund Heads configured yet.</p>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="card">
+        <div class="fd-entries-head">
+          <div>
+            <h3>Fund Entries</h3>
+            <p>Manage Opening Balance and Additional Credit entries.</p>
+          </div>
+          {% if role == "ACCOUNTS_OFFICER" %}
+            <a href="{% url 'finance:fund-entry-create' %}" class="fd-create-btn">+ Create Fund Entry</a>
+          {% endif %}
+        </div>
+
+        <table class="fd-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Financial Year</th>
+              <th>Sub Head</th>
+              <th>Entry Type</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for entry in entries %}
+              <tr>
+                <td>{{ entry.entry_date }}</td>
+                <td>{{ entry.financial_year }}</td>
+                <td>{{ entry.sub_head.code }}</td>
+                <td>{{ entry.get_entry_type_display }}</td>
+                <td>&#8377;{{ entry.amount }}</td>
+                <td>{{ entry.get_status_display }}</td>
+                <td><a href="{% url 'finance:fund-entry-detail' entry.pk %}" class="fd-view-link">View</a></td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="7" class="fd-empty">No Fund Entries found.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div style="text-align:right; margin-top:12px;">
+          <a href="{% url 'finance:fund-entry-list' %}" class="fd-view-link">View all Fund Entries &rarr;</a>
+        </div>
+      </div>
+
+    </div>
+
+    {% include 'partials/footer.html' %}
+  </div>
+
+</div>
+
+<script src="{% static 'js/theme-toggle.js' %}"></script>
+</body>
+</html>

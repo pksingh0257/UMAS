@@ -12,9 +12,10 @@
     </a>
 
       {% if role in 'ACCOUNTS_OFFICER,ADMINISTRATOR,ACCOUNTS_CLERK,HEAD_CLERK,CFA' %}
-     <a href="{% url 'finance:fund-entry-list' %}" class="{% if active_nav == 'funds' %}active{% endif %}">
+     <a href="{% url 'finance:fund-dashboard' %}" class="{% if active_nav == 'funds' %}active{% endif %}">
         <span class="icon">&#128179;</span> Funds
       </a>
+
     {% endif %}
 
     {% if role in 'ACCOUNTS_CLERK,HEAD_CLERK,ADMINISTRATOR' %}

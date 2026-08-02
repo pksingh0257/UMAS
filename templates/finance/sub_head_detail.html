@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UAMS - {{ sub_head.name }}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <!-- <link rel="stylesheet" href="{% static 'css/style_funds_addon.css' %}"> -->
+</head>
+<body>
+
+<div class="app-layout">
+
+  {% include 'partials/sidebar.html' with active_nav='funds' %}
+
+  <div class="main-content">
+    {% include 'partials/header.html' with active_nav='funds' %}
+
+    <div class="dashboard-shell">
+
+      <a href="{% url 'finance:fund-head-detail' sub_head.fund_head.pk %}" class="shd-back">&larr; Back to {{ sub_head.fund_head.name }}</a>
+      <h2 class="shd-title">{{ sub_head.name }}</h2>
+
+      <div class="shd-summary-card">
+        <div class="shd-summary-item">
+          <div class="label">Total Credit</div>
+          <div class="value">&#8377;{{ summary.total_credit|floatformat:2 }}</div>
+        </div>
+        <div class="shd-summary-item">
+          <div class="label">Total Expenditure</div>
+          <div class="value">&#8377;{{ summary.total_expenditure|floatformat:2 }}</div>
+        </div>
+        <div class="shd-summary-item balance">
+          <div class="label">Available Balance</div>
+          <div class="value">&#8377;{{ summary.available_balance|floatformat:2 }}</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="shd-tabs">
+          <div class="shd-tab active">Transactions</div>
+          <div class="shd-tab">Ledger</div>
+          <div class="shd-tab">Procurements</div>
+          <div class="shd-tab">Documents</div>
+        </div>
+
+        <table class="shd-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Particulars</th>
+              <th>Reference</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for txn in transactions %}
+              <tr>
+                <td>{{ txn.transaction_date }}</td>
+                <td>
+                  {% if txn.debit_amount %}
+                    <span class="shd-debit">Debit</span>
+                  {% else %}
+                    <span class="shd-credit">Credit</span>
+                  {% endif %}
+                </td>
+                <td>{{ txn.remarks|default:txn.get_transaction_type_display }}</td>
+                <td>{{ txn.reference_number|default:"-" }}</td>
+                <td>&#8377;{{ txn.amount }}</td>
+                <td>{% if txn.is_reversed %}Reversed{% else %}Posted{% endif %}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="6" class="shd-empty">No transactions recorded yet for this Sub Head.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <p style="color:var(--text-secondary); font-size:12.5px; margin-top:14px;">
+          Ledger / Procurements / Documents tabs will populate once those modules are wired in here.
+        </p>
+      </div>
+
+    </div>
+
+    {% include 'partials/footer.html' %}
+  </div>
+
+</div>
+
+<script src="{% static 'js/theme-toggle.js' %}"></script>
+</body>
+</html>

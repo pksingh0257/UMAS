@@ -7,6 +7,24 @@ app_name = "finance"
 
 
 urlpatterns = [
+    # Funds Dashboard / Detail pages
+    path(
+        "funds/",
+        views.fund_dashboard,
+        name="fund-dashboard",
+    ),
+    path(
+        "funds/<uuid:pk>/",
+        views.fund_head_detail,
+        name="fund-head-detail",
+    ),
+    path(
+        "funds/sub-head/<uuid:pk>/",
+        views.sub_head_detail,
+        name="sub-head-detail",
+    ),
+
+    # Fund Entries (workflow: create -> submit -> CFA decision)
     path(
         "fund-entries/",
         views.fund_entry_list,

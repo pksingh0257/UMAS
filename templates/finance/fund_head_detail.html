@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UAMS - {{ fund_head.name }}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <!-- <link rel="stylesheet" href="{% static 'css/style_funds_addon.css' %}"> -->
+</head>
+<body>
+
+<div class="app-layout">
+
+  {% include 'partials/sidebar.html' with active_nav='funds' %}
+
+  <div class="main-content">
+    {% include 'partials/header.html' with active_nav='funds' %}
+
+    <div class="dashboard-shell">
+
+      <a href="{% url 'finance:fund-dashboard' %}" class="fhd-back">&larr; Back to Funds Dashboard</a>
+      <h2 class="fhd-title">{{ fund_head.name }}</h2>
+
+      <div class="fhd-summary-card">
+        <div class="fhd-summary-item">
+          <div class="label">Total Credit</div>
+          <div class="value">&#8377;{{ summary.total_credit|floatformat:2 }}</div>
+        </div>
+        <div class="fhd-summary-item">
+          <div class="label">Total Expenditure</div>
+          <div class="value">&#8377;{{ summary.total_expenditure|floatformat:2 }}</div>
+        </div>
+        <div class="fhd-summary-item balance">
+          <div class="label">Available Balance</div>
+          <div class="value">&#8377;{{ summary.available_balance|floatformat:2 }}</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Sub-Head Wise Balance</h3>
+        <table class="fhd-table">
+          <thead>
+            <tr>
+              <th>Sub Head</th>
+              <th>Total Credit</th>
+              <th>Total Expenditure</th>
+              <th>Available Balance</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in sub_heads %}
+              <tr>
+                <td>{{ row.sub_head.name }}</td>
+                <td>&#8377;{{ row.total_credit|floatformat:2 }}</td>
+                <td>&#8377;{{ row.total_expenditure|floatformat:2 }}</td>
+                <td>&#8377;{{ row.available_balance|floatformat:2 }}</td>
+                <td><a href="{% url 'finance:sub-head-detail' row.sub_head.pk %}" class="fhd-link">View Details &rarr;</a></td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="5" class="fhd-empty">No active Sub Heads under this Fund Head.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>Recent Transactions</h3>
+        <table class="fhd-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Sub Head</th>
+              <th>Type</th>
+              <th>Reference</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for txn in recent_transactions %}
+              <tr>
+                <td>{{ txn.transaction_date }}</td>
+                <td>{{ txn.sub_head.name }}</td>
+                <td>{{ txn.get_transaction_type_display }}</td>
+                <td>{{ txn.reference_number|default:"-" }}</td>
+                <td>&#8377;{{ txn.amount }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="5" class="fhd-empty">No transactions recorded yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    {% include 'partials/footer.html' %}
+  </div>
+
+</div>
+
+<script src="{% static 'js/theme-toggle.js' %}"></script>
+</body>
+</html>
