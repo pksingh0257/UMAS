@@ -1,0 +1,22 @@
+prince_dev --> local 
+
+Git add .
+git commit -m "msg"
+
+
+Remotely:
+Git push (Done changes in prince_dev)
+
+Switch to main branch (locally):
+git checkout main
+
+git pull origin main (all changes take locally)
+
+git merge prince_dev (merge change in main from prince_dev)
+
+If any conflict:
+git add .
+git commit
+
+For pushing the code in main:
+git push origin main

@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UAMS - {{ fund_head.name }}</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
-  <!-- <link rel="stylesheet" href="{% static 'css/style_funds_addon.css' %}"> -->
 </head>
 <body>
 
@@ -37,15 +36,54 @@
         </div>
       </div>
 
+      <h3 class="fhd-section-title">Sub-Head Wise Balance</h3>
+
+      <div class="fhd-card-grid">
+        {% for row in sub_heads %}
+          <div class="fhd-subhead-card">
+            <div class="fhd-subhead-name">{{ row.sub_head.name }}</div>
+            <div class="fhd-subhead-row">
+              <div>
+                <div class="fhd-subhead-label">Allotted</div>
+                <div class="fhd-subhead-value">&#8377;{{ row.total_credit|floatformat:0 }}</div>
+              </div>
+              <div>
+                <div class="fhd-subhead-label">Expenditure</div>
+                <div class="fhd-subhead-value">&#8377;{{ row.total_expenditure|floatformat:0 }}</div>
+              </div>
+              <div>
+                <div class="fhd-subhead-label">Balance</div>
+                <div class="fhd-subhead-value">&#8377;{{ row.available_balance|floatformat:0 }}</div>
+              </div>
+            </div>
+            <div class="fhd-util-row">
+              <div class="fhd-util-label">Utilisation</div>
+              <span class="fhd-util-pct">{{ row.utilisation_pct }}%</span>
+            </div>
+            <div class="fhd-progress-track">
+              <div class="fhd-progress-fill" style="width:{{ row.utilisation_pct }}%;"></div>
+            </div>
+            <div class="fhd-subhead-action">
+              <a href="{% url 'finance:sub-head-detail' row.sub_head.pk %}" class="fhd-link">View Details &rarr;</a>
+            </div>
+          </div>
+        {% empty %}
+          <p style="color:var(--text-secondary);">No active Sub Heads under this Fund Head.</p>
+        {% endfor %}
+      </div>
+
       <div class="card">
-        <h3>Sub-Head Wise Balance</h3>
+        <div class="fhd-table-header">
+          <h3>{{ fund_head.name }} &ndash; Sub Head Summary</h3>
+        </div>
         <table class="fhd-table">
           <thead>
             <tr>
               <th>Sub Head</th>
-              <th>Total Credit</th>
-              <th>Total Expenditure</th>
-              <th>Available Balance</th>
+              <th>Allotted (&#8377;)</th>
+              <th>Expenditure (&#8377;)</th>
+              <th>Balance (&#8377;)</th>
+              <th>Utilisation (%)</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -53,14 +91,30 @@
             {% for row in sub_heads %}
               <tr>
                 <td>{{ row.sub_head.name }}</td>
-                <td>&#8377;{{ row.total_credit|floatformat:2 }}</td>
-                <td>&#8377;{{ row.total_expenditure|floatformat:2 }}</td>
-                <td>&#8377;{{ row.available_balance|floatformat:2 }}</td>
+                <td>{{ row.total_credit|floatformat:0 }}</td>
+                <td>{{ row.total_expenditure|floatformat:0 }}</td>
+                <td>{{ row.available_balance|floatformat:0 }}</td>
+                <td>
+                  <div class="fhd-table-progress">
+                    <div class="fhd-progress-track"><div class="fhd-progress-fill" style="width:{{ row.utilisation_pct }}%;"></div></div>
+                    <span>{{ row.utilisation_pct }}%</span>
+                  </div>
+                </td>
                 <td><a href="{% url 'finance:sub-head-detail' row.sub_head.pk %}" class="fhd-link">View Details &rarr;</a></td>
               </tr>
             {% empty %}
-              <tr><td colspan="5" class="fhd-empty">No active Sub Heads under this Fund Head.</td></tr>
+              <tr><td colspan="6" class="fhd-empty">No active Sub Heads under this Fund Head.</td></tr>
             {% endfor %}
+            {% if sub_heads %}
+              <tr class="fhd-total-row">
+                <td>Total</td>
+                <td>{{ summary.total_credit|floatformat:0 }}</td>
+                <td>{{ summary.total_expenditure|floatformat:0 }}</td>
+                <td>{{ summary.available_balance|floatformat:0 }}</td>
+                <td>{{ summary.utilisation_pct }}%</td>
+                <td>&ndash;</td>
+              </tr>
+            {% endif %}
           </tbody>
         </table>
       </div>
