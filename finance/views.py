@@ -156,11 +156,26 @@ def fund_head_detail(request, pk):
     fund_txns = FundTransaction.objects.filter(sub_head__fund_head=fund_head)
     summary = _balance_summary(fund_txns)
 
+    if summary["total_credit"] > 0:
+        summary["utilisation_pct"] = round(
+            (summary["total_expenditure"] / summary["total_credit"]) * 100
+        )
+    else:
+        summary["utilisation_pct"] = 0
+
     sub_heads = []
 
     for sh in fund_head.sub_heads.filter(is_active=True).order_by("name"):
         sh_txns = FundTransaction.objects.filter(sub_head=sh)
         sh_summary = _balance_summary(sh_txns)
+
+        if sh_summary["total_credit"] > 0:
+            sh_summary["utilisation_pct"] = round(
+                (sh_summary["total_expenditure"] / sh_summary["total_credit"]) * 100
+            )
+        else:
+            sh_summary["utilisation_pct"] = 0
+
         sub_heads.append({"sub_head": sh, **sh_summary})
 
     recent_transactions = fund_txns.select_related("sub_head").order_by(
