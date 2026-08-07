@@ -6,24 +6,13 @@
   <title>UAMS - {{ noting_sheet.noting_id }}</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <link rel="stylesheet" href="{% static 'css/requirement_form.css' %}">
+  <link rel="stylesheet" href="{% static 'css/noting_sheet_form.css' %}">
 </head>
 <body>
 <div class="app-layout">
   {% include 'partials/sidebar.html' with active_nav='procurement' %}
   <div class="main-content">
-    <div class="topbar">
-      <div class="brand">
-        <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="brand-icon">
-        <div>
-          <h1>ARMY INTERNAL SYSTEM</h1>
-          <p class="tagline">SECURE &bull; DISCIPLINED &bull; DEDICATED</p>
-        </div>
-      </div>
-      <div class="topbar-right">
-        <button id="theme-toggle-btn" class="theme-toggle">Light Mode</button>
-        <a href="{% url 'logout' %}" class="theme-toggle" style="text-decoration:none;">Log Out</a>
-      </div>
-    </div>
+    {% include 'partials/header.html' with active_nav='procurement' %}
 
     <div class="dashboard-shell">
 
@@ -31,28 +20,69 @@
         {% for message in messages %}<div class="card rf-message">{{ message }}</div>{% endfor %}
       {% endif %}
 
-      <div class="detail-layout">
-      <div class="detail-main">
-
       <div class="card">
         <div class="rf-card-head">
           <h2 style="margin:0;">{{ noting_sheet.noting_id }} <span class="badge badge-workflow">{{ noting_sheet.get_workflow_status_display }}</span></h2>
+          {% if noting_sheet.workflow_status == "APPROVED" %}
+            <a href="{% url 'noting_sheet_download_pdf' noting_sheet.pk %}" target="_blank" class="theme-toggle" style="text-decoration:none;">View / Print PDF</a>
+          {% endif %}
         </div>
 
-        <div class="rf-grid-3" style="margin-top:16px;">
-          <div><span class="rf-label">Requirement ID</span><p>{{ noting_sheet.requirement.requirement_id }}</p></div>
-          <div><span class="rf-label">Item Name</span><p>{{ noting_sheet.item_name }}</p></div>
-          <div><span class="rf-label">A/U</span><p>{{ noting_sheet.au }}</p></div>
-          <div><span class="rf-label">Qty</span><p>{{ noting_sheet.qty }}</p></div>
-          <div><span class="rf-label">Unit Price</span><p>{{ noting_sheet.unit_price }}</p></div>
-          <div><span class="rf-label">Approx Amount</span><p>{{ noting_sheet.approx_amount|default:"—" }}</p></div>
+        <div class="rf-grid-4" style="margin-top:16px;">
+          <div><span class="rf-label">File No</span><p>{{ noting_sheet.file_no }}</p></div>
+          <div><span class="rf-label">Branch</span><p>{{ noting_sheet.branch }}</p></div>
+          <div><span class="rf-label">Sheet No</span><p>{{ noting_sheet.sheet_no }}</p></div>
+          <div><span class="rf-label">Dated</span><p>{{ noting_sheet.dated|date:"d M Y" }}</p></div>
+          <div><span class="rf-label">Financial Year</span><p>{{ noting_sheet.financial_year }}</p></div>
+          <div><span class="rf-label">Requirement</span><p>{{ noting_sheet.requirement.requirement_id }}</p></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0;">Paragraph 1 (Purport / Subject)</h3>
+        <p>{{ noting_sheet.paragraph_1 }}</p>
+        <h3>Paragraph 2 (Requirement / Justification)</h3>
+        <p style="white-space:pre-wrap;">{{ noting_sheet.paragraph_2 }}</p>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0;">Item Details</h3>
+        <table class="ns-item-table" style="border:none;">
+          <thead>
+            <tr>
+              <th>S.No</th><th>Item Description</th><th>A/U</th><th>Quantity</th><th>Unit Price (Rs)</th><th>Approx Amount (Rs)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items %}
+              <tr>
+                <td class="ns-sno">{{ forloop.counter }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.au }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.unit_price }}</td>
+                <td class="ns-approx">{{ item.approx_amount }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="ns-total-row">
+          <span>Total Amount (Rs)</span>
+          <strong>{{ noting_sheet.total_amount }}</strong>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0;">Fund Details</h3>
+        <div class="rf-grid-4">
           <div><span class="rf-label">Amount Allotted</span><p>{{ noting_sheet.amount_allotted }}</p></div>
           <div><span class="rf-label">Amount Released</span><p>{{ noting_sheet.amount_released }}</p></div>
           <div><span class="rf-label">Amount Expended</span><p>{{ noting_sheet.amount_expended }}</p></div>
           <div><span class="rf-label">Balance Held</span><p>{{ noting_sheet.balance_amount }}</p></div>
-          <div><span class="rf-label">Created By</span><p>{{ noting_sheet.created_by.username }}</p></div>
-          <div><span class="rf-label">Date</span><p>{{ noting_sheet.created_at|date:"d M Y, P" }}</p></div>
         </div>
+        {% if noting_sheet.remarks %}
+          <p style="margin-top:10px;"><span class="rf-label">Remarks</span><br>{{ noting_sheet.remarks }}</p>
+        {% endif %}
 
         {% if can_submit %}
           <form method="post" action="{% url 'noting_sheet_submit_for_approval' noting_sheet.pk %}" style="margin-top:10px;">
@@ -63,16 +93,7 @@
       </div>
 
       <div class="card">
-        <div class="rf-card-head">
-          <h3 style="margin:0;">Approval Status</h3>
-          {% if noting_sheet.workflow_status == "APPROVED" %}
-            {% if noting_sheet.eas %}
-              <a href="{% url 'eas_detail' noting_sheet.eas.pk %}" class="login-btn" style="width:auto; padding:10px 20px; text-decoration:none;">View EAS</a>
-            {% else %}
-              <a href="{% url 'eas_create' noting_sheet.pk %}" class="login-btn" style="width:auto; padding:10px 20px; text-decoration:none;">Create EAS</a>
-            {% endif %}
-          {% endif %}
-        </div>
+        <h3 style="margin-top:0;">Approval Status</h3>
         <div class="rf-grid-2">
           <div>
             <span class="rf-label">CFA</span>
@@ -101,38 +122,16 @@
         </div>
       {% endif %}
 
-      </div>
-
-      <div class="detail-side">
+      {% if noting_sheet.workflow_status == "APPROVED" %}
         <div class="card">
-          <h3 style="margin-top:0;">Document Uploaded</h3>
-
-          <div class="doc-item">
-            <span class="badge badge-approved">Noting Sheet</span>
-            <div class="doc-actions">
-              {% if noting_sheet.workflow_status == "APPROVED" %}
-                <a href="{% url 'noting_sheet_download_pdf' noting_sheet.pk %}" target="_blank">View / Print PDF</a>
-              {% else %}
-                <span style="font-size:12px; color:var(--text-secondary);">Download available once approved</span>
-              {% endif %}
-            </div>
-          </div>
-
+          <h3 style="margin-top:0;">Next Step</h3>
           {% if noting_sheet.eas %}
-            <div class="doc-item">
-              <span class="badge badge-{{ noting_sheet.eas.simple_approval_status|lower }}">EAS</span>
-              <div class="doc-actions">
-                <a href="{% url 'eas_detail' noting_sheet.eas.pk %}">View</a>
-                {% if noting_sheet.eas.workflow_status == "APPROVED" %}
-                  <a href="{% url 'eas_download_pdf' noting_sheet.eas.pk %}" target="_blank">View / Print PDF</a>
-                {% endif %}
-              </div>
-            </div>
+            <a href="{% url 'eas_detail' noting_sheet.eas.pk %}" class="login-btn" style="width:auto; padding:10px 20px; text-decoration:none;">View EAS</a>
+          {% else %}
+            <a href="{% url 'eas_create' noting_sheet.pk %}" class="login-btn" style="width:auto; padding:10px 20px; text-decoration:none;">Create EAS</a>
           {% endif %}
         </div>
-      </div>
-
-      </div>
+      {% endif %}
 
     </div>
 
