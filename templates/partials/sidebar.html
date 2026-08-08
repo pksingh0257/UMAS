@@ -38,9 +38,15 @@
       <a href="#" class="{% if active_nav == 'payments' %}active{% endif %}">
         <span class="icon">&#128179;</span> Payments
       </a>
-      <a href="#" class="{% if active_nav == 'purchase_orders' %}active{% endif %}">
+      <!-- <a href="#" class="{% if active_nav == 'purchase_orders' %}active{% endif %}">
         <span class="icon">&#128203;</span> Documents
+      </a> -->
+      
+      <a href="{% url 'documentation:dashboard' %}"
+          class="{% if active_nav == 'documentation' %}active{% endif %}">
+        <span class="icon">&#128218;</span> Documentation
       </a>
+   
     {% endif %}
 
     {% if role in 'ACCOUNTS_OFFICER,CFA,ADMINISTRATOR' %}

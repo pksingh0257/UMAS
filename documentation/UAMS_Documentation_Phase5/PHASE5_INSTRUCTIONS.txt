@@ -1,0 +1,23 @@
+UAMS Documentation Module — Phase 5
+
+REPLACE:
+1. documentation/views.py
+2. templates/documentation/documentation_dashboard.html
+
+APPEND:
+3. documentation_phase5.css to static/css/style.css
+
+NO MIGRATION REQUIRED.
+
+RUN:
+python manage.py check
+python manage.py runserver
+
+ADDED:
+- Search
+- Category/status/authority/year filters
+- Reset button
+- Pagination: 10 documents per page
+- Quick Access panel
+- Recently Uploaded panel
+- Filter-preserving pagination

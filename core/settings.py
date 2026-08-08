@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     "requirements_mgmt.apps.RequirementsMgmtConfig",
     "procurement.apps.ProcurementConfig",
     "finance.apps.FinanceConfig",
+    "documentation.apps.DocumentationConfig",
+    
 ]
 
 MIDDLEWARE = [

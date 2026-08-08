@@ -1,0 +1,223 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UAMS - Documentation</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+<div class="app-layout">
+  {% include 'partials/sidebar.html' with active_nav='documentation' %}
+  <div class="main-content">
+    {% include 'partials/header.html' %}
+    <div class="dashboard-shell">
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="doc-alert doc-alert-success"><p>{{ message }}</p></div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="doc-page-head">
+        <div>
+          <a href="{% url 'dashboard' %}" class="doc-back-link">&larr; Back to Dashboard</a>
+          <h2>Documentation</h2>
+          <p>Government Guidelines, Financial Rules &amp; Reference Library</p>
+        </div>
+        {% if role in 'ADMINISTRATOR,CFA,ACCOUNTS_OFFICER' %}
+          <a href="{% url 'documentation:upload' %}" class="doc-upload-btn">+ Upload New Guideline</a>
+        {% endif %}
+      </div>
+
+      <div class="doc-main-grid">
+        <main class="doc-main-column">
+
+          <div class="doc-stat-grid">
+            <div class="doc-stat-card">
+              <span class="doc-stat-label">Total Documents</span>
+              <strong>{{ total_documents }}</strong>
+              <small>All reference documents</small>
+            </div>
+            <div class="doc-stat-card">
+              <span class="doc-stat-label">Active Documents</span>
+              <strong>{{ active_documents }}</strong>
+              <small>Currently in use</small>
+            </div>
+            <div class="doc-stat-card">
+              <span class="doc-stat-label">Archived Documents</span>
+              <strong>{{ archived_documents }}</strong>
+              <small>Not in active use</small>
+            </div>
+            <div class="doc-stat-card">
+              <span class="doc-stat-label">Latest Upload</span>
+              <strong>{% if latest_upload %}{{ latest_upload|date:"d M Y" }}{% else %}—{% endif %}</strong>
+              <small>Most recent reference</small>
+            </div>
+          </div>
+
+          <form method="get" class="card doc-filter-card">
+            <div class="doc-filter-row">
+              <input type="search" name="q" value="{{ search_query }}" placeholder="Search title, reference, version or authority">
+
+              <select name="category">
+                <option value="">All Categories</option>
+                {% for value, label in category_choices %}
+                  <option value="{{ value }}" {% if category_filter == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+
+              <select name="status">
+                <option value="">All Status</option>
+                {% for value, label in status_choices %}
+                  <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+
+              <select name="authority">
+                <option value="">All Authorities</option>
+                {% for authority in authorities %}
+                  <option value="{{ authority }}" {% if authority_filter == authority %}selected{% endif %}>{{ authority }}</option>
+                {% endfor %}
+              </select>
+
+              <select name="year">
+                <option value="">All Years</option>
+                {% for item in years %}
+                  <option value="{{ item.year }}" {% if year_filter == item.year|stringformat:"s" %}selected{% endif %}>{{ item.year }}</option>
+                {% endfor %}
+              </select>
+
+              <div class="doc-filter-actions">
+                <button type="submit" class="doc-filter-btn">Apply</button>
+                <a href="{% url 'documentation:dashboard' %}" class="doc-reset-btn">Reset</a>
+              </div>
+            </div>
+          </form>
+
+          <div class="card">
+            <div class="doc-table-header">
+              <div>
+                <h3>Document Library</h3>
+                <p>
+                  {% if page_obj.paginator.count %}
+                    Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} documents.
+                  {% else %}
+                    No documents found.
+                  {% endif %}
+                </p>
+              </div>
+            </div>
+
+            <div class="doc-table-wrap">
+              <table class="doc-table">
+                <thead>
+                  <tr>
+                    <th>S.No.</th>
+                    <th>Document Name</th>
+                    <th>Category</th>
+                    <th>Authority</th>
+                    <th>Year</th>
+                    <th>Status</th>
+                    <th>Uploaded On</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for document in documents %}
+                    <tr>
+                      <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
+                      <td>
+                        <a href="{% url 'documentation:detail' document.pk %}" class="doc-name-link">{{ document.document_name }}</a>
+                        {% if document.version_number %}
+                          <span class="doc-version-text">{{ document.version_number }}</span>
+                        {% endif %}
+                      </td>
+                      <td>{{ document.get_category_display }}</td>
+                      <td>{{ document.issuing_authority }}</td>
+                      <td>{{ document.document_year|default:"—" }}</td>
+                      <td><span class="doc-status doc-status-{{ document.status|lower }}">{{ document.get_status_display }}</span></td>
+                      <td>{{ document.uploaded_at|date:"d M Y" }}</td>
+                      <td>
+                        <div class="doc-action-row">
+                          <a href="{% url 'documentation:detail' document.pk %}" class="doc-btn doc-btn-view">View</a>
+                          <a href="{% url 'documentation:download' document.pk %}" class="doc-btn doc-btn-download">Download</a>
+                        </div>
+                      </td>
+                    </tr>
+                  {% empty %}
+                    <tr><td colspan="8" class="doc-empty">No documents match the selected search or filters.</td></tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            {% if page_obj.paginator.num_pages > 1 %}
+              <nav class="doc-pagination">
+                {% if page_obj.has_previous %}
+                  <a href="?q={{ search_query|urlencode }}&category={{ category_filter|urlencode }}&status={{ status_filter|urlencode }}&authority={{ authority_filter|urlencode }}&year={{ year_filter|urlencode }}&page={{ page_obj.previous_page_number }}">&laquo;</a>
+                {% else %}
+                  <span class="disabled">&laquo;</span>
+                {% endif %}
+
+                {% for page_number in page_obj.paginator.page_range %}
+                  {% if page_number == page_obj.number %}
+                    <span class="active">{{ page_number }}</span>
+                  {% elif page_number >= page_obj.number|add:"-2" and page_number <= page_obj.number|add:"2" %}
+                    <a href="?q={{ search_query|urlencode }}&category={{ category_filter|urlencode }}&status={{ status_filter|urlencode }}&authority={{ authority_filter|urlencode }}&year={{ year_filter|urlencode }}&page={{ page_number }}">{{ page_number }}</a>
+                  {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                  <a href="?q={{ search_query|urlencode }}&category={{ category_filter|urlencode }}&status={{ status_filter|urlencode }}&authority={{ authority_filter|urlencode }}&year={{ year_filter|urlencode }}&page={{ page_obj.next_page_number }}">&raquo;</a>
+                {% else %}
+                  <span class="disabled">&raquo;</span>
+                {% endif %}
+              </nav>
+            {% endif %}
+          </div>
+        </main>
+
+        <aside class="doc-side-column">
+          <div class="doc-side-card">
+            <h3>&#11088; Quick Access</h3>
+            {% for document in quick_access_documents %}
+              <a href="{% url 'documentation:detail' document.pk %}" class="doc-side-link">
+                <span>&#128196;</span>
+                <span>{{ document.document_name }}</span>
+                <strong>&rarr;</strong>
+              </a>
+            {% empty %}
+              <p class="doc-side-empty">Mark documents as Quick Access while uploading.</p>
+            {% endfor %}
+          </div>
+
+          <div class="doc-side-card">
+            <h3>Recently Uploaded</h3>
+            {% for document in recent_uploads %}
+              <a href="{% url 'documentation:detail' document.pk %}" class="doc-recent-item">
+                <span>&#128196;</span>
+                <span>
+                  <strong>{{ document.document_name }}</strong>
+                  <small>{{ document.uploaded_at|date:"d M Y" }}</small>
+                </span>
+              </a>
+            {% empty %}
+              <p class="doc-side-empty">No reference documents uploaded yet.</p>
+            {% endfor %}
+          </div>
+
+          <div class="doc-note-card">
+            <h3>Note</h3>
+            <p>These documents are for reference purposes. Always follow the latest active government instruction.</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+    {% include 'partials/footer.html' %}
+  </div>
+</div>
+<script src="{% static 'js/theme-toggle.js' %}"></script>
+</body>
+</html>

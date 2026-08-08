@@ -1,0 +1,215 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UAMS - {{ document.document_name }}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/documentation.css' %}">
+
+</head>
+<body>
+
+<div class="app-layout">
+
+  {% include 'partials/sidebar.html' with active_nav='documentation' %}
+
+  <div class="main-content">
+    {% include 'partials/header.html' %}
+
+    <div class="dashboard-shell">
+
+      <div class="doc-detail-head">
+        <div>
+          <a
+            href="{% url 'documentation:dashboard' %}"
+            class="doc-back-link"
+          >
+            &larr; Back to Documentation
+          </a>
+
+          <h2>{{ document.document_name }}</h2>
+
+          <p>
+            {{ document.get_category_display }}
+            {% if document.reference_number %}
+              &nbsp;|&nbsp; Ref: {{ document.reference_number }}
+            {% endif %}
+          </p>
+        </div>
+
+        <div class="doc-detail-actions">
+          {% if can_preview %}
+            <a
+              href="{% url 'documentation:view' document.pk %}"
+              target="_blank"
+              rel="noopener"
+              class="doc-btn doc-btn-view"
+            >
+              Open Full Screen
+            </a>
+          {% endif %}
+
+          <a
+            href="{% url 'documentation:download' document.pk %}"
+            class="doc-btn doc-btn-download"
+          >
+            Download Original
+          </a>
+        </div>
+      </div>
+
+      <div class="doc-detail-layout">
+
+        <section class="doc-viewer-card">
+
+          <div class="doc-viewer-toolbar">
+            <div>
+              <strong>Document Preview</strong>
+              <span>
+                {{ document.file_extension|upper }}
+                &nbsp;|&nbsp;
+                {{ document.file_size_display }}
+              </span>
+            </div>
+
+            {% if can_preview %}
+              <a
+                href="{% url 'documentation:view' document.pk %}"
+                target="_blank"
+                rel="noopener"
+              >
+                Open PDF
+              </a>
+            {% endif %}
+          </div>
+
+          {% if can_preview %}
+          <iframe
+  src="{% url 'documentation:view' document.pk %}"
+  class="doc-pdf-frame"
+  title="{{ document.document_name }}"
+></iframe>   
+          {% else %}
+            <div class="doc-no-preview">
+              <div class="doc-no-preview-icon">&#128196;</div>
+              <h3>Preview Not Available</h3>
+              <p>
+                This Word document does not have a PDF preview.
+                Download the original file to open it.
+              </p>
+              <a
+                href="{% url 'documentation:download' document.pk %}"
+                class="doc-btn doc-btn-download"
+              >
+                Download Original
+              </a>
+            </div>
+          {% endif %}
+
+        </section>
+
+        <aside class="doc-meta-card">
+
+          <h3>Document Details</h3>
+
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Status</span>
+            <span class="doc-status doc-status-{{ document.status|lower }}">
+              {{ document.get_status_display }}
+            </span>
+          </div>
+
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Category</span>
+            <strong>{{ document.get_category_display }}</strong>
+          </div>
+
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Issuing Authority</span>
+            <strong>{{ document.issuing_authority }}</strong>
+          </div>
+
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Reference Number</span>
+            <strong>{{ document.reference_number|default:"—" }}</strong>
+          </div>
+
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Version / Amendment</span>
+            <strong>{{ document.version_number|default:"—" }}</strong>
+          </div>
+
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Issue Date</span>
+            <strong>
+              {% if document.issue_date %}
+                {{ document.issue_date|date:"d M Y" }}
+              {% else %}
+                —
+              {% endif %}
+            </strong>
+          </div>
+
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Effective Date</span>
+            <strong>
+              {% if document.effective_date %}
+                {{ document.effective_date|date:"d M Y" }}
+              {% else %}
+                —
+              {% endif %}
+            </strong>
+          </div>
+
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Uploaded By</span>
+            <strong>{{ document.uploaded_by.username }}</strong>
+          </div>
+
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Uploaded On</span>
+            <strong>{{ document.uploaded_at|date:"d M Y, P" }}</strong>
+          </div>
+
+          {% if document.supersedes %}
+            <div class="doc-meta-item">
+              <span class="doc-meta-label">Supersedes</span>
+              <a
+                href="{% url 'documentation:detail' document.supersedes.pk %}"
+                class="doc-name-link"
+              >
+                {{ document.supersedes.document_name }}
+              </a>
+            </div>
+          {% endif %}
+
+          {% if document.description %}
+            <div class="doc-meta-item doc-meta-full">
+              <span class="doc-meta-label">Description</span>
+              <p>{{ document.description|linebreaksbr }}</p>
+            </div>
+          {% endif %}
+
+          {% if document.remarks %}
+            <div class="doc-meta-item doc-meta-full">
+              <span class="doc-meta-label">Remarks</span>
+              <p>{{ document.remarks|linebreaksbr }}</p>
+            </div>
+          {% endif %}
+
+        </aside>
+
+      </div>
+
+    </div>
+
+    {% include 'partials/footer.html' %}
+  </div>
+
+</div>
+
+<script src="{% static 'js/theme-toggle.js' %}"></script>
+</body>
+</html>
