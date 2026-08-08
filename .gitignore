@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Django
+*.log
+local_settings.py
+
+# SQLite Database
+db.sqlite3
+
+# VS Code generated/cache files
+.vscode/PythonImportHelper-v2-Completion.json
+
+# Python cache
+.pytest_cache/
+.mypy_cache/
+
+# OS files
+.DS_Store
+Thumbs.db
