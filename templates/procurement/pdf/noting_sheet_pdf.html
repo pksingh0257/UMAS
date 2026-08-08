@@ -79,7 +79,7 @@
 
         <div class="purport-body">
           {% for line in noting_sheet.paragraph_2.splitlines %}
-            <p>{{ line }}</p>
+            <p>2. {{ line }}</p>
           {% endfor %}
         </div>
 
@@ -112,8 +112,7 @@
           </tbody>
         </table>
 
-        <p class="purport-num">3</p>
-        <p>The said amount is within the financial power of {{ noting_sheet.approval_recipient|default:"CFA" }} this unit. Details of fund are as under:-</p>
+        <p>3. The said amount is within the financial power of {{ noting_sheet.approval_recipient|default:"CFA" }} this unit. Details of fund are as under:-</p>
 
         <table class="fund-table">
           <thead>
@@ -135,11 +134,10 @@
         </table>
 
         {% if noting_sheet.remarks %}
-          <p>{{ noting_sheet.remarks }}</p>
+          <p>Remarks: {{ noting_sheet.remarks }}</p>
         {% endif %}
 
-        <p class="purport-num">4</p>
-        <p>EAS sanction for the item is placed opposite for your perusal and sanction of {{ noting_sheet.approval_recipient|default:"CFA" }} please.</p>
+        <p>4. EAS sanction for the item is placed opposite for your perusal and sanction of {{ noting_sheet.approval_recipient|default:"CFA" }} please.</p>
 
       </td>
       <td class="col-remarks">PUC</td>
@@ -157,8 +155,6 @@
     <span>Prepared By: {{ noting_sheet.created_by.get_full_name|default:noting_sheet.created_by.username }} ({{ noting_sheet.created_by.get_role_display }})</span>
     <span>For Approval: {{ noting_sheet.approval_recipient }}</span>
   </div>
-
-  <p class="footer">Project Nexus &mdash; Unit Accounts Management &middot; Procurement Module &middot; CONFIDENTIAL</p>
 
 </body>
 </html>

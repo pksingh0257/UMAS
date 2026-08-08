@@ -73,15 +73,15 @@
 
             <div>
               <div class="field">
-                <label for="{{ form.paragraph_1.id_for_label }}">Paragraph 1 (Purport / Subject)</label>
+                <label for="{{ form.paragraph_1.id_for_label }}">Purport / Subject</label>
                 {{ form.paragraph_1 }}
-                <p class="ns-charcount" data-for="{{ form.paragraph_1.id_for_label }}" data-max="200">0 / 200</p>
+                <p class="ns-charcount" data-for="{{ form.paragraph_1.id_for_label }}" data-max="500">0 / 500</p>
                 {% if form.paragraph_1.errors %}<p class="rf-error-text">{{ form.paragraph_1.errors|join:", " }}</p>{% endif %}
               </div>
               <div class="field" style="margin-top:14px;">
-                <label for="{{ form.paragraph_2.id_for_label }}">Paragraph 2 (Requirement / Justification)</label>
+                <label for="{{ form.paragraph_2.id_for_label }}">Requirement / Justification</label>
                 {{ form.paragraph_2 }}
-                <p class="ns-charcount" data-for="{{ form.paragraph_2.id_for_label }}" data-max="500">0 / 500</p>
+                <p class="ns-charcount" data-for="{{ form.paragraph_2.id_for_label }}" data-max="1000">0 / 1000</p>
                 {% if form.paragraph_2.errors %}<p class="rf-error-text">{{ form.paragraph_2.errors|join:", " }}</p>{% endif %}
               </div>
             </div>
@@ -141,26 +141,29 @@
             <h3 class="ns-section-title">Fund Details</h3>
             <div class="rf-grid-2">
               <div class="field">
-                <label for="{{ form.amount_allotted.id_for_label }}">Amount Allotted (Rs)</label>
-                {{ form.amount_allotted }}
+                <label>Amount Allotted (Rs)</label>
+                <input type="text" disabled id="ns-allotted-display" value="{{ computed_allotted|floatformat:2 }}">
               </div>
               <div class="field">
-                <label for="{{ form.amount_released.id_for_label }}">Amount Released (Rs)</label>
-                {{ form.amount_released }}
+                <label>Amount Released (Rs)</label>
+                <input type="text" disabled id="ns-released-display" value="{{ computed_released|floatformat:2 }}">
               </div>
               <div class="field">
-                <label for="{{ form.amount_expended.id_for_label }}">Amount Expended including this Noting Sheet (Rs)</label>
-                {{ form.amount_expended }}
+                <label>Amount Expended including this Noting Sheet (Rs)</label>
+                <input type="text" disabled id="ns-expended-display" value="0.00">
               </div>
               <div class="field">
                 <label>Balance Amount held as on Date (Rs)</label>
-                <input type="text" disabled id="ns-balance-display" value="0.00">
+                <input type="text" disabled id="ns-balance-display" value="{{ computed_released|floatformat:2 }}">
               </div>
             </div>
+            <p style="color:var(--text-secondary); font-size:11px; margin-top:6px;">
+              Allotted/Released are pulled from the Fund ledger for this Requirement's Fund Head + Sub Head. Expended auto-fills from the Item Details total and is saved once you submit.
+            </p>
             <div class="field" style="margin-top:10px;">
               <label for="{{ form.remarks.id_for_label }}">Remarks (if any)</label>
               {{ form.remarks }}
-              <p class="ns-charcount" data-for="{{ form.remarks.id_for_label }}" data-max="200">0 / 200</p>
+              <p class="ns-charcount" data-for="{{ form.remarks.id_for_label }}" data-max="1000">0 / 1000</p>
             </div>
           </div>
 
@@ -189,7 +192,7 @@
         <div class="ns-actions">
           <a href="{% url 'procurement_select' %}?requirement={{ requirement.pk }}" class="theme-toggle" style="text-decoration:none;">Cancel</a>
           <button type="button" id="ns-preview-btn" class="theme-toggle">Preview</button>
-          <button type="submit" name="save_draft" class="login-btn">Save Draft</button>
+          <button type="submit" name="save_draft" class="login-btn"style="width: 10rem;">Save Draft</button>
         </div>
       </form>
 
@@ -231,6 +234,8 @@
     });
   }
 
+  var COMPUTED_RELEASED = {{ computed_released|default:0 }};
+
   function recalcTotal() {
     var total = 0;
     document.querySelectorAll('#ns-item-body .ns-row').forEach(function (row) {
@@ -241,6 +246,12 @@
       total += approx;
     });
     document.getElementById('ns-total-amount').textContent = total.toFixed(2);
+
+    // Expended mirrors the item total live; Balance = Released - Expended.
+    // Both are display-only here — the actual saved values are computed
+    // server-side after the real items are saved (see noting_sheet_create).
+    document.getElementById('ns-expended-display').value = total.toFixed(2);
+    document.getElementById('ns-balance-display').value = (COMPUTED_RELEASED - total).toFixed(2);
   }
 
   function bindRowEvents(row) {
@@ -258,15 +269,8 @@
   document.querySelectorAll('#ns-item-body .ns-row').forEach(bindRowEvents);
   recalcTotal();
 
-  // ---- Fund balance auto-calc: Allotted - Expended ----
-  function recalcBalance() {
-    var allotted = parseFloat(document.getElementById('{{ form.amount_allotted.id_for_label }}').value) || 0;
-    var expended = parseFloat(document.getElementById('{{ form.amount_expended.id_for_label }}').value) || 0;
-    document.getElementById('ns-balance-display').value = (allotted - expended).toFixed(2);
-  }
-  document.getElementById('{{ form.amount_allotted.id_for_label }}').addEventListener('input', recalcBalance);
-  document.getElementById('{{ form.amount_expended.id_for_label }}').addEventListener('input', recalcBalance);
-  recalcBalance();
+  // Balance is now recalculated inside recalcTotal() above, live from
+  // the item table + the server-computed Released figure.
 
   // ---- Character counters ----
   document.querySelectorAll('.ns-charcount').forEach(function (counter) {
@@ -313,9 +317,9 @@
       '<table><thead><tr><th>S No</th><th>Item</th><th>A/U</th><th>Qty</th><th>Unit Price</th><th>Approx Amt</th></tr></thead><tbody>' + itemRows + '</tbody></table>' +
       '<p><strong>Total: ' + document.getElementById('ns-total-amount').textContent + '</strong></p>' +
       '<table><thead><tr><th>Amount Allotted</th><th>Amount Released</th><th>Amount Expended</th><th>Balance</th></tr></thead><tbody><tr><td>' +
-      document.getElementById('{{ form.amount_allotted.id_for_label }}').value + '</td><td>' +
-      document.getElementById('{{ form.amount_released.id_for_label }}').value + '</td><td>' +
-      document.getElementById('{{ form.amount_expended.id_for_label }}').value + '</td><td>' +
+      document.getElementById('ns-allotted-display').value + '</td><td>' +
+      document.getElementById('ns-released-display').value + '</td><td>' +
+      document.getElementById('ns-expended-display').value + '</td><td>' +
       document.getElementById('ns-balance-display').value + '</td></tr></tbody></table>' +
       '<p>' + document.getElementById('{{ form.remarks.id_for_label }}').value + '</p>' +
       '</body></html>';

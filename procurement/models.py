@@ -253,22 +253,22 @@ class NotingSheet(models.Model):
 
     # ---- File Details ----
     file_no = models.CharField(max_length=100)
-    branch = models.CharField(max_length=100, default="Acct Branch")
-    sheet_no = models.CharField(max_length=50, default="One of One")
+    branch = models.CharField(max_length=100)
+    sheet_no = models.CharField(max_length=50)
     dated = models.DateField()
 
     # ---- Branch & Financial Year ----
     financial_year = models.CharField(max_length=20, help_text="e.g. 2026-27")
 
     # ---- Noting / Details ----
-    paragraph_1 = models.CharField(max_length=200, verbose_name="Paragraph 1 (Purport / Subject)")
-    paragraph_2 = models.TextField(max_length=500, verbose_name="Paragraph 2 (Requirement / Justification)")
+    paragraph_1 = models.CharField(max_length=500, verbose_name="Paragraph 1 (Purport / Subject)")
+    paragraph_2 = models.TextField(max_length=1000, verbose_name="Paragraph 2 (Requirement / Justification)")
 
     # ---- Fund Details ----
     amount_allotted = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     amount_released = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     amount_expended = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-    remarks = models.CharField(max_length=200, blank=True)
+    remarks = models.CharField(max_length=1000, blank=True)
 
     approval_recipient = models.CharField(
         max_length=100, blank=True,
@@ -319,7 +319,14 @@ class NotingSheet(models.Model):
 
     @property
     def balance_amount(self):
-        return self.amount_allotted - self.amount_expended
+        # CHANGED: was `amount_allotted - amount_expended`. Per
+        # finance_utils.get_fund_balance()'s own docstring, `released` —
+        # not `allotted` — represents the current available balance
+        # (allotted is the gross total ever credited, before subtracting
+        # anything already spent). Balance Held should reflect what's
+        # actually still available, so it's Released minus what this
+        # sheet expends.
+        return self.amount_released - self.amount_expended
 
     @property
     def is_editable(self):

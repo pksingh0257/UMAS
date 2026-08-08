@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from requirements_mgmt.models import Requirement
+from .finance_utils import get_fund_balance
 from .models import ProcurementCase, NotingSheet, NotingSheetItem, EAS, ConveningOrder
 from .forms import ( CaseStageDataForm, ReturnCaseForm, NotingSheetForm, NotingSheetItemFormSet, NotingCFADecisionForm, EASForm, EASCFADecisionForm, EASDocumentUploadForm, ConveningOrderForm, )
 
@@ -153,6 +154,12 @@ def noting_sheet_create(request, requirement_pk):
         messages.info(request, "A Noting Sheet already exists for this requirement.")
         return redirect("noting_sheet_detail", pk=requirement.noting_sheet.pk)
 
+    # Computed once, reused for both the initial page load (so the clerk
+    # sees real figures before even touching the form) and the actual
+    # save below — previously this only ran inside the save branch, so
+    # the fields stayed blank until after submission.
+    computed_allotted, computed_released = get_fund_balance(requirement.sub_head)
+
     if request.method == "POST":
         form = NotingSheetForm(request.POST)
         formset = NotingSheetItemFormSet(request.POST)
@@ -160,10 +167,19 @@ def noting_sheet_create(request, requirement_pk):
             noting_sheet = form.save(commit=False)
             noting_sheet.requirement = requirement
             noting_sheet.created_by = request.user
+            noting_sheet.amount_allotted = computed_allotted
+            noting_sheet.amount_released = computed_released
+
             noting_sheet.save()
 
             formset.instance = noting_sheet
             formset.save()
+
+            # Expended = this sheet's own item table total. Needs a
+            # second save since it depends on the items, which can't be
+            # totaled until after formset.save() has written them.
+            noting_sheet.amount_expended = noting_sheet.total_amount
+            noting_sheet.save(update_fields=["amount_expended"])
 
             messages.success(request, f"{noting_sheet.noting_id} created.")
             return redirect("noting_sheet_detail", pk=noting_sheet.pk)
@@ -183,6 +199,8 @@ def noting_sheet_create(request, requirement_pk):
         "form": form,
         "formset": formset,
         "requirement": requirement,
+        "computed_allotted": computed_allotted,
+        "computed_released": computed_released,
         "role": request.user.role,
         "active_nav": "procurement",
     })
@@ -424,7 +442,7 @@ def convening_order_create(request, eas_pk):
         return redirect("convening_order_detail", pk=existing_order.pk)
 
     if request.method == "POST":
-        form = ConveningOrderForm(request.POST)
+        form = ConveningOrderForm(request.POST, eas=eas)
 
         if form.is_valid():
             order = form.save(commit=False)
@@ -511,7 +529,8 @@ def convening_order_create(request, eas_pk):
                 "procurement_case": procurement_case,
                 "order_date": timezone.now().date(),
                 "subject_title": f"CONVENING ORDER FOR {eas.dsc_goods}",
-            }
+            },
+            eas=eas,
         )
 
     return render(request, "procurement/convening_order_form.html", {
