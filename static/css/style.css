@@ -66,13 +66,14 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: transparent;
-  border: 1px solid var(--brand-dark-border);
+  background: var(--primary-red);
+  /* border: 1px solid var(--brand-dark-border); */
   color: #fff;
   padding: 9px 16px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 15px;
+  font-weight: 700;
   white-space: nowrap;
 }
 .theme-toggle:hover { border-color: var(--primary-red); }
@@ -1491,3 +1492,132 @@ table.shd-table tbody tr:hover {
 .fund-btn-warning { background: #e3a008; }
 .fund-btn-danger  { background: var(--primary-red);
  }
+
+
+ /* =====================================================================
+   CONVENING ORDER FORM  (procurement/convening_order.html)
+   Uses existing theme tokens; matches .finance-form-* visual language.
+   ===================================================================== */
+
+.rf-message {
+  border-left: 4px solid var(--accent-blue);
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.co-section {
+  margin-bottom: 30px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+}
+.co-section:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.co-section-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 18px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--primary-red);
+  letter-spacing: 0.3px;
+}
+
+/* Table acts as a responsive 3-col field grid */
+.co-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+}
+.co-table td {
+  vertical-align: top;
+  width: 33.33%;
+  padding: 0 16px 22px 0;
+}
+.co-table td:last-child { padding-right: 0; }
+
+.co-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary-red);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+/* Django-rendered widgets have no class — target by tag inside .co-table */
+.co-table input[type="text"],
+.co-table input[type="date"],
+.co-table input[type="number"],
+.co-table input[type="file"],
+.co-table select,
+.co-table textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+.co-table select[multiple] { min-height: 96px; }
+.co-table textarea { min-height: 90px; resize: vertical; }
+
+.co-table input:focus,
+.co-table select:focus,
+.co-table textarea:focus {
+  outline: none;
+  border-color: var(--primary-red);
+  box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.15);
+}
+
+/* Auto-fetched / read-only display fields */
+.co-auto {
+  padding: 11px 14px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  font-style: italic;
+}
+
+.co-help {
+  margin-top: 6px;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.co-error {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary-red);
+}
+
+.co-submit {
+  width: 100%;
+  margin-top: 10px;
+  padding: 15px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border-radius: 8px;
+}
+
+/* Responsive: stack the 3-column table on narrow screens */
+@media (max-width: 900px) {
+  .co-table, .co-table tbody, .co-table tr, .co-table td {
+    display: block;
+    width: 100% !important;
+  }
+  .co-table td { padding: 0 0 18px; }
+}
