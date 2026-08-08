@@ -1,0 +1,157 @@
+/* Additive styles for the Noting Sheet create form. Doesn't touch
+   requirement_form.css or style.css — only new layout/table rules. */
+
+.ns-breadcrumb {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+.ns-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 20px;
+}
+
+.ns-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary-red);
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-red);
+  display: inline-block;
+}
+
+.ns-subtitle {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.rf-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.rf-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.ns-noting-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 24px;
+}
+
+.ns-charcount {
+  text-align: right;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 4px 0 0;
+}
+
+/* ---- Item table ---- */
+.ns-item-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+.ns-item-table th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  text-align: left;
+  padding: 0 6px 8px;
+  border-bottom: 1px solid var(--border);
+}
+.ns-item-table td {
+  padding: 6px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.ns-item-table .ns-sno {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+.ns-item-table .ns-approx {
+  text-align: right;
+  font-weight: 600;
+  color: var(--primary-red);
+}
+.ns-item-table input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 9px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 13px;
+}
+.ns-item-table input:focus { outline: none; border-color: var(--accent-blue); }
+
+.ns-row.ns-row-removed { opacity: 0.35; text-decoration: line-through; }
+
+.ns-remove-cell { text-align: center; }
+.ns-remove-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 26px;
+  border: 1px solid var(--primary-red);
+  color: var(--primary-red);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+}
+.ns-remove-label input { display: none; }
+
+.ns-add-btn {
+  background: transparent;
+  border: 1px dashed var(--primary-red);
+  color: var(--primary-red);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+}
+.ns-add-btn:hover { background: rgba(198, 40, 40, 0.08); }
+
+.ns-total-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 14px;
+  font-size: 13px;
+}
+.ns-total-row strong {
+  font-size: 18px;
+  color: var(--primary-red);
+}
+
+.ns-bottom-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 20px;
+}
+
+.ns-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin: 4px 0 30px;
+}
+
+@media (max-width: 900px) {
+  .rf-grid-4 { grid-template-columns: 1fr 1fr; }
+  .ns-noting-grid, .ns-bottom-grid { grid-template-columns: 1fr; }
+}

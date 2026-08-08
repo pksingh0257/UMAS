@@ -1,0 +1,242 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UAMS - Upload Reference Document</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+ 
+  <link rel="stylesheet" href="{% static 'css/documentation.css' %}">
+</head>
+<body>
+
+<div class="app-layout">
+
+  {% include 'partials/sidebar.html' with active_nav='documentation' %}
+
+  <div class="main-content">
+    {% include 'partials/header.html' %}
+
+    <div class="dashboard-shell">
+
+      <div class="doc-form-container">
+
+        <div class="doc-form-head">
+          <div>
+            <a
+              href="{% url 'documentation:dashboard' %}"
+              class="doc-back-link"
+            >
+              &larr; Back to Documentation
+            </a>
+            <h2>Upload Reference Document</h2>
+            <p>
+              Add a government guideline, financial rule,
+              circular, instruction or unit SOP.
+            </p>
+          </div>
+        </div>
+
+        <form
+          method="post"
+          enctype="multipart/form-data"
+          class="doc-form-card"
+          novalidate
+        >
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            <div class="doc-alert doc-alert-error">
+              {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div class="doc-form-grid">
+
+            <div class="doc-form-group">
+              <label for="{{ form.document_name.id_for_label }}">
+                Document Title <span class="required-mark">*</span>
+              </label>
+              {{ form.document_name }}
+              {% for error in form.document_name.errors %}
+                <span class="field-error">{{ error }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="doc-form-group">
+              <label for="{{ form.version_number.id_for_label }}">
+                Version / Amendment No.
+              </label>
+              {{ form.version_number }}
+              {% for error in form.version_number.errors %}
+                <span class="field-error">{{ error }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="doc-form-group">
+              <label for="{{ form.category.id_for_label }}">
+                Category <span class="required-mark">*</span>
+              </label>
+              {{ form.category }}
+              {% for error in form.category.errors %}
+                <span class="field-error">{{ error }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="doc-form-group">
+              <label for="{{ form.issuing_authority.id_for_label }}">
+                Issuing Authority <span class="required-mark">*</span>
+              </label>
+              {{ form.issuing_authority }}
+              {% for error in form.issuing_authority.errors %}
+                <span class="field-error">{{ error }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="doc-form-group">
+              <label for="{{ form.reference_number.id_for_label }}">
+                Reference Number
+              </label>
+              {{ form.reference_number }}
+              {% for error in form.reference_number.errors %}
+                <span class="field-error">{{ error }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="doc-form-group">
+              <label for="{{ form.status.id_for_label }}">
+                Status <span class="required-mark">*</span>
+              </label>
+              {{ form.status }}
+              {% for error in form.status.errors %}
+                <span class="field-error">{{ error }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="doc-form-group">
+              <label for="{{ form.issue_date.id_for_label }}">
+                Issue Date
+              </label>
+              {{ form.issue_date }}
+              {% for error in form.issue_date.errors %}
+                <span class="field-error">{{ error }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="doc-form-group">
+              <label for="{{ form.effective_date.id_for_label }}">
+                Effective Date
+              </label>
+              {{ form.effective_date }}
+              {% for error in form.effective_date.errors %}
+                <span class="field-error">{{ error }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="doc-form-group doc-form-group-full">
+              <label for="{{ form.description.id_for_label }}">
+                Description
+              </label>
+              {{ form.description }}
+              {% for error in form.description.errors %}
+                <span class="field-error">{{ error }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="doc-form-group">
+              <label for="{{ form.document_file.id_for_label }}">
+                Upload File <span class="required-mark">*</span>
+              </label>
+              {{ form.document_file }}
+              <span class="field-help">
+                Accepted formats: PDF, DOC, DOCX. Maximum size: 50 MB.
+              </span>
+              {% for error in form.document_file.errors %}
+                <span class="field-error">{{ error }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="doc-form-group">
+              <label for="{{ form.preview_pdf.id_for_label }}">
+                PDF Preview
+              </label>
+              {{ form.preview_pdf }}
+              <span class="field-help">
+                Required for DOC/DOCX so the document can be viewed in UAMS.
+              </span>
+              {% for error in form.preview_pdf.errors %}
+                <span class="field-error">{{ error }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="doc-form-group">
+              <label for="{{ form.supersedes.id_for_label }}">
+                Replaces Existing Document
+              </label>
+              {{ form.supersedes }}
+              <span class="field-help">
+                The selected older document will be marked Superseded.
+              </span>
+              {% for error in form.supersedes.errors %}
+                <span class="field-error">{{ error }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="doc-form-group doc-featured-group">
+              <label for="{{ form.is_featured.id_for_label }}">
+                Quick Access
+              </label>
+              <div class="doc-checkbox-row">
+                {{ form.is_featured }}
+                <span>Show this document in the Quick Access panel.</span>
+              </div>
+              {% for error in form.is_featured.errors %}
+                <span class="field-error">{{ error }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="doc-form-group doc-form-group-full">
+              <label for="{{ form.remarks.id_for_label }}">
+                Remarks
+              </label>
+              {{ form.remarks }}
+              {% for error in form.remarks.errors %}
+                <span class="field-error">{{ error }}</span>
+              {% endfor %}
+            </div>
+
+          </div>
+
+          <div class="doc-form-actions">
+            <a
+              href="{% url 'documentation:dashboard' %}"
+              class="secondary-action"
+            >
+              Cancel
+            </a>
+
+            <button
+              type="submit"
+              class="primary-action"
+            >
+              Save Document
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+
+    {% include 'partials/footer.html' %}
+  </div>
+
+</div>
+
+<script src="{% static 'js/theme-toggle.js' %}"></script>
+</body>
+</html>

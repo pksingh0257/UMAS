@@ -53,13 +53,6 @@ class ProcurementCase(CoreModel):
 
     case_number = models.CharField(max_length=30, unique=True, editable=False)
 
-    # CHANGED: was OneToOneField(RequirementItem, ...). requirements_mgmt
-    # flattened RequirementRequest+RequirementItem into a single
-    # `Requirement` model, so this now points there instead. Field NAME
-    # is left as `requirement_item` on purpose, to avoid breaking any
-    # other code in the project that already references
-    # `case.requirement_item` — rename it to `requirement` later if you
-    # do a project-wide search/replace.
     requirement_item = models.OneToOneField(
         Requirement, on_delete=models.PROTECT, related_name="procurement_case"
     )
@@ -142,12 +135,6 @@ class ProcurementCase(CoreModel):
             )
 
     def advance(self, user, remarks=None):
-        """
-        Move the case to the next stage in STAGE_SEQUENCE. Enforces:
-        - mandatory data for the current stage must exist (Section 16/17)
-        - transitions cannot skip stages (Section 17)
-        - CFA-only stages can only be advanced INTO by a CFA user (Section 11/17)
-        """
         if self.current_stage == "CASE_CLOSED":
             raise ValidationError("This case is already closed.")
 
@@ -184,10 +171,6 @@ class ProcurementCase(CoreModel):
         )
 
     def return_to_stage(self, user, target_stage, reason):
-        """
-        A returned/rejected case reverts to a specified earlier stage, with
-        the reason permanently recorded (Section 17) - never silently overwritten.
-        """
         if target_stage not in self.STAGE_SEQUENCE:
             raise ValidationError("Invalid target stage for return.")
         if not reason:
@@ -209,12 +192,6 @@ class ProcurementCase(CoreModel):
 
 
 class CaseStageHistory(CoreModel):
-    """
-    The case's permanent timeline (Section 17). Append-only by convention -
-    rows are never edited or deleted, only added, so the full history of
-    every transition (including returns/rejections) is always preserved.
-    """
-
     ACTION_CHOICES = [
         ("ADVANCE", "Advanced"),
         ("RETURN", "Returned"),
@@ -243,20 +220,19 @@ class CaseStageHistory(CoreModel):
 
 class NotingSheet(models.Model):
     """
-    Created by a Clerk/Head Clerk against an APPROVED Requirement, to move
-    it into procurement. One Requirement -> at most one Noting Sheet
-    (OneToOne). Its own AO -> CFA approval mirrors requirements_mgmt's
-    Requirement model exactly, on purpose, for consistency.
-
-    Item Name / Qty / Unit Price are NOT duplicated here — they're read
-    live off the linked Requirement via properties below, since they're
-    locked once the Requirement is APPROVED anyway.
+    Rebuilt to match the official Noting Sheet document format (File No,
+    Branch, Sheet No, Dated, Financial Year, two narrative paragraphs, a
+    repeatable item table via NotingSheetItem, fund figures, and a
+    For-Approval block). Approval stays CFA-ONLY, matching your real
+    design — submit_for_approval() sends straight to PENDING_CFA.
+    ao_decide()/PENDING_AO/AO_DENIED are kept only as legacy/unused, same
+    as your EAS model already does, for consistency.
     """
 
     WORKFLOW_CHOICES = [
         ("DRAFT", "Draft"),
-        ("PENDING_AO", "Pending Account Officer"),
-        ("AO_DENIED", "Returned by Account Officer"),
+        ("PENDING_AO", "Pending Account Officer"),   # legacy, unreachable
+        ("AO_DENIED", "Returned by Account Officer"),  # legacy, unreachable
         ("PENDING_CFA", "Pending CFA"),
         ("CFA_DENIED", "Returned by CFA"),
         ("APPROVED", "Approved"),
@@ -275,14 +251,29 @@ class NotingSheet(models.Model):
         related_name="noting_sheet",
     )
 
-    # A/U = unit of measure (Nos, Set, Kg, ...) — plain manual text entry.
-    au = models.CharField(max_length=50, verbose_name="A/U")
+    # ---- File Details ----
+    file_no = models.CharField(max_length=100)
+    branch = models.CharField(max_length=100, default="Acct Branch")
+    sheet_no = models.CharField(max_length=50, default="One of One")
+    dated = models.DateField()
 
-    # Fund ledger snapshot — manually entered (no live Fund model wired in
-    # yet). Balance is calculated, not stored, to avoid drift.
+    # ---- Branch & Financial Year ----
+    financial_year = models.CharField(max_length=20, help_text="e.g. 2026-27")
+
+    # ---- Noting / Details ----
+    paragraph_1 = models.CharField(max_length=200, verbose_name="Paragraph 1 (Purport / Subject)")
+    paragraph_2 = models.TextField(max_length=500, verbose_name="Paragraph 2 (Requirement / Justification)")
+
+    # ---- Fund Details ----
     amount_allotted = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     amount_released = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     amount_expended = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    remarks = models.CharField(max_length=200, blank=True)
+
+    approval_recipient = models.CharField(
+        max_length=100, blank=True,
+        help_text='Free text, e.g. "CFA (CO)" — who this is being sent to.',
+    )
 
     created_by = models.ForeignKey(
         "authentication.User", on_delete=models.PROTECT, related_name="noting_sheets_created"
@@ -317,28 +308,14 @@ class NotingSheet(models.Model):
     def __str__(self):
         return self.noting_id
 
-    # ---- Read-only pass-through fields from the Requirement ----
     @property
     def item_name(self):
-        return self.requirement.item_name
+        first_item = self.items.first()
+        return first_item.description if first_item else self.requirement.item_name
 
     @property
-    def qty(self):
-        return self.requirement.quantity
-
-    @property
-    def unit_price(self):
-        return self.requirement.estimated_cost
-
-    @property
-    def approx_amount(self):
-        """Qty * Unit Price. estimated_cost is stored as text, so this can
-        fail if a non-numeric value was ever entered — returns None rather
-        than crashing the page in that case."""
-        try:
-            return self.qty * float(self.unit_price)
-        except (TypeError, ValueError):
-            return None
+    def total_amount(self):
+        return sum((item.approx_amount or 0) for item in self.items.all())
 
     @property
     def balance_amount(self):
@@ -373,13 +350,7 @@ class NotingSheet(models.Model):
             self.noting_id = f"NS-{yr}-{seq:05d}"
         super().save(*args, **kwargs)
 
-    # ---- Workflow transitions ----
-    # CHANGED: approval is now CFA-only — Account Officer review has been
-    # dropped from the flow. submit_for_approval() sends the sheet
-    # straight to PENDING_CFA (replaces the old submit_to_ao()). ao_decide()
-    # is kept below, unused, only so any pre-existing PENDING_AO records
-    # from before this change can still be resolved manually if needed —
-    # nothing in the current flow reaches PENDING_AO anymore.
+    # ---- Workflow transitions — CFA-only, matches your real design ----
 
     def submit_for_approval(self):
         if not self.is_editable:
@@ -392,7 +363,7 @@ class NotingSheet(models.Model):
         self.save()
 
     def ao_decide(self, user, decision, remarks=""):
-        # LEGACY — no longer reachable from the current flow (see note above).
+        # LEGACY — unreachable from the current flow.
         if self.workflow_status != "PENDING_AO":
             raise ValidationError("This noting sheet is not awaiting Account Officer review.")
         self.ao_status = decision
@@ -418,13 +389,36 @@ class NotingSheet(models.Model):
             self.workflow_status = "CFA_DENIED"
         self.save()
 
+
+class NotingSheetItem(models.Model):
+    """A single row in the Item Details table — repeatable, unlike the
+    old single-item version tied directly to the Requirement."""
+
+    noting_sheet = models.ForeignKey(NotingSheet, on_delete=models.CASCADE, related_name="items")
+    description = models.CharField(max_length=250, verbose_name="Item Description")
+    au = models.CharField(max_length=50, verbose_name="A/U")
+    quantity = models.PositiveIntegerField()
+    unit_price = models.DecimalField(max_digits=12, decimal_places=2)
+
+    class Meta:
+        db_table = "proc_noting_sheet_items"
+        ordering = ["id"]
+
+    def __str__(self):
+        return f"{self.description} x {self.quantity}"
+
+    @property
+    def approx_amount(self):
+        return self.quantity * self.unit_price
+
+
 class EAS(models.Model):
     """
     Expenditure/Approval Sanction sheet — created once a NotingSheet is
     fully CFA-approved (mirrors your mockup: "Create EAS" only appears
     then). One NotingSheet -> at most one EAS (OneToOne). Uses the
-    identical AO -> CFA workflow as NotingSheet/Requirement, on purpose,
-    for consistency.
+    identical CFA-only workflow as NotingSheet, on purpose, for
+    consistency.
 
     file_no / eas_id are plain EDITABLE TEXT for now, not auto-generated —
     switch these to an auto-numbering save() (like Requirement/NotingSheet
@@ -438,7 +432,6 @@ class EAS(models.Model):
         NotingSheet, on_delete=models.PROTECT, related_name="eas"
     )
 
-    # ---- Plain editable text for now (see docstring) ----
     file_no = models.CharField(max_length=100, verbose_name="File No")
     eas_id = models.CharField(max_length=100, verbose_name="EAS ID")
 
@@ -462,21 +455,11 @@ class EAS(models.Model):
     date_time = models.DateField(verbose_name="Date")
     station = models.CharField(max_length=150)
 
-    # "Unit – Fetch From Database unit list" — plain text for now; no Unit
-    # master table wired in yet (same situation as fund_head elsewhere).
     unit = models.CharField(max_length=150, verbose_name="Unit")
 
-    # System defaults from the mockup ("Type_id=, status_id=0") — not
-    # exposed on the form, kept for whatever downstream logic expects them.
     type_id = models.CharField(max_length=50, blank=True, default="")
     status_id = models.IntegerField(default=0)
 
-    # ---- Post-approval document uploads (Sanction / Contract / Invoice) ----
-    # Only meaningful, and only shown in the UI, once the EAS itself is
-    # APPROVED — these are real uploaded files (not generated PDFs like
-    # the Noting Sheet/EAS downloads), so they're plain FileFields,
-    # PDF-only, one per document type. All optional/nullable since they
-    # get filled in over time, not all at once.
     sanction_document = models.FileField(
         upload_to="eas_documents/sanction/", null=True, blank=True,
         validators=[FileExtensionValidator(allowed_extensions=["pdf"])],
@@ -525,9 +508,6 @@ class EAS(models.Model):
 
     @property
     def case_file_no(self):
-        """Always mirrors File No (mockup: "Case_File_No = Same as File
-        Number") — a property rather than a stored field so it can never
-        drift out of sync if file_no is edited later."""
         return self.file_no
 
     @property
@@ -542,12 +522,6 @@ class EAS(models.Model):
             return "Declined"
         return "Pending"
 
-    # ---- Workflow transitions ----
-    # CHANGED: approval is now CFA-only — Account Officer review has been
-    # dropped from the flow, same as NotingSheet. submit_for_approval()
-    # sends straight to PENDING_CFA. ao_decide() kept unused for any
-    # legacy PENDING_AO records only.
-
     def submit_for_approval(self):
         if not self.is_editable:
             raise ValidationError("This EAS is not currently submittable.")
@@ -559,7 +533,7 @@ class EAS(models.Model):
         self.save()
 
     def ao_decide(self, user, decision, remarks=""):
-        # LEGACY — no longer reachable from the current flow (see note above).
+        # LEGACY — unreachable from the current flow.
         if self.workflow_status != "PENDING_AO":
             raise ValidationError("This EAS is not awaiting Account Officer review.")
         self.ao_status = decision
@@ -584,3 +558,161 @@ class EAS(models.Model):
         elif decision == "DENIED":
             self.workflow_status = "CFA_DENIED"
         self.save()
+
+class ConveningOrder(models.Model):
+    PURPOSE_CHOICES = [
+        ("INSPECTION", "Inspection"),
+        ("PURCHASE", "Purchase"),
+        ("BOO", "BOO"),
+        ("OTHER", "Other"),
+    ]
+
+    APPROVAL_STATUS_CHOICES = [
+        ("DRAFT", "Draft"),
+        ("PENDING", "Pending"),
+        ("APPROVED", "Approved"),
+    ]
+
+    convening_order_id = models.CharField(max_length=30, unique=True, editable=False)
+
+    procurement_case = models.ForeignKey(
+        ProcurementCase,
+        on_delete=models.PROTECT,
+        related_name="convening_orders",
+    )
+
+    requirement_id_text = models.CharField(max_length=100, editable=False)
+    financial_year = models.CharField(max_length=20, editable=False)
+    fund_head_text = models.CharField(max_length=250, blank=True, editable=False)
+    sub_head_text = models.CharField(max_length=250, blank=True, editable=False)
+    procurement_mode = models.CharField(max_length=50, blank=True, editable=False)
+
+    order_number = models.CharField(max_length=50, unique=True)
+    order_date = models.DateField(default=timezone.now)
+
+    subject_title = models.CharField(max_length=500)
+    committee_purpose = models.CharField(max_length=20, choices=PURPOSE_CHOICES)
+    place_of_proceedings = models.CharField(max_length=250)
+
+    start_date = models.DateField()
+    completion_due_date = models.DateField()
+
+    applicable_authority_rule = models.CharField(max_length=250)
+
+    presiding_officer = models.ForeignKey(
+        "authentication.User",
+        on_delete=models.PROTECT,
+        related_name="convening_orders_presiding",
+    )
+
+    member_1 = models.ForeignKey(
+        "authentication.User",
+        on_delete=models.PROTECT,
+        related_name="convening_orders_member1",
+    )
+
+    member_2 = models.ForeignKey(
+        "authentication.User",
+        on_delete=models.PROTECT,
+        related_name="convening_orders_member2",
+    )
+
+    additional_members = models.JSONField(default=list, blank=True)
+
+    technical_representative = models.ForeignKey(
+        "authentication.User",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="convening_orders_technical",
+    )
+
+    member_secretary = models.ForeignKey(
+        "authentication.User",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="convening_orders_secretary",
+    )
+
+    convening_authority = models.ForeignKey(
+        "authentication.User",
+        on_delete=models.PROTECT,
+        related_name="convening_orders_authority",
+    )
+
+    report_submission_to = models.ForeignKey(
+        "authentication.User",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="convening_orders_report_to",
+    )
+
+    terms_of_reference = models.TextField()
+    special_instructions = models.TextField(blank=True)
+    remarks = models.TextField(max_length=1000, blank=True)
+
+    approval_status = models.CharField(
+        max_length=20,
+        choices=APPROVAL_STATUS_CHOICES,
+        default="DRAFT",
+    )
+
+    version_number = models.PositiveIntegerField(default=1, editable=False)
+
+    created_by = models.ForeignKey(
+        "authentication.User",
+        on_delete=models.PROTECT,
+        related_name="convening_orders_created",
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "proc_convening_orders"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.convening_order_id
+
+    def save(self, *args, **kwargs):
+        if not self.convening_order_id:
+            yr = timezone.now().year
+            last = (
+                ConveningOrder.objects
+                .filter(convening_order_id__startswith=f"CO-{yr}-")
+                .order_by("-convening_order_id")
+                .first()
+            )
+
+            seq = 1
+
+            if last:
+                try:
+                    seq = int(last.convening_order_id.split("-")[-1]) + 1
+                except ValueError:
+                    seq = 1
+
+            self.convening_order_id = f"CO-{yr}-{seq:05d}"
+
+        super().save(*args, **kwargs)
+
+
+class ConveningOrderAttachment(models.Model):
+    convening_order = models.ForeignKey(
+        ConveningOrder,
+        on_delete=models.CASCADE,
+        related_name="attachments",
+    )
+
+    file = models.FileField(upload_to="convening_orders/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "proc_convening_order_attachments"
+        ordering = ["id"]
+
+    def __str__(self):
+        return self.file.name

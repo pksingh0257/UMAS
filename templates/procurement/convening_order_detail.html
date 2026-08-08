@@ -1,0 +1,227 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UAMS - {{ order.convening_order_id }}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/requirement_form.css' %}">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+  {% include 'partials/sidebar.html' with active_nav='procurement' %}
+
+  <div class="main-content">
+
+    {% include 'partials/header.html' with active_nav='procurement' %}
+
+    <div class="dashboard-shell">
+
+      <div class="card">
+
+        <div class="rf-card-head">
+
+          <h2 style="margin:0;">
+            Convening Order - {{ order.convening_order_id }}
+
+            <span class="badge badge-workflow">
+              {{ order.get_approval_status_display }}
+            </span>
+          </h2>
+
+        </div>
+
+        <div class="rf-grid-3" style="margin-top:16px;">
+
+          <div>
+            <span class="rf-label">Convening Order ID</span>
+            <p>{{ order.convening_order_id }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Procurement Case</span>
+            <p>{{ order.procurement_case }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Requirement ID</span>
+            <p>{{ order.requirement_id_text }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Order Number</span>
+            <p>{{ order.order_number }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Order Date</span>
+            <p>{{ order.order_date|date:"d M Y" }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Financial Year</span>
+            <p>{{ order.financial_year }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Fund Head</span>
+            <p>{{ order.fund_head_text }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Sub-Head</span>
+            <p>{{ order.sub_head_text }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Procurement Mode</span>
+            <p>{{ order.procurement_mode }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Subject / Title</span>
+            <p>{{ order.subject_title }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Committee Purpose</span>
+            <p>{{ order.get_committee_purpose_display }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Place of Proceedings</span>
+            <p>{{ order.place_of_proceedings }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Start Date</span>
+            <p>{{ order.start_date|date:"d M Y" }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Completion Due Date</span>
+            <p>{{ order.completion_due_date|date:"d M Y" }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Applicable Authority / Rule</span>
+            <p>{{ order.applicable_authority_rule }}</p>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>Committee Constitution</h3>
+
+        <div class="rf-grid-3">
+
+          <div>
+            <span class="rf-label">Presiding Officer</span>
+            <p>{{ order.presiding_officer }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Member 1</span>
+            <p>{{ order.member_1 }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Member 2</span>
+            <p>{{ order.member_2 }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Technical Representative</span>
+            <p>{{ order.technical_representative|default:"—" }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Member Secretary</span>
+            <p>{{ order.member_secretary|default:"—" }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Convening Authority</span>
+            <p>{{ order.convening_authority }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Report Submission To</span>
+            <p>{{ order.report_submission_to|default:"—" }}</p>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>Instructions and Control</h3>
+
+        <div class="rf-grid-2">
+
+          <div>
+            <span class="rf-label">Terms of Reference</span>
+            <p style="white-space:pre-line;">{{ order.terms_of_reference }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Special Instructions</span>
+            <p style="white-space:pre-line;">{{ order.special_instructions|default:"—" }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Remarks</span>
+            <p style="white-space:pre-line;">{{ order.remarks|default:"—" }}</p>
+          </div>
+
+          <div>
+            <span class="rf-label">Version</span>
+            <p>{{ order.version_number }}</p>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>Attachments</h3>
+
+        {% for attachment in order.attachments.all %}
+
+          <p>
+            <a href="{{ attachment.file.url }}" target="_blank">
+              {{ attachment.file.name }}
+            </a>
+          </p>
+
+        {% empty %}
+
+          <p style="color:var(--text-secondary);">
+            No attachments uploaded.
+          </p>
+
+        {% endfor %}
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script src="{% static 'js/theme-toggle.js' %}"></script>
+
+</body>
+</html>

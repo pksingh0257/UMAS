@@ -3,66 +3,193 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>UAMS - New Noting Sheet</title>
+  <title>UAMS - Create Noting Sheet</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <link rel="stylesheet" href="{% static 'css/requirement_form.css' %}">
+  <link rel="stylesheet" href="{% static 'css/noting_sheet_form.css' %}">
 </head>
 <body>
 <div class="app-layout">
   {% include 'partials/sidebar.html' with active_nav='procurement' %}
   <div class="main-content">
-{% include 'partials/header.html' with active_nav='procurement' %}
+    {% include 'partials/header.html' with active_nav='procurement' %}
+
     <div class="dashboard-shell">
 
-      <div class="card">
-        <h2 style="margin-top:0;">New Noting Sheet</h2>
-        <p style="color:var(--text-secondary); margin:0;">For Requirement {{ requirement.requirement_id }} — Noting ID is assigned automatically on save.</p>
-      </div>
+      {% if messages %}
+        {% for message in messages %}<div class="card rf-message">{{ message }}</div>{% endfor %}
+      {% endif %}
 
-      <!-- Auto-fetched fields, read-only -->
-      <div class="card">
-        <h3 style="margin-top:0;">From Requirement (auto-fetched)</h3>
-        <div class="rf-grid-3">
-          <div><span class="rf-label">Requirement ID</span><p>{{ requirement.requirement_id }}</p></div>
-          <div><span class="rf-label">Item Name</span><p>{{ requirement.item_name }}</p></div>
-          <div><span class="rf-label">Qty</span><p>{{ requirement.quantity }}</p></div>
-          <div><span class="rf-label">Unit Price</span><p>{{ requirement.estimated_cost }}</p></div>
-        </div>
-      </div>
+      <div class="ns-breadcrumb">Documents &rsaquo; Noting Sheets &rsaquo; Create</div>
+      <h1 class="ns-title">Create Noting Sheet</h1>
 
-      <form method="post" novalidate>
+      <form method="post" id="noting-sheet-form">
         {% csrf_token %}
+
         {% if form.non_field_errors %}<div class="card"><p class="rf-error-text">{{ form.non_field_errors }}</p></div>{% endif %}
 
+        <!-- ============ File Details ============ -->
         <div class="card">
-          <h3 style="margin-top:0;">Noting Sheet Details</h3>
-          <div class="rf-grid-3">
+          <h3 class="ns-section-title">File Details</h3>
+          <div class="rf-grid-4">
             <div class="field">
-              <label for="{{ form.au.id_for_label }}">A/U</label>
-              {{ form.au }}
-              {% if form.au.errors %}<p class="rf-error-text">{{ form.au.errors|join:", " }}</p>{% endif %}
+              <label for="{{ form.file_no.id_for_label }}">File No.</label>
+              {{ form.file_no }}
             </div>
             <div class="field">
-              <label for="{{ form.amount_allotted.id_for_label }}">Amount Allotted</label>
-              {{ form.amount_allotted }}
+              <label for="{{ form.branch.id_for_label }}">Branch</label>
+              {{ form.branch }}
             </div>
             <div class="field">
-              <label for="{{ form.amount_released.id_for_label }}">Amount Released</label>
-              {{ form.amount_released }}
+              <label for="{{ form.sheet_no.id_for_label }}">Sheet No.</label>
+              {{ form.sheet_no }}
             </div>
             <div class="field">
-              <label for="{{ form.amount_expended.id_for_label }}">Amount Expended (incl. this sheet)</label>
-              {{ form.amount_expended }}
+              <label for="{{ form.dated.id_for_label }}">Dated</label>
+              {{ form.dated }}
             </div>
           </div>
-          <p style="color:var(--text-secondary); font-size:12px; margin-top:10px;">
-            Balance Amount Held is calculated automatically (Allotted − Expended) once saved.
-          </p>
         </div>
 
-        <div class="rf-actions">
+        <!-- ============ Branch & Financial Year ============ -->
+        <div class="card">
+          <h3 class="ns-section-title">Branch &amp; Financial Year</h3>
+          <div class="rf-grid-2">
+            <div class="field">
+              <label>Branch</label>
+              <input type="text" disabled value="(same as File Details above)">
+            </div>
+            <div class="field">
+              <label for="{{ form.financial_year.id_for_label }}">Financial Year</label>
+              {{ form.financial_year }}
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ Noting / Details + Item Table ============ -->
+        <div class="card">
+          <h3 class="ns-section-title">Noting / Details</h3>
+          <div class="ns-noting-grid">
+
+            <div>
+              <div class="field">
+                <label for="{{ form.paragraph_1.id_for_label }}">Paragraph 1 (Purport / Subject)</label>
+                {{ form.paragraph_1 }}
+                <p class="ns-charcount" data-for="{{ form.paragraph_1.id_for_label }}" data-max="200">0 / 200</p>
+                {% if form.paragraph_1.errors %}<p class="rf-error-text">{{ form.paragraph_1.errors|join:", " }}</p>{% endif %}
+              </div>
+              <div class="field" style="margin-top:14px;">
+                <label for="{{ form.paragraph_2.id_for_label }}">Paragraph 2 (Requirement / Justification)</label>
+                {{ form.paragraph_2 }}
+                <p class="ns-charcount" data-for="{{ form.paragraph_2.id_for_label }}" data-max="500">0 / 500</p>
+                {% if form.paragraph_2.errors %}<p class="rf-error-text">{{ form.paragraph_2.errors|join:", " }}</p>{% endif %}
+              </div>
+            </div>
+
+            <div>
+              <h4 class="ns-subtitle">Item Details</h4>
+              {{ formset.management_form }}
+              {% if formset.non_form_errors %}<p class="rf-error-text">{{ formset.non_form_errors }}</p>{% endif %}
+
+              <table class="ns-item-table" id="ns-item-table">
+                <thead>
+                  <tr>
+                    <th>S.No</th>
+                    <th>Item Description</th>
+                    <th>A/U</th>
+                    <th>Quantity</th>
+                    <th>Unit Price (Rs)</th>
+                    <th>Approx Amount (Rs)</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="ns-item-body">
+                  {% for item_form in formset %}
+                    <tr class="ns-row">
+                      <td class="ns-sno">{{ forloop.counter }}</td>
+                      <td>{{ item_form.description }}</td>
+                      <td>{{ item_form.au }}</td>
+                      <td>{{ item_form.quantity }}</td>
+                      <td>{{ item_form.unit_price }}</td>
+                      <td class="ns-approx">0.00</td>
+                      <td class="ns-remove-cell">
+                        {% if item_form.DELETE %}
+                          <label class="ns-remove-label">{{ item_form.DELETE }}<span>&times;</span></label>
+                        {% endif %}
+                      </td>
+                      {% for hidden in item_form.hidden_fields %}{{ hidden }}{% endfor %}
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+              <button type="button" id="ns-add-item" class="ns-add-btn">+ Add Item</button>
+
+              <div class="ns-total-row">
+                <span>Total Amount (Rs)</span>
+                <strong id="ns-total-amount">0.00</strong>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ============ Fund Details + Approval, side by side ============ -->
+        <div class="ns-bottom-grid">
+
+          <div class="card">
+            <h3 class="ns-section-title">Fund Details</h3>
+            <div class="rf-grid-2">
+              <div class="field">
+                <label for="{{ form.amount_allotted.id_for_label }}">Amount Allotted (Rs)</label>
+                {{ form.amount_allotted }}
+              </div>
+              <div class="field">
+                <label for="{{ form.amount_released.id_for_label }}">Amount Released (Rs)</label>
+                {{ form.amount_released }}
+              </div>
+              <div class="field">
+                <label for="{{ form.amount_expended.id_for_label }}">Amount Expended including this Noting Sheet (Rs)</label>
+                {{ form.amount_expended }}
+              </div>
+              <div class="field">
+                <label>Balance Amount held as on Date (Rs)</label>
+                <input type="text" disabled id="ns-balance-display" value="0.00">
+              </div>
+            </div>
+            <div class="field" style="margin-top:10px;">
+              <label for="{{ form.remarks.id_for_label }}">Remarks (if any)</label>
+              {{ form.remarks }}
+              <p class="ns-charcount" data-for="{{ form.remarks.id_for_label }}" data-max="200">0 / 200</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="ns-section-title">Approval</h3>
+            <div class="field">
+              <label>Prepared By</label>
+              <input type="text" disabled value="({{ request.user.get_full_name|default:request.user.username }})&#10;{{ request.user.get_role_display }}">
+            </div>
+            <div class="field" style="margin-top:10px;">
+              <label>Date</label>
+              <input type="text" disabled value="{% now 'd-m-Y' %}">
+            </div>
+            <div class="field" style="margin-top:10px;">
+              <label for="{{ form.approval_recipient.id_for_label }}">For Approval</label>
+              {{ form.approval_recipient }}
+            </div>
+            <div class="field" style="margin-top:10px;">
+              <label>Status</label>
+              <span class="badge badge-pending">Pending</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="ns-actions">
           <a href="{% url 'procurement_select' %}?requirement={{ requirement.pk }}" class="theme-toggle" style="text-decoration:none;">Cancel</a>
-          <button type="submit" class="login-btn" style="width:auto; padding:12px 28px;">Create Noting Sheet</button>
+          <button type="button" id="ns-preview-btn" class="theme-toggle">Preview</button>
+          <button type="submit" name="save_draft" class="login-btn">Save Draft</button>
         </div>
       </form>
 
@@ -77,5 +204,126 @@
   </div>
 </div>
 <script src="{% static 'js/theme-toggle.js' %}"></script>
+<script>
+  // ---- Add Item row ----
+  document.getElementById('ns-add-item').addEventListener('click', function () {
+    var totalForms = document.getElementById('id_items-TOTAL_FORMS');
+    var index = parseInt(totalForms.value, 10);
+    var body = document.getElementById('ns-item-body');
+    var lastRow = body.querySelector('.ns-row:last-child');
+    var newRow = lastRow.cloneNode(true);
+
+    newRow.innerHTML = newRow.innerHTML.replace(/items-(\d+)-/g, 'items-' + index + '-');
+    newRow.querySelectorAll('input[type=text], input[type=number]').forEach(function (input) { input.value = ''; });
+    newRow.querySelectorAll('input[type=checkbox]').forEach(function (cb) { cb.checked = false; });
+    newRow.querySelector('.ns-approx').textContent = '0.00';
+    body.appendChild(newRow);
+
+    totalForms.value = index + 1;
+    renumberRows();
+    bindRowEvents(newRow);
+    recalcTotal();
+  });
+
+  function renumberRows() {
+    document.querySelectorAll('#ns-item-body .ns-row').forEach(function (row, i) {
+      row.querySelector('.ns-sno').textContent = i + 1;
+    });
+  }
+
+  function recalcTotal() {
+    var total = 0;
+    document.querySelectorAll('#ns-item-body .ns-row').forEach(function (row) {
+      var qty = parseFloat(row.querySelector('.ns-qty').value) || 0;
+      var price = parseFloat(row.querySelector('.ns-price').value) || 0;
+      var approx = qty * price;
+      row.querySelector('.ns-approx').textContent = approx.toFixed(2);
+      total += approx;
+    });
+    document.getElementById('ns-total-amount').textContent = total.toFixed(2);
+  }
+
+  function bindRowEvents(row) {
+    row.querySelector('.ns-qty').addEventListener('input', recalcTotal);
+    row.querySelector('.ns-price').addEventListener('input', recalcTotal);
+    var deleteBox = row.querySelector('.ns-remove-label input[type=checkbox]');
+    if (deleteBox) {
+      deleteBox.addEventListener('change', function () {
+        row.classList.toggle('ns-row-removed', deleteBox.checked);
+        recalcTotal();
+      });
+    }
+  }
+
+  document.querySelectorAll('#ns-item-body .ns-row').forEach(bindRowEvents);
+  recalcTotal();
+
+  // ---- Fund balance auto-calc: Allotted - Expended ----
+  function recalcBalance() {
+    var allotted = parseFloat(document.getElementById('{{ form.amount_allotted.id_for_label }}').value) || 0;
+    var expended = parseFloat(document.getElementById('{{ form.amount_expended.id_for_label }}').value) || 0;
+    document.getElementById('ns-balance-display').value = (allotted - expended).toFixed(2);
+  }
+  document.getElementById('{{ form.amount_allotted.id_for_label }}').addEventListener('input', recalcBalance);
+  document.getElementById('{{ form.amount_expended.id_for_label }}').addEventListener('input', recalcBalance);
+  recalcBalance();
+
+  // ---- Character counters ----
+  document.querySelectorAll('.ns-charcount').forEach(function (counter) {
+    var input = document.getElementById(counter.getAttribute('data-for'));
+    var max = counter.getAttribute('data-max');
+    function update() { counter.textContent = input.value.length + ' / ' + max; }
+    input.addEventListener('input', update);
+    update();
+  });
+
+  // ---- Preview: opens a new tab and renders current (unsaved) form
+  // values in the same layout as the official Noting Sheet PDF, without
+  // needing to save first. ----
+  document.getElementById('ns-preview-btn').addEventListener('click', function () {
+    var items = [];
+    document.querySelectorAll('#ns-item-body .ns-row').forEach(function (row, i) {
+      items.push({
+        sno: i + 1,
+        desc: row.querySelector('input[name$="-description"]').value,
+        au: row.querySelector('input[name$="-au"]').value,
+        qty: row.querySelector('.ns-qty').value,
+        price: row.querySelector('.ns-price').value,
+        approx: row.querySelector('.ns-approx').textContent,
+      });
+    });
+
+    var itemRows = items.map(function (it) {
+      return '<tr><td>' + it.sno + '</td><td>' + it.desc + '</td><td>' + it.au + '</td><td>' + it.qty + '</td><td>' + it.price + '</td><td>' + it.approx + '</td></tr>';
+    }).join('');
+
+    var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Preview</title><style>' +
+      'body{font-family:Helvetica,Arial,sans-serif;font-size:11pt;color:#1C1F26;padding:2cm;}' +
+      'h1{font-size:16pt;text-align:center;}' +
+      'table{width:100%;border-collapse:collapse;margin:10px 0;}' +
+      'th,td{border:1px solid #CFD8DC;padding:6px 10px;font-size:10pt;text-align:left;}' +
+      'th{background:#F5F9FF;}' +
+      '.meta{display:flex;justify-content:space-between;font-size:10pt;margin-bottom:10px;}' +
+      '</style></head><body>' +
+      '<h1>NOTING SHEET (PREVIEW \u2014 UNSAVED)</h1>' +
+      '<div class="meta"><span>File No: ' + document.getElementById('{{ form.file_no.id_for_label }}').value + '</span><span>Sheet No: ' + document.getElementById('{{ form.sheet_no.id_for_label }}').value + '</span></div>' +
+      '<div class="meta"><span>Branch: ' + document.getElementById('{{ form.branch.id_for_label }}').value + '</span><span>Dated: ' + document.getElementById('{{ form.dated.id_for_label }}').value + '</span></div>' +
+      '<p><strong>' + document.getElementById('{{ form.paragraph_1.id_for_label }}').value + '</strong></p>' +
+      '<p style="white-space:pre-wrap;">' + document.getElementById('{{ form.paragraph_2.id_for_label }}').value + '</p>' +
+      '<table><thead><tr><th>S No</th><th>Item</th><th>A/U</th><th>Qty</th><th>Unit Price</th><th>Approx Amt</th></tr></thead><tbody>' + itemRows + '</tbody></table>' +
+      '<p><strong>Total: ' + document.getElementById('ns-total-amount').textContent + '</strong></p>' +
+      '<table><thead><tr><th>Amount Allotted</th><th>Amount Released</th><th>Amount Expended</th><th>Balance</th></tr></thead><tbody><tr><td>' +
+      document.getElementById('{{ form.amount_allotted.id_for_label }}').value + '</td><td>' +
+      document.getElementById('{{ form.amount_released.id_for_label }}').value + '</td><td>' +
+      document.getElementById('{{ form.amount_expended.id_for_label }}').value + '</td><td>' +
+      document.getElementById('ns-balance-display').value + '</td></tr></tbody></table>' +
+      '<p>' + document.getElementById('{{ form.remarks.id_for_label }}').value + '</p>' +
+      '</body></html>';
+
+    var win = window.open('', '_blank');
+    win.document.write(html);
+    win.document.close();
+  });
+</script>
 </body>
 </html>
