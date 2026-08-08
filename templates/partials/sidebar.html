@@ -3,7 +3,7 @@
   <div class="logo-block">
     <img src="{% static 'images/dashboard-bg-logo.png' %}" alt="Unit Crest">
     <h2><span>UAMS</span></h2>
-   
+
   </div>
   <hr>
   <nav>
@@ -11,54 +11,56 @@
       <span class="icon">&#9635;</span> Dashboard
     </a>
 
-      {% if role in 'ACCOUNTS_OFFICER,ADMINISTRATOR,ACCOUNTS_CLERK,HEAD_CLERK,CFA' %}
-     <a href="{% url 'finance:fund-dashboard' %}" class="{% if active_nav == 'funds' %}active{% endif %}">
-        <span class="icon">&#128179;</span> Funds
-      </a>
+    {% if role in 'ACCOUNTS_OFFICER,ADMINISTRATOR,ACCOUNTS_CLERK,HEAD_CLERK,CFA' %}
+    <a href="{% url 'finance:fund-dashboard' %}" class="{% if active_nav == 'funds' %}active{% endif %}">
+      <span class="icon">&#128179;</span> Funds
+    </a>
 
     {% endif %}
 
     {% if role in 'ACCOUNTS_CLERK,HEAD_CLERK,ADMINISTRATOR' %}
-      <a href="{% url 'requirement_list' %}" class="{% if active_nav == 'requirements' %}active{% endif %}">
-        <!-- <a href="">+ New Requirement Request</a>  -->
-        <span class="icon">&#128196;</span> Requirements
-      </a>
+    <a href="{% url 'requirement_list' %}" class="{% if active_nav == 'requirements' %}active{% endif %}">
+      <!-- <a href="">+ New Requirement Request</a>  -->
+      <span class="icon">&#128196;</span> Requirements
+    </a>
     {% endif %}
 
     {% if role in 'CFA,ACCOUNTS_OFFICER,ADMINISTRATOR' %}
-      <a href="{% url 'requirement_list' %}" class="{% if active_nav == 'requirements' %}active{% endif %}">
-        <span class="icon">&#9989;</span> Approvals
-      </a>
+    <a href="{% url 'requirement_list' %}" class="{% if active_nav == 'requirements' %}active{% endif %}">
+      <span class="icon">&#9989;</span> Approvals
+    </a>
     {% endif %}
 
     {% if role in 'ACCOUNTS_CLERK,ACCOUNTS_OFFICER,ADMINISTRATOR,HEAD_CLERK,CFA' %}
-      <a href="{% url 'procurement_dashboard' %}" class="{% if active_nav == 'procurement' %}active{% endif %}">
-        <span class="icon">&#128722;</span> Procurement
-      </a>
-      <a href="#" class="{% if active_nav == 'payments' %}active{% endif %}">
-        <span class="icon">&#128179;</span> Payments
-      </a>
-      <a href="#" class="{% if active_nav == 'purchase_orders' %}active{% endif %}">
-        <span class="icon">&#128203;</span> Documents
-      </a>
+    <a href="{% url 'procurement_dashboard' %}" class="{% if active_nav == 'procurement' %}active{% endif %}">
+      <span class="icon">&#128722;</span> Procurement
+    </a>
+    <a href="#" class="{% if active_nav == 'payments' %}active{% endif %}">
+      <span class="icon">&#128179;</span> Payments
+    </a>
+
+    <!-- update this section  -->
+    <a href="#" class="{% if active_nav == 'purchase_orders' %}active{% endif %}">
+      <span class="icon">&#128203;</span> Documents
+    </a>
     {% endif %}
 
     {% if role in 'ACCOUNTS_OFFICER,CFA,ADMINISTRATOR' %}
-      <a href="#" class="{% if active_nav == 'reports' %}active{% endif %}">
-        <span class="icon">&#128202;</span> Reports
-      </a>
-      <a href="#" class="{% if active_nav == 'audit_trail' %}active{% endif %}">
-        <span class="icon">&#128065;</span> Audit Trail
-      </a>
+    <a href="#" class="{% if active_nav == 'reports' %}active{% endif %}">
+      <span class="icon">&#128202;</span> Reports
+    </a>
+    <a href="#" class="{% if active_nav == 'audit_trail' %}active{% endif %}">
+      <span class="icon">&#128065;</span> Audit Trail
+    </a>
 
     {% endif %}
 
-     {% if role in 'ADMINISTRATOR' %}
-     <a href="#" class="{% if active_nav == 'administration' %}active{% endif %}">
-        <span class="icon">&#128100;</span> Administration
-      </a>
+    {% if role in 'ADMINISTRATOR' %}
+    <a href="#" class="{% if active_nav == 'administration' %}active{% endif %}">
+      <span class="icon">&#128100;</span> Administration
+    </a>
     {% endif %}
-    
+
     <a href="#" class="{% if active_nav == 'settings' %}active{% endif %}">
       <span class="icon">&#9881;</span> Settings
     </a>
