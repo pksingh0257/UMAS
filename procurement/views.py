@@ -2,16 +2,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 from requirements_mgmt.models import Requirement
-from .models import ProcurementCase, NotingSheet, EAS
-from .forms import (
-    CaseStageDataForm, ReturnCaseForm, NotingSheetForm,
-    NotingCFADecisionForm, EASForm, EASCFADecisionForm, EASDocumentUploadForm,
-)
+from .models import ProcurementCase, NotingSheet, NotingSheetItem, EAS, ConveningOrder
+from .forms import ( CaseStageDataForm, ReturnCaseForm, NotingSheetForm, NotingSheetItemFormSet, NotingCFADecisionForm, EASForm, EASCFADecisionForm, EASDocumentUploadForm, ConveningOrderForm, )
 
 
 # ============================================================
-# EXISTING VIEWS — unchanged from what you had
+# EXISTING VIEWS — unchanged
 # ============================================================
 
 @login_required
@@ -99,12 +97,12 @@ def audit_trail(request):
 
 
 # ============================================================
-# NEW VIEWS — Noting Sheet workflow
+# NOTING SHEET workflow
 # ============================================================
 
 @login_required
 def procurement_dashboard(request):
-    """New landing page for the "Procurement" sidebar link."""
+    """Landing page for the "Procurement" sidebar link."""
     noting_sheets = NotingSheet.objects.select_related("requirement").order_by("-created_at")
 
     context = {
@@ -144,6 +142,11 @@ def procurement_select(request):
 
 @login_required
 def noting_sheet_create(request, requirement_pk):
+    """
+    CHANGED: now handles NotingSheetItemFormSet alongside the header form,
+    for the mockup's multi-item Item Details table. The first item row is
+    seeded from the linked Requirement's item_name/quantity/estimated_cost.
+    """
     requirement = get_object_or_404(Requirement, pk=requirement_pk, workflow_status="APPROVED")
 
     if hasattr(requirement, "noting_sheet"):
@@ -152,18 +155,33 @@ def noting_sheet_create(request, requirement_pk):
 
     if request.method == "POST":
         form = NotingSheetForm(request.POST)
-        if form.is_valid():
+        formset = NotingSheetItemFormSet(request.POST)
+        if form.is_valid() and formset.is_valid():
             noting_sheet = form.save(commit=False)
             noting_sheet.requirement = requirement
             noting_sheet.created_by = request.user
             noting_sheet.save()
+
+            formset.instance = noting_sheet
+            formset.save()
+
             messages.success(request, f"{noting_sheet.noting_id} created.")
             return redirect("noting_sheet_detail", pk=noting_sheet.pk)
     else:
-        form = NotingSheetForm()
+        form = NotingSheetForm(initial={
+            "dated": timezone.now().date(),
+            "paragraph_1": f"PROCUREMENT OF {requirement.item_name.upper()} FOR {requirement.demanded_by.upper()}",
+        })
+        formset = NotingSheetItemFormSet(initial=[{
+            "description": requirement.item_name,
+            "au": "Nos",
+            "quantity": requirement.quantity,
+            "unit_price": requirement.estimated_cost,
+        }], queryset=NotingSheetItem.objects.none())
 
     return render(request, "procurement/noting_sheet_form.html", {
         "form": form,
+        "formset": formset,
         "requirement": requirement,
         "role": request.user.role,
         "active_nav": "procurement",
@@ -189,8 +207,7 @@ def noting_sheet_submit_for_approval(request, pk):
 
 @login_required
 def noting_sheet_detail(request, pk):
-    """CFA-only approval — Account Officer review has been removed from
-    this flow (see NotingSheet.submit_for_approval in models.py)."""
+    """CFA-only approval — Account Officer review is not part of this flow."""
     noting_sheet = get_object_or_404(NotingSheet, pk=pk)
     role = request.user.role
 
@@ -214,27 +231,20 @@ def noting_sheet_detail(request, pk):
 
     return render(request, "procurement/noting_sheet_detail.html", {
         "noting_sheet": noting_sheet,
+        "items": noting_sheet.items.all(),
         "role": role,
         "active_nav": "procurement",
         "cfa_form": cfa_form,
         "can_submit": noting_sheet.is_editable and noting_sheet.created_by == request.user,
     })
 
+
 # ============================================================
-# NEW VIEWS — EAS workflow
+# EAS workflow — unchanged
 # ============================================================
 
 @login_required
 def eas_create(request, noting_sheet_pk):
-    """
-    "Create EAS" — only reachable once the linked Noting Sheet is fully
-    CFA-approved (workflow_status == "APPROVED"), matching the mockup
-    where the button only appears at that point.
-
-    Submitting the form both saves the EAS AND sends it straight to AO
-    review in one step — the mockup shows a single "Send For Approval"
-    button, not a separate save-then-submit flow.
-    """
     noting_sheet = get_object_or_404(NotingSheet, pk=noting_sheet_pk, workflow_status="APPROVED")
 
     if hasattr(noting_sheet, "eas"):
@@ -264,11 +274,6 @@ def eas_create(request, noting_sheet_pk):
 
 @login_required
 def eas_edit(request, pk):
-    """
-    Only reachable while editable (DRAFT / CFA_DENIED), and only by the
-    person who created it — same convention used for Requirement and
-    NotingSheet. Resubmitting goes straight back to CFA (CFA-only flow).
-    """
     eas = get_object_or_404(EAS, pk=pk)
     if not eas.is_editable or eas.created_by != request.user:
         messages.error(request, "This EAS can't be edited right now.")
@@ -295,8 +300,6 @@ def eas_edit(request, pk):
 
 @login_required
 def eas_detail(request, pk):
-    """CFA-only approval — Account Officer review has been removed from
-    this flow (see EAS.submit_for_approval in models.py)."""
     eas = get_object_or_404(EAS, pk=pk)
     role = request.user.role
 
@@ -329,27 +332,23 @@ def eas_detail(request, pk):
 
 
 # ============================================================
-# NEW VIEWS — PDF downloads
+# PDF downloads
 # ============================================================
 
 @login_required
 def noting_sheet_download_pdf(request, pk):
-    """
-    Renders a plain, print-friendly page — no server-side PDF library.
-    The page has a "Print / Save as PDF" button that calls the browser's
-    native print dialog, where choosing "Save as PDF" produces the file.
-    This replaced an xhtml2pdf-based version that kept failing.
-    """
     noting_sheet = get_object_or_404(NotingSheet, pk=pk)
     if noting_sheet.workflow_status != "APPROVED":
         messages.error(request, "This Noting Sheet can only be downloaded once it's fully approved.")
         return redirect("noting_sheet_detail", pk=pk)
-    return render(request, "procurement/pdf/noting_sheet_pdf.html", {"noting_sheet": noting_sheet})
+    return render(request, "procurement/pdf/noting_sheet_pdf.html", {
+        "noting_sheet": noting_sheet,
+        "items": noting_sheet.items.all(),
+    })
 
 
 @login_required
 def eas_download_pdf(request, pk):
-    """Same approach as noting_sheet_download_pdf above — plain printable page."""
     eas = get_object_or_404(EAS, pk=pk)
     if eas.workflow_status != "APPROVED":
         messages.error(request, "This EAS can only be downloaded once it's fully approved.")
@@ -358,7 +357,7 @@ def eas_download_pdf(request, pk):
 
 
 # ============================================================
-# NEW VIEW — Sanction / Contract / Invoice document uploads
+# Sanction / Contract / Invoice document uploads
 # ============================================================
 
 EAS_DOCUMENT_FIELDS = {
@@ -370,12 +369,6 @@ EAS_DOCUMENT_FIELDS = {
 
 @login_required
 def eas_upload_document(request, pk, doc_type):
-    """
-    Handles the Sanction / Contract / Invoice upload forms on the EAS
-    detail page. Only reachable once the EAS is APPROVED (enforced here,
-    not just hidden in the template) — mirrors the same server-side gate
-    used for the Noting Sheet/EAS PDF downloads.
-    """
     eas = get_object_or_404(EAS, pk=pk)
     field_name = EAS_DOCUMENT_FIELDS.get(doc_type)
 
@@ -397,3 +390,157 @@ def eas_upload_document(request, pk, doc_type):
             messages.error(request, "; ".join(form.errors.get("document", ["Upload failed — PDF files only."])))
 
     return redirect("eas_detail", pk=pk)
+
+
+@login_required
+def convening_order_create(request, eas_pk):
+    eas = get_object_or_404(EAS, pk=eas_pk)
+
+    if eas.workflow_status != "APPROVED":
+        messages.error(request, "Convening Order can only be created after EAS approval.")
+        return redirect("eas_detail", pk=eas.pk)
+
+    if not (eas.sanction_document and eas.contract_document and eas.invoice_document):
+        messages.error(
+            request,
+            "Sanction, Contract and Invoice must all be uploaded before creating the Convening Order.",
+        )
+        return redirect("eas_detail", pk=eas.pk)
+
+    try:
+        procurement_case = eas.noting_sheet.requirement.procurement_case
+    except AttributeError:
+        procurement_case = None
+
+    if procurement_case is None:
+        messages.error(request, "No Procurement Case is linked to this EAS.")
+        return redirect("eas_detail", pk=eas.pk)
+
+    existing_order = procurement_case.convening_orders.filter(
+        approval_status="DRAFT"
+    ).first()
+
+    if existing_order:
+        return redirect("convening_order_detail", pk=existing_order.pk)
+
+    if request.method == "POST":
+        form = ConveningOrderForm(request.POST)
+
+        if form.is_valid():
+            order = form.save(commit=False)
+
+            requirement = procurement_case.requirement_item
+
+            order.requirement_id_text = getattr(
+                requirement,
+                "requirement_id",
+                str(requirement.pk),
+            )
+
+            order.financial_year = getattr(
+                requirement,
+                "financial_year",
+                "",
+            ) or ""
+
+            fund_head = getattr(procurement_case, "fund_head", None)
+            order.fund_head_text = str(fund_head) if fund_head else ""
+
+            order.sub_head_text = getattr(requirement, "sub_head", "") or ""
+            order.procurement_mode = getattr(requirement, "procurement_mode", "") or ""
+
+            order.procurement_case = procurement_case
+            order.created_by = request.user
+            order.approval_status = "DRAFT"
+            order.version_number = 1
+            order.save()
+
+            additional_members = form.cleaned_data.get("additional_members")
+            order.additional_members = [user.pk for user in additional_members]
+            order.save(update_fields=["additional_members"])
+
+            uploaded_files = request.FILES.getlist("attachments")
+
+            if len(uploaded_files) > 5:
+                order.delete()
+                messages.error(request, "Maximum 5 attachments are allowed.")
+                return render(request, "procurement/convening_order_form.html", {
+                    "form": form,
+                    "eas": eas,
+                    "noting_sheet": eas.noting_sheet,
+                    "role": request.user.role,
+                    "active_nav": "procurement",
+                })
+
+            for uploaded_file in uploaded_files:
+                if uploaded_file.size > 5 * 1024 * 1024:
+                    order.delete()
+                    messages.error(request, f"{uploaded_file.name} is larger than 5 MB.")
+                    return render(request, "procurement/convening_order_form.html", {
+                        "form": form,
+                        "eas": eas,
+                        "noting_sheet": eas.noting_sheet,
+                        "role": request.user.role,
+                        "active_nav": "procurement",
+                    })
+
+                extension = uploaded_file.name.lower().rsplit(".", 1)[-1]
+
+                if extension not in ["pdf", "jpg", "jpeg", "png"]:
+                    order.delete()
+                    messages.error(request, "Only PDF, JPG and PNG attachments are allowed.")
+                    return render(request, "procurement/convening_order_form.html", {
+                        "form": form,
+                        "eas": eas,
+                        "noting_sheet": eas.noting_sheet,
+                        "role": request.user.role,
+                        "active_nav": "procurement",
+                    })
+
+                ConveningOrderAttachment.objects.create(
+                    convening_order=order,
+                    file=uploaded_file,
+                )
+
+            messages.success(request, f"{order.convening_order_id} created successfully.")
+            return redirect("convening_order_detail", pk=order.pk)
+
+    else:
+        form = ConveningOrderForm(
+            initial={
+                "procurement_case": procurement_case,
+                "order_date": timezone.now().date(),
+                "subject_title": f"CONVENING ORDER FOR {eas.dsc_goods}",
+            }
+        )
+
+    return render(request, "procurement/convening_order_form.html", {
+        "form": form,
+        "eas": eas,
+        "noting_sheet": eas.noting_sheet,
+        "role": request.user.role,
+        "active_nav": "procurement",
+    })
+
+
+@login_required
+def convening_order_detail(request, pk):
+    order = get_object_or_404(
+        ConveningOrder.objects.select_related(
+            "procurement_case",
+            "presiding_officer",
+            "member_1",
+            "member_2",
+            "technical_representative",
+            "member_secretary",
+            "convening_authority",
+            "report_submission_to",
+        ),
+        pk=pk,
+    )
+
+    return render(request, "procurement/convening_order_detail.html", {
+        "order": order,
+        "role": request.user.role,
+        "active_nav": "procurement",
+    })

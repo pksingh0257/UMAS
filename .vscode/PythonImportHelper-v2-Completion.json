@@ -108,14 +108,6 @@
         "documentation": {}
     },
     {
-        "label": "transaction",
-        "importPath": "django.db",
-        "description": "django.db",
-        "isExtraImport": true,
-        "detail": "django.db",
-        "documentation": {}
-    },
-    {
         "label": "models",
         "importPath": "django.db",
         "description": "django.db",
@@ -181,6 +173,38 @@
     },
     {
         "label": "transaction",
+        "importPath": "django.db",
+        "description": "django.db",
+        "isExtraImport": true,
+        "detail": "django.db",
+        "documentation": {}
+    },
+    {
+        "label": "migrations",
+        "importPath": "django.db",
+        "description": "django.db",
+        "isExtraImport": true,
+        "detail": "django.db",
+        "documentation": {}
+    },
+    {
+        "label": "models",
+        "importPath": "django.db",
+        "description": "django.db",
+        "isExtraImport": true,
+        "detail": "django.db",
+        "documentation": {}
+    },
+    {
+        "label": "migrations",
+        "importPath": "django.db",
+        "description": "django.db",
+        "isExtraImport": true,
+        "detail": "django.db",
+        "documentation": {}
+    },
+    {
+        "label": "models",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -453,14 +477,6 @@
     },
     {
         "label": "admin",
-        "importPath": "django.contrib",
-        "description": "django.contrib",
-        "isExtraImport": true,
-        "detail": "django.contrib",
-        "documentation": {}
-    },
-    {
-        "label": "messages",
         "importPath": "django.contrib",
         "description": "django.contrib",
         "isExtraImport": true,
@@ -796,30 +812,6 @@
         "documentation": {}
     },
     {
-        "label": "get_object_or_404",
-        "importPath": "django.shortcuts",
-        "description": "django.shortcuts",
-        "isExtraImport": true,
-        "detail": "django.shortcuts",
-        "documentation": {}
-    },
-    {
-        "label": "redirect",
-        "importPath": "django.shortcuts",
-        "description": "django.shortcuts",
-        "isExtraImport": true,
-        "detail": "django.shortcuts",
-        "documentation": {}
-    },
-    {
-        "label": "render",
-        "importPath": "django.shortcuts",
-        "description": "django.shortcuts",
-        "isExtraImport": true,
-        "detail": "django.shortcuts",
-        "documentation": {}
-    },
-    {
         "label": "render",
         "importPath": "django.shortcuts",
         "description": "django.shortcuts",
@@ -900,11 +892,11 @@
         "documentation": {}
     },
     {
-        "label": "login_required",
-        "importPath": "django.contrib.auth.decorators",
-        "description": "django.contrib.auth.decorators",
+        "label": "get_user_model",
+        "importPath": "django.contrib.auth",
+        "description": "django.contrib.auth",
         "isExtraImport": true,
-        "detail": "django.contrib.auth.decorators",
+        "detail": "django.contrib.auth",
         "documentation": {}
     },
     {
@@ -1013,11 +1005,11 @@
         "documentation": {}
     },
     {
-        "label": "Path",
-        "importPath": "pathlib",
-        "description": "pathlib",
+        "label": "settings",
+        "importPath": "django.conf",
+        "description": "django.conf",
         "isExtraImport": true,
-        "detail": "pathlib",
+        "detail": "django.conf",
         "documentation": {}
     },
     {
@@ -1224,11 +1216,43 @@
         "documentation": {}
     },
     {
-        "label": "PermissionDenied",
-        "importPath": "django.core.exceptions",
-        "description": "django.core.exceptions",
+        "label": "forms",
+        "importPath": "django",
+        "description": "django",
         "isExtraImport": true,
-        "detail": "django.core.exceptions",
+        "detail": "django",
+        "documentation": {}
+    },
+    {
+        "label": "forms",
+        "importPath": "django",
+        "description": "django",
+        "isExtraImport": true,
+        "detail": "django",
+        "documentation": {}
+    },
+    {
+        "label": "forms",
+        "importPath": "django",
+        "description": "django",
+        "isExtraImport": true,
+        "detail": "django",
+        "documentation": {}
+    },
+    {
+        "label": "forms",
+        "importPath": "django",
+        "description": "django",
+        "isExtraImport": true,
+        "detail": "django",
+        "documentation": {}
+    },
+    {
+        "label": "forms",
+        "importPath": "django",
+        "description": "django",
+        "isExtraImport": true,
+        "detail": "django",
         "documentation": {}
     },
     {
@@ -1357,6 +1381,78 @@
         "description": "django.core.exceptions",
         "isExtraImport": true,
         "detail": "django.core.exceptions",
+        "documentation": {}
+    },
+    {
+        "label": "ValidationError",
+        "importPath": "django.core.exceptions",
+        "description": "django.core.exceptions",
+        "isExtraImport": true,
+        "detail": "django.core.exceptions",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "slugify",
+        "importPath": "django.utils.text",
+        "description": "django.utils.text",
+        "isExtraImport": true,
+        "detail": "django.utils.text",
         "documentation": {}
     },
     {
@@ -1365,22 +1461,6 @@
         "description": "django.core.paginator",
         "isExtraImport": true,
         "detail": "django.core.paginator",
-        "documentation": {}
-    },
-    {
-        "label": "Paginator",
-        "importPath": "django.core.paginator",
-        "description": "django.core.paginator",
-        "isExtraImport": true,
-        "detail": "django.core.paginator",
-        "documentation": {}
-    },
-    {
-        "label": "Q",
-        "importPath": "django.db.models",
-        "description": "django.db.models",
-        "isExtraImport": true,
-        "detail": "django.db.models",
         "documentation": {}
     },
     {
@@ -1520,131 +1600,11 @@
         "documentation": {}
     },
     {
-        "label": "FileResponse",
-        "importPath": "django.http",
-        "description": "django.http",
-        "isExtraImport": true,
-        "detail": "django.http",
-        "documentation": {}
-    },
-    {
-        "label": "Http404",
-        "importPath": "django.http",
-        "description": "django.http",
-        "isExtraImport": true,
-        "detail": "django.http",
-        "documentation": {}
-    },
-    {
         "label": "xframe_options_exempt",
         "importPath": "django.views.decorators.clickjacking",
         "description": "django.views.decorators.clickjacking",
         "isExtraImport": true,
         "detail": "django.views.decorators.clickjacking",
-        "documentation": {}
-    },
-    {
-        "label": "xframe_options_exempt",
-        "importPath": "django.views.decorators.clickjacking",
-        "description": "django.views.decorators.clickjacking",
-        "isExtraImport": true,
-        "detail": "django.views.decorators.clickjacking",
-        "documentation": {}
-    },
-    {
-        "label": "forms",
-        "importPath": "django",
-        "description": "django",
-        "isExtraImport": true,
-        "detail": "django",
-        "documentation": {}
-    },
-    {
-        "label": "forms",
-        "importPath": "django",
-        "description": "django",
-        "isExtraImport": true,
-        "detail": "django",
-        "documentation": {}
-    },
-    {
-        "label": "forms",
-        "importPath": "django",
-        "description": "django",
-        "isExtraImport": true,
-        "detail": "django",
-        "documentation": {}
-    },
-    {
-        "label": "forms",
-        "importPath": "django",
-        "description": "django",
-        "isExtraImport": true,
-        "detail": "django",
-        "documentation": {}
-    },
-    {
-        "label": "forms",
-        "importPath": "django",
-        "description": "django",
-        "isExtraImport": true,
-        "detail": "django",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "slugify",
-        "importPath": "django.utils.text",
-        "description": "django.utils.text",
-        "isExtraImport": true,
-        "detail": "django.utils.text",
         "documentation": {}
     },
     {
@@ -1805,6 +1765,14 @@
         "description": "django.views.decorators.http",
         "isExtraImport": true,
         "detail": "django.views.decorators.http",
+        "documentation": {}
+    },
+    {
+        "label": "inlineformset_factory",
+        "importPath": "django.forms",
+        "description": "django.forms",
+        "isExtraImport": true,
+        "detail": "django.forms",
         "documentation": {}
     },
     {
@@ -2313,69 +2281,6 @@
         "description": "documentation.migrations.0001_initial",
         "peekOfCode": "class Migration(migrations.Migration):\n    initial = True\n    dependencies = [\n        migrations.swappable_dependency(settings.AUTH_USER_MODEL),\n    ]\n    operations = [\n        migrations.CreateModel(\n            name='ReferenceDocument',\n            fields=[\n                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),",
         "detail": "documentation.migrations.0001_initial",
-        "documentation": {}
-    },
-    {
-        "label": "documentation_dashboard",
-        "kind": 2,
-        "importPath": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "description": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "peekOfCode": "def documentation_dashboard(request):\n    role = _ensure_documentation_access(request.user)\n    documents = ReferenceDocument.objects.select_related(\n        \"uploaded_by\",\n        \"updated_by\",\n    )\n    search_query = request.GET.get(\"q\", \"\").strip()\n    category_filter = request.GET.get(\"category\", \"\").strip()\n    status_filter = request.GET.get(\"status\", \"\").strip()\n    authority_filter = request.GET.get(\"authority\", \"\").strip()",
-        "detail": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "documentation": {}
-    },
-    {
-        "label": "reference_document_upload",
-        "kind": 2,
-        "importPath": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "description": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "peekOfCode": "def reference_document_upload(request):\n    role = getattr(request.user, \"role\", None)\n    if role not in DOCUMENT_UPLOAD_ROLES:\n        raise PermissionDenied(\n            \"You are not authorised to upload reference documents.\"\n        )\n    if request.method == \"POST\":\n        form = ReferenceDocumentUploadForm(\n            request.POST,\n            request.FILES,",
-        "detail": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "documentation": {}
-    },
-    {
-        "label": "reference_document_detail",
-        "kind": 2,
-        "importPath": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "description": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "peekOfCode": "def reference_document_detail(request, pk):\n    role = _ensure_documentation_access(request.user)\n    document = get_object_or_404(\n        ReferenceDocument.objects.select_related(\n            \"uploaded_by\",\n            \"updated_by\",\n            \"supersedes\",\n        ),\n        pk=pk,\n    )",
-        "detail": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "documentation": {}
-    },
-    {
-        "label": "reference_document_inline",
-        "kind": 2,
-        "importPath": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "description": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "peekOfCode": "def reference_document_inline(request, pk):\n    _ensure_documentation_access(request.user)\n    document = get_object_or_404(ReferenceDocument, pk=pk)\n    preview_file = document.preview_file\n    if not preview_file:\n        raise Http404(\n            \"No browser preview is available for this document.\"\n        )\n    file_handle = _open_storage_file(preview_file)\n    response = FileResponse(",
-        "detail": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "documentation": {}
-    },
-    {
-        "label": "reference_document_download",
-        "kind": 2,
-        "importPath": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "description": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "peekOfCode": "def reference_document_download(request, pk):\n    _ensure_documentation_access(request.user)\n    document = get_object_or_404(ReferenceDocument, pk=pk)\n    if not document.document_file:\n        raise Http404(\n            \"The requested document file is not available.\"\n        )\n    file_handle = _open_storage_file(document.document_file)\n    filename = (\n        Path(document.document_file.name).name",
-        "detail": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "documentation": {}
-    },
-    {
-        "label": "DOCUMENTATION_ROLES",
-        "kind": 5,
-        "importPath": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "description": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "peekOfCode": "DOCUMENTATION_ROLES = {\n    \"ADMINISTRATOR\",\n    \"CFA\",\n    \"ACCOUNTS_OFFICER\",\n    \"HEAD_CLERK\",\n    \"ACCOUNTS_CLERK\",\n    \"ACCOUNTS_JCO\",\n}\nDOCUMENT_UPLOAD_ROLES = {\n    \"ADMINISTRATOR\",",
-        "detail": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "documentation": {}
-    },
-    {
-        "label": "DOCUMENT_UPLOAD_ROLES",
-        "kind": 5,
-        "importPath": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "description": "documentation.UAMS_Documentation_Phase5.documentation.views",
-        "peekOfCode": "DOCUMENT_UPLOAD_ROLES = {\n    \"ADMINISTRATOR\",\n    \"CFA\",\n    \"ACCOUNTS_OFFICER\",\n}\ndef _ensure_documentation_access(user):\n    role = getattr(user, \"role\", None)\n    if role not in DOCUMENTATION_ROLES:\n        raise PermissionDenied(\n            \"You are not authorised to access Documentation.\"",
-        "detail": "documentation.UAMS_Documentation_Phase5.documentation.views",
         "documentation": {}
     },
     {
@@ -3015,6 +2920,24 @@
         "description": "procurement.migrations.0005_eas_contract_document_eas_invoice_document_and_more",
         "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('procurement', '0004_eas'),\n    ]\n    operations = [\n        migrations.AddField(\n            model_name='eas',\n            name='contract_document',\n            field=models.FileField(blank=True, null=True, upload_to='eas_documents/contract/', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['pdf'])]),\n        ),",
         "detail": "procurement.migrations.0005_eas_contract_document_eas_invoice_document_and_more",
+        "documentation": {}
+    },
+    {
+        "label": "Migration",
+        "kind": 6,
+        "importPath": "procurement.migrations.0006_remove_notingsheet_au_notingsheet_approval_recipient_and_more",
+        "description": "procurement.migrations.0006_remove_notingsheet_au_notingsheet_approval_recipient_and_more",
+        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('procurement', '0005_eas_contract_document_eas_invoice_document_and_more'),\n    ]\n    operations = [\n        migrations.RemoveField(\n            model_name='notingsheet',\n            name='au',\n        ),\n        migrations.AddField(",
+        "detail": "procurement.migrations.0006_remove_notingsheet_au_notingsheet_approval_recipient_and_more",
+        "documentation": {}
+    },
+    {
+        "label": "Migration",
+        "kind": 6,
+        "importPath": "procurement.migrations.0007_conveningorder_conveningorderattachment",
+        "description": "procurement.migrations.0007_conveningorder_conveningorderattachment",
+        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('procurement', '0006_remove_notingsheet_au_notingsheet_approval_recipient_and_more'),\n        migrations.swappable_dependency(settings.AUTH_USER_MODEL),\n    ]\n    operations = [\n        migrations.CreateModel(\n            name='ConveningOrder',\n            fields=[\n                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),",
+        "detail": "procurement.migrations.0007_conveningorder_conveningorderattachment",
         "documentation": {}
     },
     {
@@ -3724,7 +3647,7 @@
         "kind": 6,
         "importPath": "procurement.forms",
         "description": "procurement.forms",
-        "peekOfCode": "class ReturnCaseForm(forms.Form):\n    target_stage = forms.ChoiceField(choices=ProcurementCase.STAGE_CHOICES)\n    reason = forms.CharField(widget=forms.Textarea(attrs={'rows': 2}))\n# ============================================================\n# NEW — Noting Sheet forms (merged in from noting_forms.py)\n# ============================================================\nclass NotingSheetForm(forms.ModelForm):\n    \"\"\"\n    Only asks for what's genuinely new: A/U and the fund ledger figures.\n    Item Name / Qty / Unit Price / Approx Amount are auto-fetched from the",
+        "peekOfCode": "class ReturnCaseForm(forms.Form):\n    target_stage = forms.ChoiceField(choices=ProcurementCase.STAGE_CHOICES)\n    reason = forms.CharField(widget=forms.Textarea(attrs={'rows': 2}))\n# ============================================================\n# Noting Sheet forms\n# ============================================================\nclass NotingSheetForm(forms.ModelForm):\n    class Meta:\n        model = NotingSheet\n        fields = [",
         "detail": "procurement.forms",
         "documentation": {}
     },
@@ -3733,16 +3656,16 @@
         "kind": 6,
         "importPath": "procurement.forms",
         "description": "procurement.forms",
-        "peekOfCode": "class NotingSheetForm(forms.ModelForm):\n    \"\"\"\n    Only asks for what's genuinely new: A/U and the fund ledger figures.\n    Item Name / Qty / Unit Price / Approx Amount are auto-fetched from the\n    linked Requirement and shown read-only in the template — they aren't\n    form fields at all.\n    \"\"\"\n    class Meta:\n        model = NotingSheet\n        fields = [\"au\", \"amount_allotted\", \"amount_released\", \"amount_expended\"]",
+        "peekOfCode": "class NotingSheetForm(forms.ModelForm):\n    class Meta:\n        model = NotingSheet\n        fields = [\n            \"file_no\", \"branch\", \"sheet_no\", \"dated\", \"financial_year\",\n            \"paragraph_1\", \"paragraph_2\",\n            \"amount_allotted\", \"amount_released\", \"amount_expended\", \"remarks\",\n            \"approval_recipient\",\n        ]\n        widgets = {",
         "detail": "procurement.forms",
         "documentation": {}
     },
     {
-        "label": "NotingAODecisionForm",
+        "label": "NotingSheetItemForm",
         "kind": 6,
         "importPath": "procurement.forms",
         "description": "procurement.forms",
-        "peekOfCode": "class NotingAODecisionForm(forms.Form):\n    # LEGACY — Account Officer review was removed from the Noting Sheet\n    # flow (now CFA-only, see NotingSheet.submit_for_approval). Kept only\n    # in case any pre-existing PENDING_AO records need manual handling.\n    ao_status = forms.ChoiceField(choices=NotingSheet.DECISION_CHOICES, widget=forms.Select(), label=\"Status\")\n    ao_remarks = forms.CharField(\n        widget=forms.Textarea(attrs={\"rows\": 3, \"placeholder\": \"Remarks (required if returning)\"}),\n        required=False, label=\"Remarks\",\n    )\n    def clean(self):",
+        "peekOfCode": "class NotingSheetItemForm(forms.ModelForm):\n    class Meta:\n        model = NotingSheetItem\n        fields = [\"description\", \"au\", \"quantity\", \"unit_price\"]\n        widgets = {\n            \"description\": forms.TextInput(attrs={\"class\": \"ns-input\", \"placeholder\": \"Item description\"}),\n            \"au\": forms.TextInput(attrs={\"class\": \"ns-input ns-au\", \"placeholder\": \"Nos\"}),\n            \"quantity\": forms.NumberInput(attrs={\"class\": \"ns-input ns-qty\", \"min\": 1}),\n            \"unit_price\": forms.NumberInput(attrs={\"class\": \"ns-input ns-price\", \"min\": 0, \"step\": \"0.01\"}),\n        }",
         "detail": "procurement.forms",
         "documentation": {}
     },
@@ -3751,7 +3674,7 @@
         "kind": 6,
         "importPath": "procurement.forms",
         "description": "procurement.forms",
-        "peekOfCode": "class NotingCFADecisionForm(forms.Form):\n    cfa_status = forms.ChoiceField(choices=NotingSheet.DECISION_CHOICES, widget=forms.Select(), label=\"Status\")\n    cfa_remarks = forms.CharField(\n        widget=forms.Textarea(attrs={\"rows\": 3, \"placeholder\": \"Remarks (required if returning)\"}),\n        required=False, label=\"Remarks\",\n    )\n    def clean(self):\n        cleaned = super().clean()\n        if cleaned.get(\"cfa_status\") == \"DENIED\" and not cleaned.get(\"cfa_remarks\"):\n            self.add_error(\"cfa_remarks\", \"Remarks are required when returning a noting sheet.\")",
+        "peekOfCode": "class NotingCFADecisionForm(forms.Form):\n    \"\"\"CFA-only decision — matches your real NotingSheet workflow (no AO step).\"\"\"\n    cfa_status = forms.ChoiceField(choices=NotingSheet.DECISION_CHOICES, widget=forms.Select(), label=\"Status\")\n    cfa_remarks = forms.CharField(\n        widget=forms.Textarea(attrs={\"rows\": 3, \"placeholder\": \"Remarks (required if returning)\"}),\n        required=False, label=\"Remarks\",\n    )\n    def clean(self):\n        cleaned = super().clean()\n        if cleaned.get(\"cfa_status\") == \"DENIED\" and not cleaned.get(\"cfa_remarks\"):",
         "detail": "procurement.forms",
         "documentation": {}
     },
@@ -3760,16 +3683,7 @@
         "kind": 6,
         "importPath": "procurement.forms",
         "description": "procurement.forms",
-        "peekOfCode": "class EASForm(forms.ModelForm):\n    \"\"\"\n    Tabular create/edit form for the EAS sheet (Field Name / Value\n    layout). file_no and eas_id are plain editable text for now — switch\n    to auto-generated later once the numbering scheme is confirmed.\n    case_file_no, type_id, and status_id are deliberately NOT on this\n    form: case_file_no always mirrors file_no (see EAS.case_file_no\n    property), and type_id/status_id are system defaults set at creation.\n    \"\"\"\n    class Meta:",
-        "detail": "procurement.forms",
-        "documentation": {}
-    },
-    {
-        "label": "EASAODecisionForm",
-        "kind": 6,
-        "importPath": "procurement.forms",
-        "description": "procurement.forms",
-        "peekOfCode": "class EASAODecisionForm(forms.Form):\n    # LEGACY — same reason as NotingAODecisionForm above; EAS approval\n    # is now CFA-only (see EAS.submit_for_approval).\n    ao_status = forms.ChoiceField(choices=EAS.DECISION_CHOICES, widget=forms.Select(), label=\"Status\")\n    ao_remarks = forms.CharField(\n        widget=forms.Textarea(attrs={\"rows\": 3, \"placeholder\": \"Remarks (required if returning)\"}),\n        required=False, label=\"Remarks\",\n    )\n    def clean(self):\n        cleaned = super().clean()",
+        "peekOfCode": "class EASForm(forms.ModelForm):\n    class Meta:\n        model = EAS\n        fields = [\n            \"file_no\", \"eas_id\", \"dsc_goods\", \"name_supplier\", \"purpose_broad\",\n            \"designation_cfa\", \"qty_sanctioned\", \"amount_sanction\", \"cost_per_unit\",\n            \"other_charges\", \"total_amount_words\", \"availability_fund\",\n            \"sub_details_heads\", \"reference_no\", \"name_paying_agent\",\n            \"date_time\", \"station\", \"unit\",\n        ]",
         "detail": "procurement.forms",
         "documentation": {}
     },
@@ -3778,7 +3692,7 @@
         "kind": 6,
         "importPath": "procurement.forms",
         "description": "procurement.forms",
-        "peekOfCode": "class EASCFADecisionForm(forms.Form):\n    cfa_status = forms.ChoiceField(choices=EAS.DECISION_CHOICES, widget=forms.Select(), label=\"Status\")\n    cfa_remarks = forms.CharField(\n        widget=forms.Textarea(attrs={\"rows\": 3, \"placeholder\": \"Remarks (required if returning)\"}),\n        required=False, label=\"Remarks\",\n    )\n    def clean(self):\n        cleaned = super().clean()\n        if cleaned.get(\"cfa_status\") == \"DENIED\" and not cleaned.get(\"cfa_remarks\"):\n            self.add_error(\"cfa_remarks\", \"Remarks are required when returning an EAS.\")",
+        "peekOfCode": "class EASCFADecisionForm(forms.Form):\n    \"\"\"CFA-only decision — mirrors NotingCFADecisionForm exactly.\"\"\"\n    cfa_status = forms.ChoiceField(choices=EAS.DECISION_CHOICES, widget=forms.Select(), label=\"Status\")\n    cfa_remarks = forms.CharField(\n        widget=forms.Textarea(attrs={\"rows\": 3, \"placeholder\": \"Remarks (required if returning)\"}),\n        required=False, label=\"Remarks\",\n    )\n    def clean(self):\n        cleaned = super().clean()\n        if cleaned.get(\"cfa_status\") == \"DENIED\" and not cleaned.get(\"cfa_remarks\"):",
         "detail": "procurement.forms",
         "documentation": {}
     },
@@ -3787,7 +3701,34 @@
         "kind": 6,
         "importPath": "procurement.forms",
         "description": "procurement.forms",
-        "peekOfCode": "class EASDocumentUploadForm(forms.Form):\n    \"\"\"\n    One shared form for all three post-approval uploads (Sanction /\n    Contract / Invoice) — the view decides which EAS field to save it to\n    based on the doc_type in the URL, so this form only needs to know\n    it's a PDF.\n    \"\"\"\n    document = forms.FileField(\n        validators=[FileExtensionValidator(allowed_extensions=[\"pdf\"])],\n        widget=forms.ClearableFileInput(attrs={\"accept\": \"application/pdf\"}),",
+        "peekOfCode": "class EASDocumentUploadForm(forms.Form):\n    \"\"\"Single-file upload used for Sanction / Contract / Invoice — the\n    doc_type (which model field it writes to) is chosen in the view, not\n    here (see eas_upload_document / EAS_DOCUMENT_FIELDS).\"\"\"\n    document = forms.FileField(\n        validators=[FileExtensionValidator(allowed_extensions=[\"pdf\"])]\n    )\nUser = get_user_model()\nclass ConveningOrderForm(forms.ModelForm):\n    additional_members = forms.ModelMultipleChoiceField(",
+        "detail": "procurement.forms",
+        "documentation": {}
+    },
+    {
+        "label": "ConveningOrderForm",
+        "kind": 6,
+        "importPath": "procurement.forms",
+        "description": "procurement.forms",
+        "peekOfCode": "class ConveningOrderForm(forms.ModelForm):\n    additional_members = forms.ModelMultipleChoiceField(\n        queryset=User.objects.filter(is_active=True).order_by(\"username\"),\n        required=False,\n        widget=forms.SelectMultiple(attrs={\"size\": 5}),\n        label=\"Additional Members\",\n    )\n    class Meta:\n        model = ConveningOrder\n        fields = [",
+        "detail": "procurement.forms",
+        "documentation": {}
+    },
+    {
+        "label": "NotingSheetItemFormSet",
+        "kind": 5,
+        "importPath": "procurement.forms",
+        "description": "procurement.forms",
+        "peekOfCode": "NotingSheetItemFormSet = inlineformset_factory(\n    NotingSheet, NotingSheetItem, form=NotingSheetItemForm,\n    extra=1, can_delete=True,\n)\nclass NotingCFADecisionForm(forms.Form):\n    \"\"\"CFA-only decision — matches your real NotingSheet workflow (no AO step).\"\"\"\n    cfa_status = forms.ChoiceField(choices=NotingSheet.DECISION_CHOICES, widget=forms.Select(), label=\"Status\")\n    cfa_remarks = forms.CharField(\n        widget=forms.Textarea(attrs={\"rows\": 3, \"placeholder\": \"Remarks (required if returning)\"}),\n        required=False, label=\"Remarks\",",
+        "detail": "procurement.forms",
+        "documentation": {}
+    },
+    {
+        "label": "User",
+        "kind": 5,
+        "importPath": "procurement.forms",
+        "description": "procurement.forms",
+        "peekOfCode": "User = get_user_model()\nclass ConveningOrderForm(forms.ModelForm):\n    additional_members = forms.ModelMultipleChoiceField(\n        queryset=User.objects.filter(is_active=True).order_by(\"username\"),\n        required=False,\n        widget=forms.SelectMultiple(attrs={\"size\": 5}),\n        label=\"Additional Members\",\n    )\n    class Meta:\n        model = ConveningOrder",
         "detail": "procurement.forms",
         "documentation": {}
     },
@@ -3805,7 +3746,7 @@
         "kind": 6,
         "importPath": "procurement.models",
         "description": "procurement.models",
-        "peekOfCode": "class CaseStageHistory(CoreModel):\n    \"\"\"\n    The case's permanent timeline (Section 17). Append-only by convention -\n    rows are never edited or deleted, only added, so the full history of\n    every transition (including returns/rejections) is always preserved.\n    \"\"\"\n    ACTION_CHOICES = [\n        (\"ADVANCE\", \"Advanced\"),\n        (\"RETURN\", \"Returned\"),\n    ]",
+        "peekOfCode": "class CaseStageHistory(CoreModel):\n    ACTION_CHOICES = [\n        (\"ADVANCE\", \"Advanced\"),\n        (\"RETURN\", \"Returned\"),\n    ]\n    case = models.ForeignKey(\n        ProcurementCase, on_delete=models.PROTECT, related_name=\"history\"\n    )\n    from_stage = models.CharField(max_length=20)\n    to_stage = models.CharField(max_length=20)",
         "detail": "procurement.models",
         "documentation": {}
     },
@@ -3814,7 +3755,16 @@
         "kind": 6,
         "importPath": "procurement.models",
         "description": "procurement.models",
-        "peekOfCode": "class NotingSheet(models.Model):\n    \"\"\"\n    Created by a Clerk/Head Clerk against an APPROVED Requirement, to move\n    it into procurement. One Requirement -> at most one Noting Sheet\n    (OneToOne). Its own AO -> CFA approval mirrors requirements_mgmt's\n    Requirement model exactly, on purpose, for consistency.\n    Item Name / Qty / Unit Price are NOT duplicated here — they're read\n    live off the linked Requirement via properties below, since they're\n    locked once the Requirement is APPROVED anyway.\n    \"\"\"",
+        "peekOfCode": "class NotingSheet(models.Model):\n    \"\"\"\n    Rebuilt to match the official Noting Sheet document format (File No,\n    Branch, Sheet No, Dated, Financial Year, two narrative paragraphs, a\n    repeatable item table via NotingSheetItem, fund figures, and a\n    For-Approval block). Approval stays CFA-ONLY, matching your real\n    design — submit_for_approval() sends straight to PENDING_CFA.\n    ao_decide()/PENDING_AO/AO_DENIED are kept only as legacy/unused, same\n    as your EAS model already does, for consistency.\n    \"\"\"",
+        "detail": "procurement.models",
+        "documentation": {}
+    },
+    {
+        "label": "NotingSheetItem",
+        "kind": 6,
+        "importPath": "procurement.models",
+        "description": "procurement.models",
+        "peekOfCode": "class NotingSheetItem(models.Model):\n    \"\"\"A single row in the Item Details table — repeatable, unlike the\n    old single-item version tied directly to the Requirement.\"\"\"\n    noting_sheet = models.ForeignKey(NotingSheet, on_delete=models.CASCADE, related_name=\"items\")\n    description = models.CharField(max_length=250, verbose_name=\"Item Description\")\n    au = models.CharField(max_length=50, verbose_name=\"A/U\")\n    quantity = models.PositiveIntegerField()\n    unit_price = models.DecimalField(max_digits=12, decimal_places=2)\n    class Meta:\n        db_table = \"proc_noting_sheet_items\"",
         "detail": "procurement.models",
         "documentation": {}
     },
@@ -3823,7 +3773,25 @@
         "kind": 6,
         "importPath": "procurement.models",
         "description": "procurement.models",
-        "peekOfCode": "class EAS(models.Model):\n    \"\"\"\n    Expenditure/Approval Sanction sheet — created once a NotingSheet is\n    fully CFA-approved (mirrors your mockup: \"Create EAS\" only appears\n    then). One NotingSheet -> at most one EAS (OneToOne). Uses the\n    identical AO -> CFA workflow as NotingSheet/Requirement, on purpose,\n    for consistency.\n    file_no / eas_id are plain EDITABLE TEXT for now, not auto-generated —\n    switch these to an auto-numbering save() (like Requirement/NotingSheet\n    use) once the exact numbering scheme is confirmed.",
+        "peekOfCode": "class EAS(models.Model):\n    \"\"\"\n    Expenditure/Approval Sanction sheet — created once a NotingSheet is\n    fully CFA-approved (mirrors your mockup: \"Create EAS\" only appears\n    then). One NotingSheet -> at most one EAS (OneToOne). Uses the\n    identical CFA-only workflow as NotingSheet, on purpose, for\n    consistency.\n    file_no / eas_id are plain EDITABLE TEXT for now, not auto-generated —\n    switch these to an auto-numbering save() (like Requirement/NotingSheet\n    use) once the exact numbering scheme is confirmed.",
+        "detail": "procurement.models",
+        "documentation": {}
+    },
+    {
+        "label": "ConveningOrder",
+        "kind": 6,
+        "importPath": "procurement.models",
+        "description": "procurement.models",
+        "peekOfCode": "class ConveningOrder(models.Model):\n    PURPOSE_CHOICES = [\n        (\"INSPECTION\", \"Inspection\"),\n        (\"PURCHASE\", \"Purchase\"),\n        (\"BOO\", \"BOO\"),\n        (\"OTHER\", \"Other\"),\n    ]\n    APPROVAL_STATUS_CHOICES = [\n        (\"DRAFT\", \"Draft\"),\n        (\"PENDING\", \"Pending\"),",
+        "detail": "procurement.models",
+        "documentation": {}
+    },
+    {
+        "label": "ConveningOrderAttachment",
+        "kind": 6,
+        "importPath": "procurement.models",
+        "description": "procurement.models",
+        "peekOfCode": "class ConveningOrderAttachment(models.Model):\n    convening_order = models.ForeignKey(\n        ConveningOrder,\n        on_delete=models.CASCADE,\n        related_name=\"attachments\",\n    )\n    file = models.FileField(upload_to=\"convening_orders/\")\n    uploaded_at = models.DateTimeField(auto_now_add=True)\n    class Meta:\n        db_table = \"proc_convening_order_attachments\"",
         "detail": "procurement.models",
         "documentation": {}
     },
@@ -3859,7 +3827,7 @@
         "kind": 2,
         "importPath": "procurement.views",
         "description": "procurement.views",
-        "peekOfCode": "def audit_trail(request):\n    from .models import CaseStageHistory\n    history = CaseStageHistory.objects.select_related('case', 'performed_by').order_by('-created_at')[:100]\n    return render(request, 'procurement/audit_trail.html', {\n        'history': history,\n        'role': request.user.role,\n        'active_nav': 'audit_trail',\n    })\n# ============================================================\n# NEW VIEWS — Noting Sheet workflow",
+        "peekOfCode": "def audit_trail(request):\n    from .models import CaseStageHistory\n    history = CaseStageHistory.objects.select_related('case', 'performed_by').order_by('-created_at')[:100]\n    return render(request, 'procurement/audit_trail.html', {\n        'history': history,\n        'role': request.user.role,\n        'active_nav': 'audit_trail',\n    })\n# ============================================================\n# NOTING SHEET workflow",
         "detail": "procurement.views",
         "documentation": {}
     },
@@ -3868,7 +3836,7 @@
         "kind": 2,
         "importPath": "procurement.views",
         "description": "procurement.views",
-        "peekOfCode": "def procurement_dashboard(request):\n    \"\"\"New landing page for the \"Procurement\" sidebar link.\"\"\"\n    noting_sheets = NotingSheet.objects.select_related(\"requirement\").order_by(\"-created_at\")\n    context = {\n        \"noting_sheets\": noting_sheets,\n        \"total_count\": noting_sheets.count(),\n        \"pending_count\": noting_sheets.exclude(workflow_status=\"APPROVED\").count(),\n        \"completed_count\": noting_sheets.filter(workflow_status=\"APPROVED\").count(),\n        \"role\": request.user.role,\n        \"active_nav\": \"procurement\",",
+        "peekOfCode": "def procurement_dashboard(request):\n    \"\"\"Landing page for the \"Procurement\" sidebar link.\"\"\"\n    noting_sheets = NotingSheet.objects.select_related(\"requirement\").order_by(\"-created_at\")\n    context = {\n        \"noting_sheets\": noting_sheets,\n        \"total_count\": noting_sheets.count(),\n        \"pending_count\": noting_sheets.exclude(workflow_status=\"APPROVED\").count(),\n        \"completed_count\": noting_sheets.filter(workflow_status=\"APPROVED\").count(),\n        \"role\": request.user.role,\n        \"active_nav\": \"procurement\",",
         "detail": "procurement.views",
         "documentation": {}
     },
@@ -3886,7 +3854,7 @@
         "kind": 2,
         "importPath": "procurement.views",
         "description": "procurement.views",
-        "peekOfCode": "def noting_sheet_create(request, requirement_pk):\n    requirement = get_object_or_404(Requirement, pk=requirement_pk, workflow_status=\"APPROVED\")\n    if hasattr(requirement, \"noting_sheet\"):\n        messages.info(request, \"A Noting Sheet already exists for this requirement.\")\n        return redirect(\"noting_sheet_detail\", pk=requirement.noting_sheet.pk)\n    if request.method == \"POST\":\n        form = NotingSheetForm(request.POST)\n        if form.is_valid():\n            noting_sheet = form.save(commit=False)\n            noting_sheet.requirement = requirement",
+        "peekOfCode": "def noting_sheet_create(request, requirement_pk):\n    \"\"\"\n    CHANGED: now handles NotingSheetItemFormSet alongside the header form,\n    for the mockup's multi-item Item Details table. The first item row is\n    seeded from the linked Requirement's item_name/quantity/estimated_cost.\n    \"\"\"\n    requirement = get_object_or_404(Requirement, pk=requirement_pk, workflow_status=\"APPROVED\")\n    if hasattr(requirement, \"noting_sheet\"):\n        messages.info(request, \"A Noting Sheet already exists for this requirement.\")\n        return redirect(\"noting_sheet_detail\", pk=requirement.noting_sheet.pk)",
         "detail": "procurement.views",
         "documentation": {}
     },
@@ -3904,7 +3872,7 @@
         "kind": 2,
         "importPath": "procurement.views",
         "description": "procurement.views",
-        "peekOfCode": "def noting_sheet_detail(request, pk):\n    \"\"\"CFA-only approval — Account Officer review has been removed from\n    this flow (see NotingSheet.submit_for_approval in models.py).\"\"\"\n    noting_sheet = get_object_or_404(NotingSheet, pk=pk)\n    role = request.user.role\n    cfa_form = None\n    can_act_as_cfa = role == \"CFA\" and noting_sheet.workflow_status == \"PENDING_CFA\"\n    if request.method == \"POST\":\n        if can_act_as_cfa and \"cfa_submit\" in request.POST:\n            cfa_form = NotingCFADecisionForm(request.POST)",
+        "peekOfCode": "def noting_sheet_detail(request, pk):\n    \"\"\"CFA-only approval — Account Officer review is not part of this flow.\"\"\"\n    noting_sheet = get_object_or_404(NotingSheet, pk=pk)\n    role = request.user.role\n    cfa_form = None\n    can_act_as_cfa = role == \"CFA\" and noting_sheet.workflow_status == \"PENDING_CFA\"\n    if request.method == \"POST\":\n        if can_act_as_cfa and \"cfa_submit\" in request.POST:\n            cfa_form = NotingCFADecisionForm(request.POST)\n            if cfa_form.is_valid():",
         "detail": "procurement.views",
         "documentation": {}
     },
@@ -3913,7 +3881,7 @@
         "kind": 2,
         "importPath": "procurement.views",
         "description": "procurement.views",
-        "peekOfCode": "def eas_create(request, noting_sheet_pk):\n    \"\"\"\n    \"Create EAS\" — only reachable once the linked Noting Sheet is fully\n    CFA-approved (workflow_status == \"APPROVED\"), matching the mockup\n    where the button only appears at that point.\n    Submitting the form both saves the EAS AND sends it straight to AO\n    review in one step — the mockup shows a single \"Send For Approval\"\n    button, not a separate save-then-submit flow.\n    \"\"\"\n    noting_sheet = get_object_or_404(NotingSheet, pk=noting_sheet_pk, workflow_status=\"APPROVED\")",
+        "peekOfCode": "def eas_create(request, noting_sheet_pk):\n    noting_sheet = get_object_or_404(NotingSheet, pk=noting_sheet_pk, workflow_status=\"APPROVED\")\n    if hasattr(noting_sheet, \"eas\"):\n        messages.info(request, \"An EAS already exists for this noting sheet.\")\n        return redirect(\"eas_detail\", pk=noting_sheet.eas.pk)\n    if request.method == \"POST\":\n        form = EASForm(request.POST)\n        if form.is_valid():\n            eas = form.save(commit=False)\n            eas.noting_sheet = noting_sheet",
         "detail": "procurement.views",
         "documentation": {}
     },
@@ -3922,7 +3890,7 @@
         "kind": 2,
         "importPath": "procurement.views",
         "description": "procurement.views",
-        "peekOfCode": "def eas_edit(request, pk):\n    \"\"\"\n    Only reachable while editable (DRAFT / CFA_DENIED), and only by the\n    person who created it — same convention used for Requirement and\n    NotingSheet. Resubmitting goes straight back to CFA (CFA-only flow).\n    \"\"\"\n    eas = get_object_or_404(EAS, pk=pk)\n    if not eas.is_editable or eas.created_by != request.user:\n        messages.error(request, \"This EAS can't be edited right now.\")\n        return redirect(\"eas_detail\", pk=pk)",
+        "peekOfCode": "def eas_edit(request, pk):\n    eas = get_object_or_404(EAS, pk=pk)\n    if not eas.is_editable or eas.created_by != request.user:\n        messages.error(request, \"This EAS can't be edited right now.\")\n        return redirect(\"eas_detail\", pk=pk)\n    if request.method == \"POST\":\n        form = EASForm(request.POST, instance=eas)\n        if form.is_valid():\n            form.save()\n            eas.submit_for_approval()",
         "detail": "procurement.views",
         "documentation": {}
     },
@@ -3931,7 +3899,7 @@
         "kind": 2,
         "importPath": "procurement.views",
         "description": "procurement.views",
-        "peekOfCode": "def eas_detail(request, pk):\n    \"\"\"CFA-only approval — Account Officer review has been removed from\n    this flow (see EAS.submit_for_approval in models.py).\"\"\"\n    eas = get_object_or_404(EAS, pk=pk)\n    role = request.user.role\n    cfa_form = None\n    can_act_as_cfa = role == \"CFA\" and eas.workflow_status == \"PENDING_CFA\"\n    if request.method == \"POST\":\n        if can_act_as_cfa and \"cfa_submit\" in request.POST:\n            cfa_form = EASCFADecisionForm(request.POST)",
+        "peekOfCode": "def eas_detail(request, pk):\n    eas = get_object_or_404(EAS, pk=pk)\n    role = request.user.role\n    cfa_form = None\n    can_act_as_cfa = role == \"CFA\" and eas.workflow_status == \"PENDING_CFA\"\n    if request.method == \"POST\":\n        if can_act_as_cfa and \"cfa_submit\" in request.POST:\n            cfa_form = EASCFADecisionForm(request.POST)\n            if cfa_form.is_valid():\n                eas.cfa_decide(",
         "detail": "procurement.views",
         "documentation": {}
     },
@@ -3940,7 +3908,7 @@
         "kind": 2,
         "importPath": "procurement.views",
         "description": "procurement.views",
-        "peekOfCode": "def noting_sheet_download_pdf(request, pk):\n    \"\"\"\n    Renders a plain, print-friendly page — no server-side PDF library.\n    The page has a \"Print / Save as PDF\" button that calls the browser's\n    native print dialog, where choosing \"Save as PDF\" produces the file.\n    This replaced an xhtml2pdf-based version that kept failing.\n    \"\"\"\n    noting_sheet = get_object_or_404(NotingSheet, pk=pk)\n    if noting_sheet.workflow_status != \"APPROVED\":\n        messages.error(request, \"This Noting Sheet can only be downloaded once it's fully approved.\")",
+        "peekOfCode": "def noting_sheet_download_pdf(request, pk):\n    noting_sheet = get_object_or_404(NotingSheet, pk=pk)\n    if noting_sheet.workflow_status != \"APPROVED\":\n        messages.error(request, \"This Noting Sheet can only be downloaded once it's fully approved.\")\n        return redirect(\"noting_sheet_detail\", pk=pk)\n    return render(request, \"procurement/pdf/noting_sheet_pdf.html\", {\n        \"noting_sheet\": noting_sheet,\n        \"items\": noting_sheet.items.all(),\n    })\n@login_required",
         "detail": "procurement.views",
         "documentation": {}
     },
@@ -3949,7 +3917,7 @@
         "kind": 2,
         "importPath": "procurement.views",
         "description": "procurement.views",
-        "peekOfCode": "def eas_download_pdf(request, pk):\n    \"\"\"Same approach as noting_sheet_download_pdf above — plain printable page.\"\"\"\n    eas = get_object_or_404(EAS, pk=pk)\n    if eas.workflow_status != \"APPROVED\":\n        messages.error(request, \"This EAS can only be downloaded once it's fully approved.\")\n        return redirect(\"eas_detail\", pk=pk)\n    return render(request, \"procurement/pdf/eas_pdf.html\", {\"eas\": eas, \"noting_sheet\": eas.noting_sheet})\n# ============================================================\n# NEW VIEW — Sanction / Contract / Invoice document uploads\n# ============================================================",
+        "peekOfCode": "def eas_download_pdf(request, pk):\n    eas = get_object_or_404(EAS, pk=pk)\n    if eas.workflow_status != \"APPROVED\":\n        messages.error(request, \"This EAS can only be downloaded once it's fully approved.\")\n        return redirect(\"eas_detail\", pk=pk)\n    return render(request, \"procurement/pdf/eas_pdf.html\", {\"eas\": eas, \"noting_sheet\": eas.noting_sheet})\n# ============================================================\n# Sanction / Contract / Invoice document uploads\n# ============================================================\nEAS_DOCUMENT_FIELDS = {",
         "detail": "procurement.views",
         "documentation": {}
     },
@@ -3958,7 +3926,25 @@
         "kind": 2,
         "importPath": "procurement.views",
         "description": "procurement.views",
-        "peekOfCode": "def eas_upload_document(request, pk, doc_type):\n    \"\"\"\n    Handles the Sanction / Contract / Invoice upload forms on the EAS\n    detail page. Only reachable once the EAS is APPROVED (enforced here,\n    not just hidden in the template) — mirrors the same server-side gate\n    used for the Noting Sheet/EAS PDF downloads.\n    \"\"\"\n    eas = get_object_or_404(EAS, pk=pk)\n    field_name = EAS_DOCUMENT_FIELDS.get(doc_type)\n    if field_name is None:",
+        "peekOfCode": "def eas_upload_document(request, pk, doc_type):\n    eas = get_object_or_404(EAS, pk=pk)\n    field_name = EAS_DOCUMENT_FIELDS.get(doc_type)\n    if field_name is None:\n        messages.error(request, \"Unknown document type.\")\n        return redirect(\"eas_detail\", pk=pk)\n    if eas.workflow_status != \"APPROVED\":\n        messages.error(request, \"Documents can only be uploaded once the EAS is approved.\")\n        return redirect(\"eas_detail\", pk=pk)\n    if request.method == \"POST\":",
+        "detail": "procurement.views",
+        "documentation": {}
+    },
+    {
+        "label": "convening_order_create",
+        "kind": 2,
+        "importPath": "procurement.views",
+        "description": "procurement.views",
+        "peekOfCode": "def convening_order_create(request, eas_pk):\n    eas = get_object_or_404(EAS, pk=eas_pk)\n    if eas.workflow_status != \"APPROVED\":\n        messages.error(request, \"Convening Order can only be created after EAS approval.\")\n        return redirect(\"eas_detail\", pk=eas.pk)\n    if not (eas.sanction_document and eas.contract_document and eas.invoice_document):\n        messages.error(\n            request,\n            \"Sanction, Contract and Invoice must all be uploaded before creating the Convening Order.\",\n        )",
+        "detail": "procurement.views",
+        "documentation": {}
+    },
+    {
+        "label": "convening_order_detail",
+        "kind": 2,
+        "importPath": "procurement.views",
+        "description": "procurement.views",
+        "peekOfCode": "def convening_order_detail(request, pk):\n    order = get_object_or_404(\n        ConveningOrder.objects.select_related(\n            \"procurement_case\",\n            \"presiding_officer\",\n            \"member_1\",\n            \"member_2\",\n            \"technical_representative\",\n            \"member_secretary\",\n            \"convening_authority\",",
         "detail": "procurement.views",
         "documentation": {}
     },
@@ -3967,7 +3953,7 @@
         "kind": 5,
         "importPath": "procurement.views",
         "description": "procurement.views",
-        "peekOfCode": "EAS_DOCUMENT_FIELDS = {\n    \"sanction\": \"sanction_document\",\n    \"contract\": \"contract_document\",\n    \"invoice\": \"invoice_document\",\n}\n@login_required\ndef eas_upload_document(request, pk, doc_type):\n    \"\"\"\n    Handles the Sanction / Contract / Invoice upload forms on the EAS\n    detail page. Only reachable once the EAS is APPROVED (enforced here,",
+        "peekOfCode": "EAS_DOCUMENT_FIELDS = {\n    \"sanction\": \"sanction_document\",\n    \"contract\": \"contract_document\",\n    \"invoice\": \"invoice_document\",\n}\n@login_required\ndef eas_upload_document(request, pk, doc_type):\n    eas = get_object_or_404(EAS, pk=pk)\n    field_name = EAS_DOCUMENT_FIELDS.get(doc_type)\n    if field_name is None:",
         "detail": "procurement.views",
         "documentation": {}
     },
