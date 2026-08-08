@@ -1,0 +1,530 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UAMS - Convening Order</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/requirement_form.css' %}">
+  <style>
+    .co-section {
+      margin-bottom: 22px;
+    }
+
+    .co-section-title {
+      color: #244f80;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .co-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    .co-table td,
+    .co-table th {
+      border: 1px solid #222;
+      padding: 10px;
+      vertical-align: top;
+    }
+
+    .co-table th {
+      background: #dbe5f1;
+      text-align: left;
+    }
+
+    .co-label {
+      font-weight: 700;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .co-help {
+      font-size: 12px;
+      color: #555;
+    }
+
+    .co-field {
+      width: 100%;
+    }
+
+    .co-error {
+      color: #b00020;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .co-auto {
+      background: #eef3f8;
+      padding: 9px;
+      border-radius: 4px;
+      min-height: 20px;
+    }
+
+    .co-submit {
+      margin-top: 20px;
+      padding: 12px 28px;
+      width: auto;
+    }
+  </style>
+</head>
+
+<body>
+<div class="app-layout">
+
+  {% include 'partials/sidebar.html' with active_nav='procurement' %}
+
+  <div class="main-content">
+
+    {% include 'partials/header.html' with active_nav='procurement' %}
+
+    <div class="dashboard-shell">
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="card rf-message">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="card">
+
+        <h2 style="margin-top:0;">
+          Convening Order Form
+        </h2>
+
+        <p style="color:var(--text-secondary); font-size:13px;">
+          Create Convening Order after completion of EAS, Sanction, Contract and Invoice.
+        </p>
+
+        <form method="post" enctype="multipart/form-data">
+
+          {% csrf_token %}
+
+          <div class="co-section">
+
+            <div class="co-section-title">
+              1. Convening Order Form
+            </div>
+
+            <div class="co-section-title" style="font-size:15px;">
+              A. Order and case details
+            </div>
+
+            <table class="co-table">
+
+              <tr>
+
+                <td>
+                  <span class="co-label">Convening Order ID (Auto)</span>
+                  <div class="co-auto">
+                    System-generated
+                  </div>
+                </td>
+
+                <td>
+                  <span class="co-label">Procurement Case</span>
+                  {{ form.procurement_case }}
+                  {% for error in form.procurement_case.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                  <div class="co-help">
+                    Approved and active case only
+                  </div>
+                </td>
+
+                <td>
+                  <span class="co-label">Requirement ID (Auto)</span>
+                  <div class="co-auto">
+                    {{ eas.noting_sheet.requirement.requirement_id }}
+                  </div>
+                </td>
+
+              </tr>
+
+              <tr>
+
+                <td>
+                  <span class="co-label">Order Number</span>
+                  {{ form.order_number }}
+                  {% for error in form.order_number.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                  <div class="co-help">
+                    Text, maximum 50 characters, unique and mandatory
+                  </div>
+                </td>
+
+                <td>
+                  <span class="co-label">Order Date</span>
+                  {{ form.order_date }}
+                  {% for error in form.order_date.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                </td>
+
+                <td>
+                  <span class="co-label">Financial Year (Auto)</span>
+                  <div class="co-auto">
+                    Auto fetched from selected case
+                  </div>
+                </td>
+
+              </tr>
+
+              <tr>
+
+                <td>
+                  <span class="co-label">Fund Head (Auto)</span>
+                  <div class="co-auto">
+                    Auto fetched from selected case
+                  </div>
+                </td>
+
+                <td>
+                  <span class="co-label">Sub-Head (Auto)</span>
+                  <div class="co-auto">
+                    Auto fetched from selected case
+                  </div>
+                </td>
+
+                <td>
+                  <span class="co-label">Procurement Mode (Auto)</span>
+                  <div class="co-auto">
+                    Auto fetched from selected case
+                  </div>
+                </td>
+
+              </tr>
+
+              <tr>
+
+                <td>
+                  <span class="co-label">Subject / Title</span>
+                  {{ form.subject_title }}
+                  {% for error in form.subject_title.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                </td>
+
+                <td>
+                  <span class="co-label">Committee Purpose</span>
+                  {{ form.committee_purpose }}
+                  {% for error in form.committee_purpose.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                </td>
+
+                <td>
+                  <span class="co-label">Place of Proceedings</span>
+                  {{ form.place_of_proceedings }}
+                  {% for error in form.place_of_proceedings.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                </td>
+
+              </tr>
+
+              <tr>
+
+                <td>
+                  <span class="co-label">Start Date</span>
+                  {{ form.start_date }}
+                  {% for error in form.start_date.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                  <div class="co-help">
+                    Mandatory
+                  </div>
+                </td>
+
+                <td>
+                  <span class="co-label">Completion Due Date</span>
+                  {{ form.completion_due_date }}
+                  {% for error in form.completion_due_date.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                  <div class="co-help">
+                    Must be on or after Start Date
+                  </div>
+                </td>
+
+                <td>
+                  <span class="co-label">Applicable Authority / Rule</span>
+                  {{ form.applicable_authority_rule }}
+                  {% for error in form.applicable_authority_rule.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                </td>
+
+              </tr>
+
+            </table>
+
+          </div>
+
+
+          <div class="co-section">
+
+            <div class="co-section-title">
+              B. Committee constitution
+            </div>
+
+            <table class="co-table">
+
+              <tr>
+
+                <td>
+                  <span class="co-label">Presiding Officer</span>
+                  {{ form.presiding_officer }}
+                  {% for error in form.presiding_officer.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                  <div class="co-help">
+                    Personnel dropdown - Mandatory
+                  </div>
+                </td>
+
+                <td>
+                  <span class="co-label">Member 1</span>
+                  {{ form.member_1 }}
+                  {% for error in form.member_1.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                  <div class="co-help">
+                    Personnel dropdown - Mandatory
+                  </div>
+                </td>
+
+                <td>
+                  <span class="co-label">Member 2</span>
+                  {{ form.member_2 }}
+                  {% for error in form.member_2.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                  <div class="co-help">
+                    Personnel dropdown - Mandatory
+                  </div>
+                </td>
+
+              </tr>
+
+              <tr>
+
+                <td>
+                  <span class="co-label">Presiding Officer Details (Auto)</span>
+                  <div class="co-auto">
+                    Service No., Rank, Name, Appointment
+                  </div>
+                </td>
+
+                <td>
+                  <span class="co-label">Member 1 Details (Auto)</span>
+                  <div class="co-auto">
+                    Service No., Rank, Name, Appointment
+                  </div>
+                </td>
+
+                <td>
+                  <span class="co-label">Member 2 Details (Auto)</span>
+                  <div class="co-auto">
+                    Service No., Rank, Name, Appointment
+                  </div>
+                </td>
+
+              </tr>
+
+              <tr>
+
+                <td>
+                  <span class="co-label">Additional Members</span>
+                  {{ form.additional_members }}
+                  {% for error in form.additional_members.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                  <div class="co-help">
+                    Optional - multiple personnel allowed
+                  </div>
+                </td>
+
+                <td>
+                  <span class="co-label">Technical Representative</span>
+                  {{ form.technical_representative }}
+                  {% for error in form.technical_representative.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                  <div class="co-help">
+                    Optional / conditional
+                  </div>
+                </td>
+
+                <td>
+                  <span class="co-label">Member Secretary</span>
+                  {{ form.member_secretary }}
+                  {% for error in form.member_secretary.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                  <div class="co-help">
+                    Optional
+                  </div>
+                </td>
+
+              </tr>
+
+              <tr>
+
+                <td>
+                  <span class="co-label">Convening Authority</span>
+                  {{ form.convening_authority }}
+                  {% for error in form.convening_authority.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                  <div class="co-help">
+                    Personnel / Appointment dropdown - Mandatory
+                  </div>
+                </td>
+
+                <td>
+                  <span class="co-label">Convening Authority Details (Auto)</span>
+                  <div class="co-auto">
+                    Rank, Name and Appointment
+                  </div>
+                </td>
+
+                <td>
+                  <span class="co-label">Report Submission To</span>
+                  {{ form.report_submission_to }}
+                  {% for error in form.report_submission_to.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                </td>
+
+              </tr>
+
+            </table>
+
+          </div>
+
+
+          <div class="co-section">
+
+            <div class="co-section-title">
+              C. Instructions and control
+            </div>
+
+            <table class="co-table">
+
+              <tr>
+
+                <td>
+                  <span class="co-label">Terms of Reference</span>
+                  {{ form.terms_of_reference }}
+                  {% for error in form.terms_of_reference.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                  <div class="co-help">
+                    At least one Terms of Reference entry is mandatory.
+                  </div>
+                </td>
+
+                <td>
+                  <span class="co-label">Special Instructions</span>
+                  {{ form.special_instructions }}
+                  {% for error in form.special_instructions.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                  <div class="co-help">
+                    Optional
+                  </div>
+                </td>
+
+                <td>
+                  <span class="co-label">Attachments</span>
+                  <input
+                    type="file"
+                    name="attachments"
+                    multiple
+                    accept=".pdf,.jpg,.jpeg,.png"
+                  >
+                  <div class="co-help">
+                    Multiple PDF/JPG/PNG files, maximum 5 files, maximum 5 MB each.
+                  </div>
+                </td>
+
+              </tr>
+
+              <tr>
+
+                <td>
+                  <span class="co-label">Remarks</span>
+                  {{ form.remarks }}
+                  {% for error in form.remarks.errors %}
+                    <div class="co-error">{{ error }}</div>
+                  {% endfor %}
+                </td>
+
+                <td>
+                  <span class="co-label">Approval Status (Auto)</span>
+                  <div class="co-auto">
+                    Draft
+                  </div>
+                </td>
+
+                <td>
+                  <span class="co-label">Version (Auto)</span>
+                  <div class="co-auto">
+                    Original / 1
+                  </div>
+                </td>
+
+              </tr>
+
+            </table>
+
+          </div>
+
+
+          <div style="margin-top:20px; padding:15px; background:#eef3f8; border-left:4px solid #244f80;">
+
+            <strong>Validation Rules</strong>
+
+            <ol style="margin-bottom:0;">
+
+              <li>Procurement case must be approved and active.</li>
+              <li>Order number must be unique.</li>
+              <li>Order date cannot precede sanction/EAS date.</li>
+              <li>Completion due date must be on or after start date.</li>
+              <li>Presiding Officer, Member 1 and Member 2 are mandatory.</li>
+              <li>The same person cannot occupy multiple committee roles.</li>
+              <li>Presiding Officer seniority should be checked when rank information is available.</li>
+              <li>Only active personnel are available in the personnel dropdowns.</li>
+              <li>At least one Terms of Reference is required.</li>
+              <li>Approved orders must not be overwritten; amendments should use a new version.</li>
+
+            </ol>
+
+          </div>
+
+
+          <button type="submit" class="login-btn co-submit">
+            Save Convening Order
+          </button>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script src="{% static 'js/theme-toggle.js' %}"></script>
+
+</body>
+</html>

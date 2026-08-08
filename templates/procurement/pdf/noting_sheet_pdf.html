@@ -4,26 +4,38 @@
 <meta charset="utf-8">
 <style>
   @page { size: A4; margin: 2cm; }
-  body { font-family: Helvetica, Arial, sans-serif; font-size: 11pt; color: #1C1F26; }
-  h1 { font-size: 17pt; margin: 0 0 4px; }
-  .meta { color: #607D8B; font-size: 9pt; margin-bottom: 18px; }
-  .status {
+  body { font-family: Helvetica, Arial, sans-serif; font-size: 10.5pt; color: #1C1F26; }
+  h1 { font-size: 15pt; text-align: center; letter-spacing: 2px; margin: 0 0 16px; }
+
+  .head-row { display: flex; justify-content: space-between; font-size: 10pt; margin-bottom: 4px; }
+
+  .main-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  .main-table > tbody > tr > td { border: 1px solid #1C1F26; vertical-align: top; padding: 6px 8px; }
+  .col-ref { width: 6%; text-align: center; font-weight: bold; }
+  .col-purport { width: 82%; }
+  .col-remarks { width: 12%; text-align: center; }
+
+  .purport-num { text-align: center; font-weight: bold; margin: 0 0 10px; }
+  .purport-title { text-align: center; font-weight: bold; margin: 0 0 16px; }
+  .purport-body p { margin: 0 0 10px; }
+
+  .item-table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+  .item-table th, .item-table td { border: 1px solid #1C1F26; padding: 5px 7px; font-size: 9.5pt; text-align: center; }
+  .item-table th { background: #F0F0F0; }
+  .item-table .desc-col { text-align: left; }
+  .item-table .total-row td { font-weight: bold; }
+
+  .fund-table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+  .fund-table th, .fund-table td { border: 1px solid #1C1F26; padding: 6px 8px; font-size: 9.5pt; text-align: center; }
+  .fund-table th { background: #F0F0F0; }
+
+  .status-badge {
     display: inline-block; padding: 3px 10px; border: 1px solid #2E7D53;
     color: #2E7D53; border-radius: 10px; font-size: 9pt;
   }
-  table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
-  th, td { border: 1px solid #CFD8DC; padding: 6px 10px; text-align: left; font-size: 10pt; }
-  th { background: #F5F9FF; width: 32%; font-weight: bold; }
-  .section-title {
-    font-size: 12pt; font-weight: bold; margin: 20px 0 6px;
-    border-bottom: 1px solid #CFD8DC; padding-bottom: 4px;
-  }
-  .footer { color: #90A4AE; font-size: 8pt; margin-top: 30px; text-align: center; }
+  .footer { color: #90A4AE; font-size: 8pt; margin-top: 24px; text-align: center; }
 
-  .toolbar {
-    display: flex; justify-content: flex-end; gap: 10px;
-    margin-bottom: 16px;
-  }
+  .toolbar { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 16px; }
   .toolbar button, .toolbar a {
     font-family: inherit; font-size: 10pt; font-weight: 600;
     padding: 8px 18px; border-radius: 6px; cursor: pointer;
@@ -31,10 +43,7 @@
   }
   .btn-print { background: #C62828; color: #fff; border: none; }
   .btn-back { background: transparent; color: #1C1F26; border: 1px solid #CFD8DC; }
-
-  @media print {
-    .toolbar { display: none; }
-  }
+  @media print { .toolbar { display: none; } }
 </style>
 </head>
 <body>
@@ -44,46 +53,110 @@
     <button class="btn-print" onclick="window.print()">Print / Save as PDF</button>
   </div>
 
-  <h1>Noting Sheet &mdash; {{ noting_sheet.noting_id }}</h1>
-  <p class="meta">
-    Status: <span class="status">{{ noting_sheet.get_workflow_status_display }}</span>
-    &middot; Generated {% now "d M Y, P" %}
-  </p>
+  <h1>NOTING SHEET</h1>
 
-  <table>
-    <tr><th>Requirement ID</th><td>{{ noting_sheet.requirement.requirement_id }}</td></tr>
-    <tr><th>Item Name</th><td>{{ noting_sheet.item_name }}</td></tr>
-    <tr><th>A/U</th><td>{{ noting_sheet.au }}</td></tr>
-    <tr><th>Qty</th><td>{{ noting_sheet.qty }}</td></tr>
-    <tr><th>Unit Price</th><td>{{ noting_sheet.unit_price }}</td></tr>
-    <tr><th>Approx Amount</th><td>{{ noting_sheet.approx_amount|default:"—" }}</td></tr>
-    <tr><th>Amount Allotted</th><td>{{ noting_sheet.amount_allotted }}</td></tr>
-    <tr><th>Amount Released</th><td>{{ noting_sheet.amount_released }}</td></tr>
-    <tr><th>Amount Expended</th><td>{{ noting_sheet.amount_expended }}</td></tr>
-    <tr><th>Balance Held</th><td>{{ noting_sheet.balance_amount }}</td></tr>
-    <tr><th>Created By</th><td>{{ noting_sheet.created_by.username }}</td></tr>
-    <tr><th>Date</th><td>{{ noting_sheet.created_at|date:"d M Y, P" }}</td></tr>
-  </table>
+  <div class="head-row">
+    <span>File No : {{ noting_sheet.file_no }}</span>
+    <span>Sheet No: {{ noting_sheet.sheet_no }}</span>
+  </div>
+  <div class="head-row">
+    <span>Branch : {{ noting_sheet.branch }}</span>
+    <span>Dated : {{ noting_sheet.dated|date:"M Y" }}</span>
+  </div>
 
-  <div class="section-title">Approval Status</div>
-  <table>
+  <table class="main-table">
     <tr>
-      <th>Account Officer</th>
-      <td>
-        {{ noting_sheet.get_ao_status_display }}
-        {% if noting_sheet.ao_remarks %} &mdash; "{{ noting_sheet.ao_remarks }}"{% endif %}
-        {% if noting_sheet.ao_acted_by %}<br>{{ noting_sheet.ao_acted_by.username }} &middot; {{ noting_sheet.ao_acted_at|date:"d M Y, P" }}{% endif %}
-      </td>
+      <td class="col-ref">Ref</td>
+      <td class="col-purport">Purport</td>
+      <td class="col-remarks">Remarks</td>
     </tr>
     <tr>
-      <th>CFA</th>
-      <td>
-        {{ noting_sheet.get_cfa_status_display }}
-        {% if noting_sheet.cfa_remarks %} &mdash; "{{ noting_sheet.cfa_remarks }}"{% endif %}
-        {% if noting_sheet.cfa_acted_by %}<br>{{ noting_sheet.cfa_acted_by.username }} &middot; {{ noting_sheet.cfa_acted_at|date:"d M Y, P" }}{% endif %}
+      <td class="col-ref">&nbsp;</td>
+      <td class="col-purport">
+
+        <p class="purport-num">1</p>
+        <p class="purport-title">{{ noting_sheet.paragraph_1 }}</p>
+
+        <div class="purport-body">
+          {% for line in noting_sheet.paragraph_2.splitlines %}
+            <p>{{ line }}</p>
+          {% endfor %}
+        </div>
+
+        <table class="item-table">
+          <thead>
+            <tr>
+              <th>S No</th>
+              <th class="desc-col">Item</th>
+              <th>A/U</th>
+              <th>Qty</th>
+              <th>Unit Price<br>(Rs)</th>
+              <th>Approx Amt<br>(Rs)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items %}
+              <tr>
+                <td>{{ forloop.counter }}.</td>
+                <td class="desc-col">{{ item.description }}</td>
+                <td>{{ item.au }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.unit_price }}</td>
+                <td>{{ item.approx_amount }}</td>
+              </tr>
+            {% endfor %}
+            <tr class="total-row">
+              <td colspan="5" style="text-align:right;">Total</td>
+              <td>{{ noting_sheet.total_amount }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="purport-num">3</p>
+        <p>The said amount is within the financial power of {{ noting_sheet.approval_recipient|default:"CFA" }} this unit. Details of fund are as under:-</p>
+
+        <table class="fund-table">
+          <thead>
+            <tr>
+              <th>Amount Allotted (Rs)</th>
+              <th>Amount Released (Rs)</th>
+              <th>Amount Expended including this Noting Sheet (Rs)</th>
+              <th>Balance Amount held as on Date (Rs)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ noting_sheet.amount_allotted }}</td>
+              <td>{{ noting_sheet.amount_released }}</td>
+              <td>{{ noting_sheet.amount_expended }}</td>
+              <td>{{ noting_sheet.balance_amount }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        {% if noting_sheet.remarks %}
+          <p>{{ noting_sheet.remarks }}</p>
+        {% endif %}
+
+        <p class="purport-num">4</p>
+        <p>EAS sanction for the item is placed opposite for your perusal and sanction of {{ noting_sheet.approval_recipient|default:"CFA" }} please.</p>
+
       </td>
+      <td class="col-remarks">PUC</td>
     </tr>
   </table>
+
+  <div class="head-row" style="margin-top:20px;">
+    <span>
+      Status: <span class="status-badge">{{ noting_sheet.get_workflow_status_display }}</span>
+    </span>
+    <span>Generated {% now "d M Y, P" %}</span>
+  </div>
+
+  <div class="head-row" style="margin-top:14px;">
+    <span>Prepared By: {{ noting_sheet.created_by.get_full_name|default:noting_sheet.created_by.username }} ({{ noting_sheet.created_by.get_role_display }})</span>
+    <span>For Approval: {{ noting_sheet.approval_recipient }}</span>
+  </div>
 
   <p class="footer">Project Nexus &mdash; Unit Accounts Management &middot; Procurement Module &middot; CONFIDENTIAL</p>
 

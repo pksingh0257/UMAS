@@ -31,211 +31,773 @@
         {% for message in messages %}<div class="card rf-message">{{ message }}</div>{% endfor %}
       {% endif %}
 
-      <div class="detail-layout">
-      <div class="detail-main">
 
-      <div class="card">
-        <div class="rf-card-head">
-          <h2 style="margin:0;">EAS &mdash; {{ eas.file_no }} <span class="badge badge-workflow">{{ eas.get_workflow_status_display }}</span></h2>
-          {% if can_edit %}
-            <a href="{% url 'eas_edit' eas.pk %}" class="login-btn" style="width:auto; padding:8px 18px; text-decoration:none;">Edit &amp; Resend</a>
-          {% endif %}
-        </div>
-        <p style="color:var(--text-secondary); font-size:13px;">
-          Noting Sheet: <a href="{% url 'noting_sheet_detail' noting_sheet.pk %}" style="color:var(--accent-blue); text-decoration:none;">{{ noting_sheet.noting_id }}</a>
-          &middot; Requirement: {{ noting_sheet.requirement.requirement_id }}
-        </p>
+      <!-- WORKFLOW STATUS BAR - FIRST ROW -->
+      <div class="card" style="padding:24px 20px; margin-bottom:20px;">
 
-        <div class="rf-grid-3" style="margin-top:16px;">
-          <div><span class="rf-label">File No</span><p>{{ eas.file_no }}</p></div>
-          <div><span class="rf-label">EAS ID</span><p>{{ eas.eas_id }}</p></div>
-          <div><span class="rf-label">Case File No</span><p>{{ eas.case_file_no }}</p></div>
+        <div style="display:flex; align-items:center; width:100%;">
 
-          <div><span class="rf-label">DSC of Goods</span><p>{{ eas.dsc_goods }}</p></div>
-          <div><span class="rf-label">Name of Supplier</span><p>{{ eas.name_supplier }}</p></div>
-          <div><span class="rf-label">Purpose - Broad</span><p>{{ eas.purpose_broad }}</p></div>
+          <!-- NOTING SHEET -->
+          <div style="flex:1; text-align:center;">
 
-          <div><span class="rf-label">Designation of CFA</span><p>{{ eas.designation_cfa }}</p></div>
-          <div><span class="rf-label">Qty Sanctioned</span><p>{{ eas.qty_sanctioned }}</p></div>
-          <div><span class="rf-label">Amount Sanction</span><p>{{ eas.amount_sanction }}</p></div>
+            {% if noting_sheet.workflow_status == "APPROVED" %}
 
-          <div><span class="rf-label">Cost Per Unit</span><p>{{ eas.cost_per_unit }}</p></div>
-          <div><span class="rf-label">Other Charges</span><p>{{ eas.other_charges|default:"—" }}</p></div>
-          <div><span class="rf-label">Total Amount (words)</span><p>{{ eas.total_amount_words }}</p></div>
-
-          <div><span class="rf-label">Availability of Fund</span><p>{{ eas.availability_fund }}</p></div>
-          <div><span class="rf-label">Sub Details / Heads</span><p>{{ eas.sub_details_heads }}</p></div>
-          <div><span class="rf-label">Reference No</span><p>{{ eas.reference_no }}</p></div>
-
-          <div><span class="rf-label">Name of Paying Agency</span><p>{{ eas.name_paying_agent }}</p></div>
-          <div><span class="rf-label">Date</span><p>{{ eas.date_time|date:"d M Y" }}</p></div>
-          <div><span class="rf-label">Station</span><p>{{ eas.station }}</p></div>
-
-          <div><span class="rf-label">Unit</span><p>{{ eas.unit }}</p></div>
-          <div><span class="rf-label">Created By</span><p>{{ eas.created_by.username }}</p></div>
-          <div><span class="rf-label">Date Created</span><p>{{ eas.created_at|date:"d M Y, P" }}</p></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3 style="margin-top:0;">Approval Status</h3>
-        <div class="rf-grid-2">
-          <div>
-            <span class="rf-label">CFA</span>
-            <p><span class="badge badge-{{ eas.cfa_status|lower }}">{{ eas.get_cfa_status_display }}</span></p>
-            {% if eas.cfa_remarks %}<p style="color:var(--text-secondary); font-size:13px;">"{{ eas.cfa_remarks }}"</p>{% endif %}
-            {% if eas.cfa_acted_at %}<p style="color:var(--text-secondary); font-size:12px;">{{ eas.cfa_acted_by.username }} &middot; {{ eas.cfa_acted_at|date:"d M Y, P" }}</p>{% endif %}
-          </div>
-        </div>
-      </div>
-
-      {% if cfa_form %}
-        <div class="card">
-          <h3 style="margin-top:0;">CFA Review</h3>
-          <form method="post">
-            {% csrf_token %}
-            <div class="rf-grid-2">
-              <div class="field"><label for="{{ cfa_form.cfa_status.id_for_label }}">Status</label>{{ cfa_form.cfa_status }}</div>
-              <div class="field">
-                <label for="{{ cfa_form.cfa_remarks.id_for_label }}">Remarks</label>
-                {{ cfa_form.cfa_remarks }}
-                {% if cfa_form.cfa_remarks.errors %}<p class="rf-error-text">{{ cfa_form.cfa_remarks.errors|join:", " }}</p>{% endif %}
+              <div style="width:32px; height:32px; border-radius:50%; background:#198754; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">
+                ✓
               </div>
-            </div>
-            <button type="submit" name="cfa_submit" class="login-btn" style="width:auto; padding:10px 24px; margin-top:10px;">Submit Decision</button>
-          </form>
+
+              <div style="font-size:13px; font-weight:600; color:#198754;">
+                Noting Sheet
+              </div>
+
+              <div style="font-size:11px; color:#198754; margin-top:3px;">
+                Approved
+              </div>
+
+            {% else %}
+
+              <div style="width:32px; height:32px; border-radius:50%; background:#0d6efd; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">
+                1
+              </div>
+
+              <div style="font-size:13px; font-weight:600; color:#0d6efd;">
+                Noting Sheet
+              </div>
+
+              <div style="font-size:11px; color:#0d6efd; margin-top:3px;">
+                Active
+              </div>
+
+            {% endif %}
+
+          </div>
+
+
+          <!-- LINE -->
+          <div style="height:2px; flex:1; background:{% if noting_sheet.workflow_status == "APPROVED" %}#198754{% else %}#d9dee5{% endif %};"></div>
+
+
+          <!-- EAS -->
+          <div style="flex:1; text-align:center;">
+
+            {% if eas.workflow_status == "APPROVED" %}
+
+              <div style="width:32px; height:32px; border-radius:50%; background:#198754; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">
+                ✓
+              </div>
+
+              <div style="font-size:13px; font-weight:600; color:#198754;">
+                EAS
+              </div>
+
+              <div style="font-size:11px; color:#198754; margin-top:3px;">
+                Approved
+              </div>
+
+            {% else %}
+
+              <div style="width:32px; height:32px; border-radius:50%; background:#0d6efd; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">
+                2
+              </div>
+
+              <div style="font-size:13px; font-weight:600; color:#0d6efd;">
+                EAS
+              </div>
+
+              <div style="font-size:11px; color:#0d6efd; margin-top:3px;">
+                Active
+              </div>
+
+            {% endif %}
+
+          </div>
+
+
+          <!-- LINE -->
+          <div style="height:2px; flex:1; background:{% if eas.workflow_status == "APPROVED" %}#198754{% else %}#d9dee5{% endif %};"></div>
+
+
+          <!-- SANCTION -->
+          <div style="flex:1; text-align:center;">
+
+            {% if eas.sanction_document %}
+
+              <div style="width:32px; height:32px; border-radius:50%; background:#198754; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">
+                ✓
+              </div>
+
+              <div style="font-size:13px; font-weight:600; color:#198754;">
+                Sanction
+              </div>
+
+              <div style="font-size:11px; color:#198754; margin-top:3px;">
+                Uploaded
+              </div>
+
+            {% elif eas.workflow_status == "APPROVED" %}
+
+              <div style="width:32px; height:32px; border-radius:50%; background:#0d6efd; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">
+                3
+              </div>
+
+              <div style="font-size:13px; font-weight:600; color:#0d6efd;">
+                Sanction
+              </div>
+
+              <div style="font-size:11px; color:#0d6efd; margin-top:3px;">
+                Active
+              </div>
+
+            {% else %}
+
+              <div style="width:32px; height:32px; border-radius:50%; background:#e9ecef; color:#6c757d; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">
+                3
+              </div>
+
+              <div style="font-size:13px; font-weight:600; color:#6c757d;">
+                Sanction
+              </div>
+
+              <div style="font-size:11px; color:#6c757d; margin-top:3px;">
+                Pending
+              </div>
+
+            {% endif %}
+
+          </div>
+
+
+          <!-- LINE -->
+          <div style="height:2px; flex:1; background:{% if eas.sanction_document %}#198754{% else %}#d9dee5{% endif %};"></div>
+
+
+          <!-- CONTRACT -->
+          <div style="flex:1; text-align:center;">
+
+            {% if eas.contract_document %}
+
+              <div style="width:32px; height:32px; border-radius:50%; background:#198754; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">
+                ✓
+              </div>
+
+              <div style="font-size:13px; font-weight:600; color:#198754;">
+                Contract
+              </div>
+
+              <div style="font-size:11px; color:#198754; margin-top:3px;">
+                Uploaded
+              </div>
+
+            {% elif eas.sanction_document %}
+
+              <div style="width:32px; height:32px; border-radius:50%; background:#0d6efd; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">
+                4
+              </div>
+
+              <div style="font-size:13px; font-weight:600; color:#0d6efd;">
+                Contract
+              </div>
+
+              <div style="font-size:11px; color:#0d6efd; margin-top:3px;">
+                Active
+              </div>
+
+            {% else %}
+
+              <div style="width:32px; height:32px; border-radius:50%; background:#e9ecef; color:#6c757d; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">
+                4
+              </div>
+
+              <div style="font-size:13px; font-weight:600; color:#6c757d;">
+                Contract
+              </div>
+
+              <div style="font-size:11px; color:#6c757d; margin-top:3px;">
+                Pending
+              </div>
+
+            {% endif %}
+
+          </div>
+
+
+          <!-- LINE -->
+          <div style="height:2px; flex:1; background:{% if eas.contract_document %}#198754{% else %}#d9dee5{% endif %};"></div>
+
+
+          <!-- INVOICE -->
+          <div style="flex:1; text-align:center;">
+
+            {% if eas.invoice_document %}
+
+              <div style="width:32px; height:32px; border-radius:50%; background:#198754; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">
+                ✓
+              </div>
+
+              <div style="font-size:13px; font-weight:600; color:#198754;">
+                Invoice
+              </div>
+
+              <div style="font-size:11px; color:#198754; margin-top:3px;">
+                Uploaded
+              </div>
+
+            {% elif eas.contract_document %}
+
+              <div style="width:32px; height:32px; border-radius:50%; background:#0d6efd; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">
+                5
+              </div>
+
+              <div style="font-size:13px; font-weight:600; color:#0d6efd;">
+                Invoice
+              </div>
+
+              <div style="font-size:11px; color:#0d6efd; margin-top:3px;">
+                Active
+              </div>
+
+            {% else %}
+
+              <div style="width:32px; height:32px; border-radius:50%; background:#e9ecef; color:#6c757d; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">
+                5
+              </div>
+
+              <div style="font-size:13px; font-weight:600; color:#6c757d;">
+                Invoice
+              </div>
+
+              <div style="font-size:11px; color:#6c757d; margin-top:3px;">
+                Pending
+              </div>
+
+            {% endif %}
+
+          </div>
+
         </div>
-      {% endif %}
-
-      {% if eas.workflow_status == "APPROVED" %}
-
-        <div class="card">
-          <h3 style="margin-top:0;">Sanction</h3>
-          {% if eas.sanction_document %}
-            <p style="color:var(--text-secondary); font-size:13px;">
-              Uploaded: <a href="{{ eas.sanction_document.url }}" target="_blank" style="color:var(--accent-blue); text-decoration:none;">{{ eas.sanction_document.name|cut:"eas_documents/sanction/" }}</a>
-            </p>
-          {% else %}
-            <p style="color:var(--text-secondary); font-size:13px;">No file uploaded yet.</p>
-          {% endif %}
-          <form method="post" action="{% url 'eas_upload_document' eas.pk 'sanction' %}" enctype="multipart/form-data" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:10px;">
-            {% csrf_token %}
-            <input type="file" name="document" accept="application/pdf" required>
-            <button type="submit" class="login-btn" style="width:auto; padding:8px 20px;">{% if eas.sanction_document %}Replace{% else %}Upload{% endif %}</button>
-          </form>
-        </div>
-
-        <div class="card">
-          <h3 style="margin-top:0;">Contract</h3>
-          {% if eas.contract_document %}
-            <p style="color:var(--text-secondary); font-size:13px;">
-              Uploaded: <a href="{{ eas.contract_document.url }}" target="_blank" style="color:var(--accent-blue); text-decoration:none;">{{ eas.contract_document.name|cut:"eas_documents/contract/" }}</a>
-            </p>
-          {% else %}
-            <p style="color:var(--text-secondary); font-size:13px;">No file uploaded yet.</p>
-          {% endif %}
-          <form method="post" action="{% url 'eas_upload_document' eas.pk 'contract' %}" enctype="multipart/form-data" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:10px;">
-            {% csrf_token %}
-            <input type="file" name="document" accept="application/pdf" required>
-            <button type="submit" class="login-btn" style="width:auto; padding:8px 20px;">{% if eas.contract_document %}Replace{% else %}Upload{% endif %}</button>
-          </form>
-        </div>
-
-        <div class="card">
-          <h3 style="margin-top:0;">Invoice</h3>
-          {% if eas.invoice_document %}
-            <p style="color:var(--text-secondary); font-size:13px;">
-              Uploaded: <a href="{{ eas.invoice_document.url }}" target="_blank" style="color:var(--accent-blue); text-decoration:none;">{{ eas.invoice_document.name|cut:"eas_documents/invoice/" }}</a>
-            </p>
-          {% else %}
-            <p style="color:var(--text-secondary); font-size:13px;">No file uploaded yet.</p>
-          {% endif %}
-          <form method="post" action="{% url 'eas_upload_document' eas.pk 'invoice' %}" enctype="multipart/form-data" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:10px;">
-            {% csrf_token %}
-            <input type="file" name="document" accept="application/pdf" required>
-            <button type="submit" class="login-btn" style="width:auto; padding:8px 20px;">{% if eas.invoice_document %}Replace{% else %}Upload{% endif %}</button>
-          </form>
-        </div>
-
-      {% endif %}
 
       </div>
 
-      <div class="detail-side">
-        <div class="card">
-          <h3 style="margin-top:0;">Document Uploaded</h3>
 
-          <div class="doc-item">
-            <span class="badge badge-approved">Noting Sheet</span>
-            <div class="doc-actions">
-              <a href="{% url 'noting_sheet_detail' noting_sheet.pk %}">View</a>
-              {% if noting_sheet.workflow_status == "APPROVED" %}
-                <a href="{% url 'noting_sheet_download_pdf' noting_sheet.pk %}" target="_blank">View / Print PDF</a>
+      <!-- SECOND ROW: EAS DETAILS + DOCUMENT UPLOADED -->
+      <div class="detail-layout">
+
+        <div class="detail-main">
+
+          <!-- EAS DETAILS -->
+          <div class="card">
+            <div class="rf-card-head">
+              <h2 style="margin:0;">EAS &mdash; {{ eas.file_no }} <span class="badge badge-workflow">{{ eas.get_workflow_status_display }}</span></h2>
+
+              {% if can_edit %}
+                <a href="{% url 'eas_edit' eas.pk %}" class="login-btn" style="width:auto; padding:8px 18px; text-decoration:none;">Edit &amp; Resend</a>
               {% endif %}
+
+            </div>
+
+            <p style="color:var(--text-secondary); font-size:13px;">
+              Noting Sheet:
+              <a href="{% url 'noting_sheet_detail' noting_sheet.pk %}" style="color:var(--accent-blue); text-decoration:none;">
+                {{ noting_sheet.noting_id }}
+              </a>
+              &middot; Requirement: {{ noting_sheet.requirement.requirement_id }}
+            </p>
+
+            <div class="rf-grid-3" style="margin-top:16px;">
+
+              <div>
+                <span class="rf-label">File No</span>
+                <p>{{ eas.file_no }}</p>
+              </div>
+
+              <div>
+                <span class="rf-label">EAS ID</span>
+                <p>{{ eas.eas_id }}</p>
+              </div>
+
+              <div>
+                <span class="rf-label">Case File No</span>
+                <p>{{ eas.case_file_no }}</p>
+              </div>
+
+
+              <div>
+                <span class="rf-label">DSC of Goods</span>
+                <p>{{ eas.dsc_goods }}</p>
+              </div>
+
+              <div>
+                <span class="rf-label">Name of Supplier</span>
+                <p>{{ eas.name_supplier }}</p>
+              </div>
+
+              <div>
+                <span class="rf-label">Purpose - Broad</span>
+                <p>{{ eas.purpose_broad }}</p>
+              </div>
+
+
+              <div>
+                <span class="rf-label">Designation of CFA</span>
+                <p>{{ eas.designation_cfa }}</p>
+              </div>
+
+              <div>
+                <span class="rf-label">Qty Sanctioned</span>
+                <p>{{ eas.qty_sanctioned }}</p>
+              </div>
+
+              <div>
+                <span class="rf-label">Amount Sanction</span>
+                <p>{{ eas.amount_sanction }}</p>
+              </div>
+
+
+              <div>
+                <span class="rf-label">Cost Per Unit</span>
+                <p>{{ eas.cost_per_unit }}</p>
+              </div>
+
+              <div>
+                <span class="rf-label">Other Charges</span>
+                <p>{{ eas.other_charges|default:"—" }}</p>
+              </div>
+
+              <div>
+                <span class="rf-label">Total Amount (words)</span>
+                <p>{{ eas.total_amount_words }}</p>
+              </div>
+
+
+              <div>
+                <span class="rf-label">Availability of Fund</span>
+                <p>{{ eas.availability_fund }}</p>
+              </div>
+
+              <div>
+                <span class="rf-label">Sub Details / Heads</span>
+                <p>{{ eas.sub_details_heads }}</p>
+              </div>
+
+              <div>
+                <span class="rf-label">Reference No</span>
+                <p>{{ eas.reference_no }}</p>
+              </div>
+
+
+              <div>
+                <span class="rf-label">Name of Paying Agency</span>
+                <p>{{ eas.name_paying_agent }}</p>
+              </div>
+
+              <div>
+                <span class="rf-label">Date</span>
+                <p>{{ eas.date_time|date:"d M Y" }}</p>
+              </div>
+
+              <div>
+                <span class="rf-label">Station</span>
+                <p>{{ eas.station }}</p>
+              </div>
+
+
+              <div>
+                <span class="rf-label">Unit</span>
+                <p>{{ eas.unit }}</p>
+              </div>
+
+              <div>
+                <span class="rf-label">Created By</span>
+                <p>{{ eas.created_by.username }}</p>
+              </div>
+
+              <div>
+                <span class="rf-label">Date Created</span>
+                <p>{{ eas.created_at|date:"d M Y, P" }}</p>
+              </div>
+
             </div>
           </div>
 
-          <div class="doc-item">
-            <span class="badge badge-{{ eas.simple_approval_status|lower }}">EAS</span>
-            <div class="doc-actions">
-              {% if eas.workflow_status == "APPROVED" %}
-                <a href="{% url 'eas_download_pdf' eas.pk %}" target="_blank">View / Print PDF</a>
-              {% else %}
-                <span style="font-size:12px; color:var(--text-secondary);">Download available once approved</span>
-              {% endif %}
-            </div>
-          </div>
 
-          <div class="doc-item">
-            <span class="badge badge-{% if eas.sanction_document %}approved{% else %}pending{% endif %}">Sanction</span>
-            <div class="doc-actions">
-              {% if eas.sanction_document %}
-                <a href="{{ eas.sanction_document.url }}" target="_blank">View</a>
-                <a href="{{ eas.sanction_document.url }}" download>Download PDF</a>
-              {% else %}
-                <span style="font-size:12px; color:var(--text-secondary);">Not uploaded yet</span>
-              {% endif %}
-            </div>
-          </div>
+          <!-- CFA REVIEW -->
+          {% if cfa_form %}
+            <div class="card">
 
-          <div class="doc-item">
-            <span class="badge badge-{% if eas.contract_document %}approved{% else %}pending{% endif %}">Contract</span>
-            <div class="doc-actions">
-              {% if eas.contract_document %}
-                <a href="{{ eas.contract_document.url }}" target="_blank">View</a>
-                <a href="{{ eas.contract_document.url }}" download>Download PDF</a>
-              {% else %}
-                <span style="font-size:12px; color:var(--text-secondary);">Not uploaded yet</span>
-              {% endif %}
-            </div>
-          </div>
+              <h3 style="margin-top:0;">CFA Review</h3>
 
-          <div class="doc-item">
-            <span class="badge badge-{% if eas.invoice_document %}approved{% else %}pending{% endif %}">Invoice</span>
-            <div class="doc-actions">
-              {% if eas.invoice_document %}
-                <a href="{{ eas.invoice_document.url }}" target="_blank">View</a>
-                <a href="{{ eas.invoice_document.url }}" download>Download PDF</a>
-              {% else %}
-                <span style="font-size:12px; color:var(--text-secondary);">Not uploaded yet</span>
-              {% endif %}
+              <form method="post">
+
+                {% csrf_token %}
+
+                <div class="rf-grid-2">
+
+                  <div class="field">
+                    <label for="{{ cfa_form.cfa_status.id_for_label }}">Status</label>
+                    {{ cfa_form.cfa_status }}
+                  </div>
+
+                  <div class="field">
+                    <label for="{{ cfa_form.cfa_remarks.id_for_label }}">Remarks</label>
+                    {{ cfa_form.cfa_remarks }}
+
+                    {% if cfa_form.cfa_remarks.errors %}
+                      <p class="rf-error-text">{{ cfa_form.cfa_remarks.errors|join:", " }}</p>
+                    {% endif %}
+
+                  </div>
+
+                </div>
+
+                <button type="submit" name="cfa_submit" class="login-btn" style="width:auto; padding:10px 24px; margin-top:10px;">
+                  Submit Decision
+                </button>
+
+              </form>
+
             </div>
+          {% endif %}
+
+
+          <!-- SANCTION / CONTRACT / INVOICE -->
+          {% if eas.workflow_status == "APPROVED" %}
+
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; margin-top:20px;">
+
+              <!-- SANCTION -->
+              <div class="card" style="margin:0;">
+
+                <h3 style="margin-top:0;">Sanction</h3>
+
+                {% if eas.sanction_document %}
+
+                  <p style="color:var(--text-secondary); font-size:13px;">
+                    Uploaded:
+                    <a href="{{ eas.sanction_document.url }}" target="_blank" style="color:var(--accent-blue); text-decoration:none;">
+                      {{ eas.sanction_document.name|cut:"eas_documents/sanction/" }}
+                    </a>
+                  </p>
+
+                {% else %}
+
+                  <p style="color:var(--text-secondary); font-size:13px;">
+                    No file uploaded yet.
+                  </p>
+
+                {% endif %}
+
+                <form method="post"
+                      action="{% url 'eas_upload_document' eas.pk 'sanction' %}"
+                      enctype="multipart/form-data"
+                      style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:10px;">
+
+                  {% csrf_token %}
+
+                  <input type="file" name="document" accept="application/pdf" required>
+
+                  <button type="submit" class="login-btn" style="width:auto; padding:8px 20px;">
+                    {% if eas.sanction_document %}Replace{% else %}Upload{% endif %}
+                  </button>
+
+                </form>
+
+              </div>
+
+
+              <!-- CONTRACT -->
+              <div class="card" style="margin:0;">
+
+                <h3 style="margin-top:0;">Contract</h3>
+
+                {% if eas.contract_document %}
+
+                  <p style="color:var(--text-secondary); font-size:13px;">
+                    Uploaded:
+                    <a href="{{ eas.contract_document.url }}" target="_blank" style="color:var(--accent-blue); text-decoration:none;">
+                      {{ eas.contract_document.name|cut:"eas_documents/contract/" }}
+                    </a>
+                  </p>
+
+                {% else %}
+
+                  <p style="color:var(--text-secondary); font-size:13px;">
+                    No file uploaded yet.
+                  </p>
+
+                {% endif %}
+
+                <form method="post"
+                      action="{% url 'eas_upload_document' eas.pk 'contract' %}"
+                      enctype="multipart/form-data"
+                      style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:10px;">
+
+                  {% csrf_token %}
+
+                  <input type="file" name="document" accept="application/pdf" required>
+
+                  <button type="submit" class="login-btn" style="width:auto; padding:8px 20px;">
+                    {% if eas.contract_document %}Replace{% else %}Upload{% endif %}
+                  </button>
+
+                </form>
+
+              </div>
+
+
+              <!-- INVOICE -->
+              <div class="card" style="margin:0;">
+
+                <h3 style="margin-top:0;">Invoice</h3>
+
+                {% if eas.invoice_document %}
+
+                  <p style="color:var(--text-secondary); font-size:13px;">
+                    Uploaded:
+                    <a href="{{ eas.invoice_document.url }}" target="_blank" style="color:var(--accent-blue); text-decoration:none;">
+                      {{ eas.invoice_document.name|cut:"eas_documents/invoice/" }}
+                    </a>
+                  </p>
+
+                {% else %}
+
+                  <p style="color:var(--text-secondary); font-size:13px;">
+                    No file uploaded yet.
+                  </p>
+
+                {% endif %}
+
+                <form method="post"
+                      action="{% url 'eas_upload_document' eas.pk 'invoice' %}"
+                      enctype="multipart/form-data"
+                      style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:10px;">
+
+                  {% csrf_token %}
+
+                  <input type="file" name="document" accept="application/pdf" required>
+
+                  <button type="submit" class="login-btn" style="width:auto; padding:8px 20px;">
+                    {% if eas.invoice_document %}Replace{% else %}Upload{% endif %}
+                  </button>
+
+                </form>
+
+              </div>
+
+            </div>
+
+          {% endif %}
+          {% if eas.workflow_status == "APPROVED" and eas.sanction_document and eas.contract_document and eas.invoice_document %}
+          <div class="card" style="margin-top:20px;">
+            <h3 style="margin-top:0;">Next Step</h3>
+            <p style="color:var(--text-secondary); font-size:13px;">
+              Sanction, Contract and Invoice have all been uploaded.
+            </p>
+            <a href="{% url 'convening_order_create' eas.pk %}"
+              class="login-btn"
+              style="width:auto; padding:12px 24px; text-decoration:none; display:inline-block; margin-top:8px;">
+              Create Convening Order
+            </a>
           </div>
+        {% endif %}
+
+
         </div>
-      </div>
+
+
+        <!-- DOCUMENT UPLOADED - RIGHT SIDE -->
+        <div class="detail-side">
+
+          <div class="card">
+
+            <h3 style="margin-top:0;">Document Uploaded</h3>
+
+
+            <!-- NOTING SHEET -->
+            <div class="doc-item">
+
+              <span class="badge badge-approved">
+                Noting Sheet
+              </span>
+
+              <div class="doc-actions">
+
+                <a href="{% url 'noting_sheet_detail' noting_sheet.pk %}">
+                  View
+                </a>
+
+                {% if noting_sheet.workflow_status == "APPROVED" %}
+
+                  <a href="{% url 'noting_sheet_download_pdf' noting_sheet.pk %}" target="_blank">
+                    View / Print PDF
+                  </a>
+
+                {% endif %}
+
+              </div>
+
+            </div>
+
+
+            <!-- EAS -->
+            <div class="doc-item">
+
+              <span class="badge badge-{{ eas.simple_approval_status|lower }}">
+                EAS
+              </span>
+
+              <div class="doc-actions">
+
+                {% if eas.workflow_status == "APPROVED" %}
+
+                  <a href="{% url 'eas_download_pdf' eas.pk %}" target="_blank">
+                    View / Print PDF
+                  </a>
+
+                {% else %}
+
+                  <span style="font-size:12px; color:var(--text-secondary);">
+                    Download available once approved
+                  </span>
+
+                {% endif %}
+
+              </div>
+
+            </div>
+
+
+            <!-- SANCTION -->
+            <div class="doc-item">
+
+              <span class="badge badge-{% if eas.sanction_document %}approved{% else %}pending{% endif %}">
+                Sanction
+              </span>
+
+              <div class="doc-actions">
+
+                {% if eas.sanction_document %}
+
+                  <a href="{{ eas.sanction_document.url }}" target="_blank">
+                    View
+                  </a>
+
+                  <a href="{{ eas.sanction_document.url }}" download>
+                    Download PDF
+                  </a>
+
+                {% else %}
+
+                  <span style="font-size:12px; color:var(--text-secondary);">
+                    Not uploaded yet
+                  </span>
+
+                {% endif %}
+
+              </div>
+
+            </div>
+
+
+            <!-- CONTRACT -->
+            <div class="doc-item">
+
+              <span class="badge badge-{% if eas.contract_document %}approved{% else %}pending{% endif %}">
+                Contract
+              </span>
+
+              <div class="doc-actions">
+
+                {% if eas.contract_document %}
+
+                  <a href="{{ eas.contract_document.url }}" target="_blank">
+                    View
+                  </a>
+
+                  <a href="{{ eas.contract_document.url }}" download>
+                    Download PDF
+                  </a>
+
+                {% else %}
+
+                  <span style="font-size:12px; color:var(--text-secondary);">
+                    Not uploaded yet
+                  </span>
+
+                {% endif %}
+
+              </div>
+
+            </div>
+
+
+            <!-- INVOICE -->
+            <div class="doc-item">
+
+              <span class="badge badge-{% if eas.invoice_document %}approved{% else %}pending{% endif %}">
+                Invoice
+              </span>
+
+              <div class="doc-actions">
+
+                {% if eas.invoice_document %}
+
+                  <a href="{{ eas.invoice_document.url }}" target="_blank">
+                    View
+                  </a>
+
+                  <a href="{{ eas.invoice_document.url }}" download>
+                    Download PDF
+                  </a>
+
+                {% else %}
+
+                  <span style="font-size:12px; color:var(--text-secondary);">
+                    Not uploaded yet
+                  </span>
+
+                {% endif %}
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
 
       </div>
 
     </div>
+
 
     <div class="footer-strip">
-      <div><span class="label">PROJECT</span><span class="item">Project Nexus - Unit Accounts Management</span></div>
-      <div><span class="label">MODULE</span><span class="item">Procurement</span></div>
-      <div><span class="label">VERSION</span><span class="item">1.0</span></div>
-      <div><span class="label">CLASSIFICATION</span><span class="item">CONFIDENTIAL</span></div>
+
+      <div>
+        <span class="label">PROJECT</span>
+        <span class="item">Project Nexus - Unit Accounts Management</span>
+      </div>
+
+      <div>
+        <span class="label">MODULE</span>
+        <span class="item">Procurement</span>
+      </div>
+
+      <div>
+        <span class="label">VERSION</span>
+        <span class="item">1.0</span>
+      </div>
+
+      <div>
+        <span class="label">CLASSIFICATION</span>
+        <span class="item">CONFIDENTIAL</span>
+      </div>
+
     </div>
+
   </div>
 </div>
+
 <script src="{% static 'js/theme-toggle.js' %}"></script>
+
 </body>
 </html>
