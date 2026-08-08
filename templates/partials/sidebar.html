@@ -26,7 +26,7 @@
     {% endif %}
 
     {% if role in 'CFA,ACCOUNTS_OFFICER,ADMINISTRATOR' %}
-      <a href="{% url 'requirement_list' %}" class="{% if active_nav == 'requirements' %}active{% endif %}">
+      <a href="{% url 'requirement_list' %}" class="{% if active_nav == 'Approvals' %}active{% endif %}">
         <span class="icon">&#9989;</span> Approvals
       </a>
     {% endif %}
