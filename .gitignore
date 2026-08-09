@@ -22,3 +22,4 @@ venv/
 .DS_Store
 Thumbs.db
 "@ | Set-Content -Encoding UTF8 .gitignore
+media/
