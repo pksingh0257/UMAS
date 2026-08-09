@@ -259,8 +259,12 @@ class EASDocumentUploadForm(forms.Form):
 #     exists yet to enforce this against.
 # ============================================================
 User = get_user_model()
+# ============================================================
+# Convening Order Form
+# ============================================================
 
 class ConveningOrderForm(forms.ModelForm):
+
     class Meta:
         model = ConveningOrder
 
@@ -275,44 +279,97 @@ class ConveningOrderForm(forms.ModelForm):
             "two_ic_appointment",
             "order_date",
         ]
+
         widgets = {
-            "description": forms.Textarea(attrs={
-                "rows": 7,
-                "placeholder": "Enter Para 1 exactly as it should appear in the Convening Order.",
-            }),
-            "presiding_officer": forms.TextInput(attrs={
-                "placeholder": "e.g. SS-52548A Lt Nitin Bhandari"
-            }),
-            "member_1": forms.TextInput(attrs={
-                "placeholder": "e.g. JC-288757M Sub Shiv Singh"
-            }),
-            "member_2": forms.TextInput(attrs={
-                "placeholder": "e.g. JC-294912Y Sub Madan Lal"
-            }),
-            "completion_date": forms.DateInput(attrs={"type": "date"}),
-            "two_ic_name": forms.TextInput(attrs={"placeholder": "e.g. Rathan Kumar HS"}),
-            "two_ic_rank": forms.TextInput(attrs={"placeholder": "e.g. Lt Col"}),
-            "two_ic_appointment": forms.TextInput(attrs={"placeholder": "2IC"}),
-            "order_date": forms.DateInput(attrs={"type": "date"}),
+            "description": forms.Textarea(
+                attrs={
+                    "rows": 7,
+                    "placeholder": (
+                        "Enter Para 1 exactly as it should "
+                        "appear in the Convening Order."
+                    ),
+                }
+            ),
+
+            "presiding_officer": forms.TextInput(
+                attrs={
+                    "placeholder": "e.g. SS-52548A Lt Nitin Bhandari"
+                }
+            ),
+
+            "member_1": forms.TextInput(
+                attrs={
+                    "placeholder": "e.g. JC-288757M Sub Shiv Singh"
+                }
+            ),
+
+            "member_2": forms.TextInput(
+                attrs={
+                    "placeholder": "e.g. JC-294912Y Sub Madan Lal"
+                }
+            ),
+
+            "completion_date": forms.DateInput(
+                attrs={
+                    "type": "date"
+                }
+            ),
+
+            "two_ic_name": forms.TextInput(
+                attrs={
+                    "placeholder": "e.g. Rathan Kumar HS"
+                }
+            ),
+
+            "two_ic_rank": forms.TextInput(
+                attrs={
+                    "placeholder": "e.g. Lt Col"
+                }
+            ),
+
+            "two_ic_appointment": forms.TextInput(
+                attrs={
+                    "placeholder": "2IC"
+                }
+            ),
+
+            "order_date": forms.DateInput(
+                attrs={
+                    "type": "date"
+                }
+            ),
         }
 
     def clean(self):
         cleaned = super().clean()
 
-        completion = cleaned.get("completion_date")
+        completion_date = cleaned.get("completion_date")
         order_date = cleaned.get("order_date")
-        if completion and order_date and completion < order_date:
+
+        # Completion date cannot be before order date
+        if (
+            completion_date
+            and order_date
+            and completion_date < order_date
+        ):
             self.add_error(
                 "completion_date",
-                "Date of Completion cannot be before the Convening Order date.",
+                "Date of Completion cannot be before the Convening Order date."
             )
 
+        # Same person should not occupy multiple board positions
         people = [
-            (cleaned.get("presiding_officer") or "").strip().lower(),
-            (cleaned.get("member_1") or "").strip().lower(),
-            (cleaned.get("member_2") or "").strip().lower(),
+            cleaned.get("presiding_officer"),
+            cleaned.get("member_1"),
+            cleaned.get("member_2"),
         ]
-        people = [p for p in people if p]
+
+        people = [
+            str(person).strip().lower()
+            for person in people
+            if person
+        ]
+
         if len(people) != len(set(people)):
             raise forms.ValidationError(
                 "Presiding Officer, Member 1 and Member 2 must be different."

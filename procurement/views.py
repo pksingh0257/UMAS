@@ -8,13 +8,7 @@ from requirements_mgmt.models import Requirement
 from .finance_utils import get_fund_balance
 from .models import ProcurementCase, NotingSheet, NotingSheetItem, EAS, ConveningOrder
 from .forms import ( CaseStageDataForm, ReturnCaseForm, NotingSheetForm, NotingSheetItemFormSet, NotingCFADecisionForm, EASForm, EASCFADecisionForm, EASDocumentUploadForm, ConveningOrderForm, )
-from io import BytesIO
 
-from django.http import HttpResponse
-
-from docx import Document
-from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.shared import Pt
 
 def compute_eas_autofill(noting_sheet):
     """
@@ -473,17 +467,6 @@ def eas_upload_document(request, pk, doc_type):
 
     return redirect("eas_detail", pk=pk)
 
-# ============================================================
-# CONVENING ORDER
-# Simplified as per official Convening Order format
-# ============================================================
-
-CONVENING_ORDER_CREATOR_ROLES = {
-    "ADMINISTRATOR",
-    "HEAD_CLERK",
-    "ACCOUNTS_CLERK",
-}
-
 
 # ============================================================
 # CONVENING ORDER
@@ -606,9 +589,7 @@ def convening_order_create(request, eas_pk):
     # --------------------------------------------------------
     if request.method == "POST":
 
-        form = ConveningOrderForm(
-            request.POST
-        )
+        form = ConveningOrderForm(request.POST)
 
         if form.is_valid():
 
@@ -616,14 +597,17 @@ def convening_order_create(request, eas_pk):
                 commit=False
             )
 
+            # Link to Procurement Case
             order.procurement_case = (
                 procurement_case
             )
 
+            # Store the user who created it
             order.created_by = (
                 request.user
             )
 
+            # Save Convening Order
             order.save()
 
             messages.success(

@@ -587,7 +587,7 @@ class ConveningOrder(models.Model):
     member_1 = models.CharField(max_length=250)
     member_2 = models.CharField(max_length=250)
 
-    completion_date = models.DateField(verbose_name="Date of Completion")
+    completion_date = models.DateField(null=True, blank=True)
 
     two_ic_name = models.CharField(max_length=150)
     two_ic_rank = models.CharField(max_length=100)
