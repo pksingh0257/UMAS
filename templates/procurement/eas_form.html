@@ -11,7 +11,7 @@
 <div class="app-layout">
   {% include 'partials/sidebar.html' with active_nav='procurement' %}
   <div class="main-content">
- {% include 'partials/header.html' with active_nav='procurement' %}
+    {% include 'partials/header.html' with active_nav='procurement' %}
 
     <div class="dashboard-shell">
 
@@ -20,107 +20,213 @@
       {% endif %}
 
       <div class="card">
-        <div class="rf-card-head">
-          <h2 style="margin:0; background:#2E7D53; color:#fff; padding:8px 18px; border-radius:6px; display:inline-block; font-size:16px;">EAS</h2>
-        </div>
-        <p style="color:var(--text-secondary); font-size:13px; margin-top:10px;">
+        <h2 style="margin-top:0;">
+          <span style="background:#2E7D53; color:#fff; padding:6px 16px; border-radius:6px; display:inline-block; font-size:16px;">EAS</span>
+        </h2>
+        <p style="color:var(--text-secondary); margin:0;">
           Noting Sheet: {{ noting_sheet.noting_id }} &middot; Requirement: {{ noting_sheet.requirement.requirement_id }} &middot; Item: {{ noting_sheet.item_name }}
         </p>
-
-        <form method="post" style="margin-top:16px;">
-          {% csrf_token %}
-
-          <div class="rf-table-wrap">
-            <table class="item-table">
-              <tbody>
-                <tr>
-                  <td class="rf-label" style="width:20%;">File No</td>
-                  <td style="width:30%;">{{ form.file_no }}</td>
-                  <td class="rf-label" style="width:20%;">Availability of Fund</td>
-                  <td style="width:30%;">{{ form.availability_fund }}</td>
-                </tr>
-                <tr>
-                  <td class="rf-label">EAS ID</td>
-                  <td>{{ form.eas_id }}</td>
-                  <td class="rf-label">Sub Details / Heads</td>
-                  <td>{{ form.sub_details_heads }}</td>
-                </tr>
-                <tr>
-                  <td class="rf-label">DSC (Description) of Goods</td>
-                  <td>{{ form.dsc_goods }}</td>
-                  <td class="rf-label">Reference No</td>
-                  <td>{{ form.reference_no }}</td>
-                </tr>
-                <tr>
-                  <td class="rf-label">Name of Supplier</td>
-                  <td>{{ form.name_supplier }}</td>
-                  <td class="rf-label">Name of Paying Agency</td>
-                  <td>{{ form.name_paying_agent }}</td>
-                </tr>
-                <tr>
-                  <td class="rf-label">Purpose - Broad</td>
-                  <td>{{ form.purpose_broad }}</td>
-                  <td class="rf-label">Date</td>
-                  <td>{{ form.date_time }}</td>
-                </tr>
-                <tr>
-                  <td class="rf-label">Designation of CFA</td>
-                  <td>{{ form.designation_cfa }}</td>
-                  <td class="rf-label">Case File No</td>
-                  <td><input type="text" value="(same as File No)" disabled></td>
-                </tr>
-                <tr>
-                  <td class="rf-label">Qty Sanctioned</td>
-                  <td>{{ form.qty_sanctioned }}</td>
-                  <td class="rf-label">Station</td>
-                  <td>{{ form.station }}</td>
-                </tr>
-                <tr>
-                  <td class="rf-label">Amount Sanction</td>
-                  <td>{{ form.amount_sanction }}</td>
-                  <td class="rf-label">Unit</td>
-                  <td>{{ form.unit }}</td>
-                </tr>
-                <tr>
-                  <td class="rf-label">Cost Per Unit</td>
-                  <td>{{ form.cost_per_unit }}</td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td class="rf-label">Other Associated Charges</td>
-                  <td>{{ form.other_charges }}</td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td class="rf-label">Total Amount (in words)</td>
-                  <td colspan="3">{{ form.total_amount_words }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {% for field in form %}
-            {% if field.errors %}<p class="rf-error-text">{{ field.label }}: {{ field.errors|join:", " }}</p>{% endif %}
-          {% endfor %}
-
-          <div class="rf-actions">
-            <button type="submit" class="login-btn" style="width:auto; padding:12px 28px;">Send For Approval</button>
-          </div>
-        </form>
       </div>
 
+      <form method="post" novalidate id="eas-form">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="card"><p class="rf-error-text">{{ form.non_field_errors }}</p></div>
+        {% endif %}
+
+        <div class="card">
+          <div class="rf-grid-3">
+            <div class="field">
+              <label>EAS ID</label>
+              <input type="text" disabled id="eas-id-display" value="{{ autofill.eas_id }}">
+            </div>
+
+            <div class="field">
+              <label>File No</label>
+              <input type="text" disabled id="eas-file-no-display" value="{{ autofill.file_no }}">
+            </div>
+
+            <div class="field">
+              <label>DSC (Description) of Goods</label>
+              <input type="text" disabled id="eas-dsc-goods-display" value="{{ autofill.dsc_goods }}">
+            </div>
+            
+            <div class="field">
+              <label>Purpose - Broad</label>
+              <input type="text" disabled id="eas-purpose-broad-display" value="{{ autofill.purpose_broad }}">
+            </div>
+
+            <div class="field">
+              <label>Sub Details / Heads</label>
+              <input type="text" disabled id="eas-sub-details-heads-display" value="{{ autofill.sub_details_heads }}">
+            </div>
+
+           <div class="field">
+              <label>Cost Per Unit</label>
+              <input type="text" disabled id="eas-cost-per-unit-display" value="{{ autofill.cost_per_unit|floatformat:2 }}">
+            </div>
+
+            <div class="field">
+              <label>Qty Sanctioned</label>
+              <input type="text" disabled id="eas-qty-sanctioned-display" value="{{ autofill.qty_sanctioned }}">
+            </div>
+
+            <div class="field">
+              <label>Amount Sanction</label>
+              <input type="text" disabled id="eas-amount-sanction-display" value="{{ autofill.amount_sanction|floatformat:2 }}">
+            </div>
+
+            <div class="field">
+              <label for="{{ form.other_charges.id_for_label }}">Other Associated Charges</label>
+              {{ form.other_charges }}
+              {% if form.other_charges.errors %}<p class="rf-error-text">{{ form.other_charges.errors|join:", " }}</p>{% endif %}
+            </div>
+
+            <div class="field">
+              <label for="{{ form.total_amount_words.id_for_label }}">Total Amount (in words)</label>
+              {{ form.total_amount_words }}
+              {% if form.total_amount_words.errors %}<p class="rf-error-text">{{ form.total_amount_words.errors|join:", " }}</p>{% endif %}
+            </div>
+
+            <div class="field">
+              <label for="{{ form.availability_fund.id_for_label }}">Availability of Fund</label>
+              {{ form.availability_fund }}
+              {% if form.availability_fund.errors %}<p class="rf-error-text">{{ form.availability_fund.errors|join:", " }}</p>{% endif %}
+            </div>
+
+          
+            <div class="field">
+              <label for="{{ form.name_supplier.id_for_label }}">Name of Supplier</label>
+              {{ form.name_supplier }}
+              {% if form.name_supplier.errors %}<p class="rf-error-text">{{ form.name_supplier.errors|join:", " }}</p>{% endif %}
+            </div>
+
+
+            <div class="field">
+              <label for="{{ form.designation_cfa.id_for_label }}">Designation of CFA</label>
+              {{ form.designation_cfa }}
+              {% if form.designation_cfa.errors %}<p class="rf-error-text">{{ form.designation_cfa.errors|join:", " }}</p>{% endif %}
+            </div>
+
+            <div class="field">
+              <label for="{{ form.major.id_for_label }}">Major</label>
+              {{ form.major }}
+              {% if form.major.errors %}<p class="rf-error-text">{{ form.major.errors|join:", " }}</p>{% endif %}
+            </div>
+
+            <div class="field">
+              <label for="{{ form.minor.id_for_label }}">Minor</label>
+              {{ form.minor }}
+              {% if form.minor.errors %}<p class="rf-error-text">{{ form.minor.errors|join:", " }}</p>{% endif %}
+            </div>
+
+            <div class="field">
+              <label for="{{ form.reference_no.id_for_label }}">Reference No</label>
+              {{ form.reference_no }}
+              {% if form.reference_no.errors %}<p class="rf-error-text">{{ form.reference_no.errors|join:", " }}</p>{% endif %}
+            </div>
+
+            <div class="field">
+              <label for="{{ form.name_paying_agent.id_for_label }}">Name of Paying Agency</label>
+              {{ form.name_paying_agent }}
+              {% if form.name_paying_agent.errors %}<p class="rf-error-text">{{ form.name_paying_agent.errors|join:", " }}</p>{% endif %}
+            </div>
+
+            <div class="field">
+              <label for="{{ form.station.id_for_label }}">Station</label>
+              {{ form.station }}
+              {% if form.station.errors %}<p class="rf-error-text">{{ form.station.errors|join:", " }}</p>{% endif %}
+            </div>
+
+            <div class="field">
+              <label for="{{ form.unit.id_for_label }}">Unit</label>
+              {{ form.unit }}
+              {% if form.unit.errors %}<p class="rf-error-text">{{ form.unit.errors|join:", " }}</p>{% endif %}
+            </div>
+
+            <div class="field">
+              <label for="{{ form.date_time.id_for_label }}">Date</label>
+              {{ form.date_time }}
+              {% if form.date_time.errors %}<p class="rf-error-text">{{ form.date_time.errors|join:", " }}</p>{% endif %}
+            </div>
+
+          </div>
+        </div>
+
+        <div class="rf-actions">
+          <a href="{% if eas %}{% url 'eas_detail' eas.pk %}{% else %}{% url 'noting_sheet_detail' noting_sheet.pk %}{% endif %}" class="theme-toggle" style="text-decoration:none;">Cancel</a>
+          <button type="button" id="eas-preview-btn" class="theme-toggle">Preview</button>
+          <button type="submit" class="login-btn" style="width:auto; padding:12px 28px;">Send For Approval</button>
+        </div>
+      </form>
+
     </div>
 
-    <div class="footer-strip">
-      <div><span class="label">PROJECT</span><span class="item">Project Nexus - Unit Accounts Management</span></div>
-      <div><span class="label">MODULE</span><span class="item">Procurement</span></div>
-      <div><span class="label">VERSION</span><span class="item">1.0</span></div>
-      <div><span class="label">CLASSIFICATION</span><span class="item">CONFIDENTIAL</span></div>
-    </div>
+  {% include 'partials/footer.html' with active_nav='procurement' %}
+
+
   </div>
 </div>
 <script src="{% static 'js/theme-toggle.js' %}"></script>
+<script>
+  // Preview: opens a new tab and renders current (unsaved) field values
+  // in a simple layout, same idea as Noting Sheet's Preview button.
+  document.getElementById('eas-preview-btn').addEventListener('click', function () {
+    // Auto-fetched fields: read straight from the disabled inputs'
+    // rendered values (Django already put the right text in them).
+    var autoFields = [
+      ['File No', document.getElementById('eas-file-no-display')],
+      ['EAS ID', document.getElementById('eas-id-display')],
+      ['DSC (Description) of Goods', document.getElementById('eas-dsc-goods-display')],
+      ['Purpose - Broad', document.getElementById('eas-purpose-broad-display')],
+      ['Qty Sanctioned', document.getElementById('eas-qty-sanctioned-display')],
+      ['Amount Sanction', document.getElementById('eas-amount-sanction-display')],
+      ['Cost Per Unit', document.getElementById('eas-cost-per-unit-display')],
+      ['Sub Details / Heads', document.getElementById('eas-sub-details-heads-display')],
+    ];
+
+    var editableFields = [
+      ['Name of Supplier', '{{ form.name_supplier.id_for_label }}'],
+      ['Designation of CFA', '{{ form.designation_cfa.id_for_label }}'],
+      ['Other Associated Charges', '{{ form.other_charges.id_for_label }}'],
+      ['Total Amount (in words)', '{{ form.total_amount_words.id_for_label }}'],
+      ['Availability of Fund', '{{ form.availability_fund.id_for_label }}'],
+      ['Major', '{{ form.major.id_for_label }}'],
+      ['Minor', '{{ form.minor.id_for_label }}'],
+      ['Reference No', '{{ form.reference_no.id_for_label }}'],
+      ['Name of Paying Agency', '{{ form.name_paying_agent.id_for_label }}'],
+      ['Date', '{{ form.date_time.id_for_label }}'],
+      ['Station', '{{ form.station.id_for_label }}'],
+      ['Unit', '{{ form.unit.id_for_label }}']
+    ];
+
+    var autoRows = autoFields.map(function (f) {
+      var value = f[1] ? f[1].value : '';
+      return '<tr><th>' + f[0] + ' <span style="font-weight:400;">(auto)</span></th><td>' + value + '</td></tr>';
+    }).join('');
+
+    var editRows = editableFields.map(function (f) {
+      var el = document.getElementById(f[1]);
+      var value = el ? el.value : '';
+      return '<tr><th>' + f[0] + '</th><td>' + value + '</td></tr>';
+    }).join('');
+
+    var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>EAS Preview</title><style>' +
+      'body{font-family:Helvetica,Arial,sans-serif;font-size:11pt;color:#1C1F26;padding:2cm;}' +
+      'h1{font-size:16pt;text-align:center;}' +
+      'table{width:100%;border-collapse:collapse;margin:10px 0;}' +
+      'th,td{border:1px solid #CFD8DC;padding:6px 10px;font-size:10pt;text-align:left;}' +
+      'th{background:#F5F9FF;width:30%;}' +
+      '</style></head><body>' +
+      '<h1>EAS (PREVIEW \u2014 UNSAVED)</h1>' +
+      '<table>' + autoRows + editRows + '</table>' +
+      '</body></html>';
+
+    var win = window.open('', '_blank');
+    win.document.write(html);
+    win.document.close();
+  });
+</script>
 </body>
 </html>

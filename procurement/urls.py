@@ -29,5 +29,6 @@ urlpatterns = [
     path('case/<str:case_number>/', views.case_detail, name='case_detail'),
     path("convening-order/create/<int:eas_pk>/",views.convening_order_create,name="convening_order_create",),
     path("convening-order/<int:pk>/",views.convening_order_detail,name="convening_order_detail",),
+    path("convening-order/<int:pk>/docx/",views.convening_order_download_docx,name="convening_order_download_docx",),
 
 ]

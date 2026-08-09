@@ -51,32 +51,77 @@ class ReturnCaseForm(forms.Form):
 # ============================================================
 
 class NotingSheetForm(forms.ModelForm):
-    """
-    CHANGED: amount_allotted / amount_released / amount_expended are NOT
-    form fields anymore — they're computed server-side in the view
-    (Allotted/Released from the Requirement's Fund+Sub Head ledger,
-    Expended from this sheet's own item total) and set directly on the
-    model instance before save(), not typed by the clerk.
-    """
     class Meta:
         model = NotingSheet
+
         fields = [
-            "file_no", "branch", "sheet_no", "dated", "financial_year",
-            "paragraph_1", "paragraph_2", "remarks",
+            "file_no",
+            "branch",
+            "sheet_no",
+            "dated",
+            "financial_year",
+            "paragraph_1",
+            "paragraph_2",
+            "remarks",
             "approval_recipient",
         ]
-        widgets = {
-            "file_no": forms.TextInput(attrs={"placeholder": "314404/ACG/ /A"}),
-            "branch": forms.TextInput(),
-            "sheet_no": forms.TextInput(attrs={"placeholder": "One of One"}),
-            "dated": forms.DateInput(attrs={"type": "date"}),
-            "financial_year": forms.TextInput(attrs={"placeholder": "2026-27"}),
-            "paragraph_1": forms.TextInput(attrs={"maxlength": 200, "placeholder": "Subject / purport of this noting sheet"}),
-            "paragraph_2": forms.Textarea(attrs={"rows": 5, "maxlength": 500, "placeholder": "1. ...\n2. ..."}),
-            "remarks": forms.Textarea(attrs={"rows": 2, "maxlength": 200}),
-            "approval_recipient": forms.TextInput(attrs={"placeholder": "e.g. CFA (CO)"}),
-        }
 
+        widgets = {
+            "file_no": forms.TextInput(
+                attrs={
+                    "placeholder": "314404/ACG/ /A"
+                }
+            ),
+
+            "branch": forms.TextInput(
+                attrs={
+                    "placeholder": "Acct Branch"
+                }
+            ),
+
+            "sheet_no": forms.TextInput(
+                attrs={
+                    "placeholder": "One of One"
+                }
+            ),
+
+            "dated": forms.DateInput(
+                attrs={
+                    "type": "date"
+                }
+            ),
+
+            "financial_year": forms.TextInput(
+                attrs={
+                    "placeholder": "2026-27"
+                }
+            ),
+
+            "paragraph_1": forms.TextInput(
+                attrs={
+                    "placeholder": "Enter Purport / Subject"
+                }
+            ),
+
+            "paragraph_2": forms.Textarea(
+                attrs={
+                    "rows": 6,
+                    "placeholder": "Enter Requirement / Justification"
+                }
+            ),
+
+            "remarks": forms.Textarea(
+                attrs={
+                    "rows": 3
+                }
+            ),
+
+            "approval_recipient": forms.TextInput(
+                attrs={
+                    "placeholder": "e.g. CFA (CO)"
+                }
+            ),
+        }
 
 class NotingSheetItemForm(forms.ModelForm):
     class Meta:
@@ -119,32 +164,30 @@ class NotingCFADecisionForm(forms.Form):
 # ============================================================
 
 class EASForm(forms.ModelForm):
+    """
+    CHANGED: file_no, eas_id, dsc_goods, purpose_broad, qty_sanctioned,
+    amount_sanction, cost_per_unit, sub_details_heads are NOT form fields
+    anymore — they're auto-fetched/computed from the linked NotingSheet
+    in the view (see compute_eas_autofill in views.py) and set on the
+    model instance directly, same pattern as NotingSheet's own
+    amount_allotted/released. Remaining fields stay clerk-editable.
+    """
     class Meta:
         model = EAS
         fields = [
-            "file_no", "eas_id", "dsc_goods", "name_supplier", "purpose_broad",
-            "designation_cfa", "qty_sanctioned", "amount_sanction", "cost_per_unit",
+            "name_supplier", "designation_cfa",
             "other_charges", "total_amount_words", "availability_fund",
-            "sub_details_heads", "reference_no", "name_paying_agent",
+            "major", "minor", "reference_no", "name_paying_agent",
             "date_time", "station", "unit",
         ]
-        # NOTE: case_file_no is NOT a field — it's a read-only property on
-        # the model that always mirrors file_no (see eas_form.html's
-        # disabled "(same as File No)" placeholder).
         widgets = {
-            "file_no": forms.TextInput(),
-            "eas_id": forms.TextInput(),
-            "dsc_goods": forms.TextInput(),
             "name_supplier": forms.TextInput(),
-            "purpose_broad": forms.TextInput(),
             "designation_cfa": forms.TextInput(),
-            "qty_sanctioned": forms.NumberInput(attrs={"min": 1}),
-            "amount_sanction": forms.NumberInput(attrs={"min": 0, "step": "0.01"}),
-            "cost_per_unit": forms.NumberInput(attrs={"min": 0, "step": "0.01"}),
             "other_charges": forms.TextInput(),
             "total_amount_words": forms.TextInput(),
             "availability_fund": forms.TextInput(),
-            "sub_details_heads": forms.TextInput(),
+            "major": forms.TextInput(),
+            "minor": forms.TextInput(),
             "reference_no": forms.TextInput(),
             "name_paying_agent": forms.TextInput(),
             "date_time": forms.DateInput(attrs={"type": "date"}),
@@ -215,83 +258,121 @@ class EASDocumentUploadForm(forms.Form):
 #     version" — an edit-view concern; no convening_order_edit view
 #     exists yet to enforce this against.
 # ============================================================
+User = get_user_model()
+# ============================================================
+# Convening Order Form
+# ============================================================
 
 class ConveningOrderForm(forms.ModelForm):
-    additional_members = forms.ModelMultipleChoiceField(
-        queryset=User.objects.filter(is_active=True).order_by("username"),
-        required=False,
-        widget=forms.SelectMultiple(),
-    )
 
     class Meta:
         model = ConveningOrder
+
         fields = [
-            "procurement_case", "order_number", "order_date",
-            "subject_title", "committee_purpose", "place_of_proceedings",
-            "start_date", "completion_due_date", "applicable_authority_rule",
-            "presiding_officer", "member_1", "member_2", "additional_members",
-            "technical_representative", "member_secretary", "convening_authority",
-            "report_submission_to", "terms_of_reference", "special_instructions",
-            "remarks",
+            "description",
+            "presiding_officer",
+            "member_1",
+            "member_2",
+            "completion_date",
+            "two_ic_name",
+            "two_ic_rank",
+            "two_ic_appointment",
+            "order_date",
         ]
+
         widgets = {
-            "order_number": forms.TextInput(attrs={"maxlength": 50}),
-            "order_date": forms.DateInput(attrs={"type": "date"}),
-            "subject_title": forms.TextInput(attrs={"maxlength": 500}),
-            "committee_purpose": forms.Select(),
-            "place_of_proceedings": forms.TextInput(),
-            "start_date": forms.DateInput(attrs={"type": "date"}),
-            "completion_due_date": forms.DateInput(attrs={"type": "date"}),
-            "applicable_authority_rule": forms.TextInput(),
-            "terms_of_reference": forms.Textarea(attrs={"rows": 3}),
-            "special_instructions": forms.Textarea(attrs={"rows": 2}),
-            "remarks": forms.Textarea(attrs={"rows": 2}),
+            "description": forms.Textarea(
+                attrs={
+                    "rows": 7,
+                    "placeholder": (
+                        "Enter Para 1 exactly as it should "
+                        "appear in the Convening Order."
+                    ),
+                }
+            ),
+
+            "presiding_officer": forms.TextInput(
+                attrs={
+                    "placeholder": "e.g. SS-52548A Lt Nitin Bhandari"
+                }
+            ),
+
+            "member_1": forms.TextInput(
+                attrs={
+                    "placeholder": "e.g. JC-288757M Sub Shiv Singh"
+                }
+            ),
+
+            "member_2": forms.TextInput(
+                attrs={
+                    "placeholder": "e.g. JC-294912Y Sub Madan Lal"
+                }
+            ),
+
+            "completion_date": forms.DateInput(
+                attrs={
+                    "type": "date"
+                }
+            ),
+
+            "two_ic_name": forms.TextInput(
+                attrs={
+                    "placeholder": "e.g. Rathan Kumar HS"
+                }
+            ),
+
+            "two_ic_rank": forms.TextInput(
+                attrs={
+                    "placeholder": "e.g. Lt Col"
+                }
+            ),
+
+            "two_ic_appointment": forms.TextInput(
+                attrs={
+                    "placeholder": "2IC"
+                }
+            ),
+
+            "order_date": forms.DateInput(
+                attrs={
+                    "type": "date"
+                }
+            ),
         }
-
-    def __init__(self, *args, eas=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._eas = eas
-
-        active_users = User.objects.filter(is_active=True).order_by("username")
-        for field_name in (
-            "presiding_officer", "member_1", "member_2",
-            "technical_representative", "member_secretary", "convening_authority",
-            "report_submission_to",
-        ):
-            self.fields[field_name].queryset = active_users
-
-        self.fields["procurement_case"].queryset = ProcurementCase.objects.filter(is_closed=False)
 
     def clean(self):
         cleaned = super().clean()
 
-        start_date = cleaned.get("start_date")
-        completion_due_date = cleaned.get("completion_due_date")
-        if start_date and completion_due_date and completion_due_date < start_date:
-            self.add_error("completion_due_date", "Completion due date must be on or after the start date.")
-
+        completion_date = cleaned.get("completion_date")
         order_date = cleaned.get("order_date")
-        if order_date and self._eas is not None and getattr(self._eas, "date_time", None):
-            if order_date < self._eas.date_time:
-                self.add_error("order_date", "Order date cannot precede the EAS/sanction date.")
 
-        role_fields = [
-            "presiding_officer", "member_1", "member_2",
-            "technical_representative", "member_secretary",
-            "convening_authority", "report_submission_to",
+        # Completion date cannot be before order date
+        if (
+            completion_date
+            and order_date
+            and completion_date < order_date
+        ):
+            self.add_error(
+                "completion_date",
+                "Date of Completion cannot be before the Convening Order date."
+            )
+
+        # Same person should not occupy multiple board positions
+        people = [
+            cleaned.get("presiding_officer"),
+            cleaned.get("member_1"),
+            cleaned.get("member_2"),
         ]
-        seen = {}
-        for field_name in role_fields:
-            person = cleaned.get(field_name)
-            if person is None:
-                continue
-            if person in seen:
-                self.add_error(
-                    field_name,
-                    f"{person} is already assigned as {seen[person]} — "
-                    "the same person can't hold multiple committee roles.",
-                )
-            else:
-                seen[person] = field_name
+
+        people = [
+            str(person).strip().lower()
+            for person in people
+            if person
+        ]
+
+        if len(people) != len(set(people)):
+            raise forms.ValidationError(
+                "Presiding Officer, Member 1 and Member 2 must be different."
+            )
 
         return cleaned

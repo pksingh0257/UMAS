@@ -77,11 +77,15 @@
         <p class="purport-num">1</p>
         <p class="purport-title">{{ noting_sheet.paragraph_1 }}</p>
 
-        <div class="purport-body">
+      <div class="purport-body">
           {% for line in noting_sheet.paragraph_2.splitlines %}
-            <p>2. {{ line }}</p>
+              {% if forloop.first %}
+                  <p><span>2. </span>{{ line }}</p>
+              {% else %}
+                  <p>{{ line }}</p>
+              {% endif %}
           {% endfor %}
-        </div>
+      </div>
 
         <table class="item-table">
           <thead>

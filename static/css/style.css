@@ -1621,3 +1621,673 @@ table.shd-table tbody tr:hover {
   }
   .co-table td { padding: 0 0 18px; }
 }
+.co-simple-section {
+  border-top:1px solid var(--border);
+  padding-top:20px;
+  margin-top:20px;
+}
+
+.co-simple-section h3 {
+  margin-top:0;
+}
+
+.co-simple-section .field input,
+.co-simple-section .field textarea {
+  width:100%;
+  box-sizing:border-box;
+}
+
+.co-static-preview {
+  border:1px dashed var(--border);
+  background:var(--bg);
+  color:var(--text-secondary);
+  border-radius:8px;
+  padding:14px;
+  line-height:1.7;
+}
+
+.co-error {
+  color:#d32f2f;
+  font-size:12px;
+  margin-top:5px;
+}
+
+/* =====================================================================
+   DASHBOARD — Welcome banner, KPI cards, chart containers
+   ===================================================================== */
+
+.dash-welcome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dash-welcome-text h2 { margin: 0 0 4px; }
+.dash-welcome-text p { margin: 0; }
+
+/* =========================================================
+   DASHBOARD KPI STRIP
+   Operational + financial KPIs for the UAMS Administrator
+   ========================================================= */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  --kpi-accent: var(--primary-red);
+  --kpi-accent-soft: rgba(198, 40, 40, 0.10);
+  min-width: 0;
+  min-height: 132px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 16px 16px 14px 18px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 7px 20px rgba(16, 19, 28, 0.055);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: var(--kpi-accent);
+}
+
+.kpi-card::after {
+  content: '';
+  position: absolute;
+  width: 78px;
+  height: 78px;
+  right: -32px;
+  bottom: -40px;
+  border-radius: 50%;
+  background: var(--kpi-accent-soft);
+  pointer-events: none;
+}
+
+.kpi-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--kpi-accent) 30%, var(--border));
+  box-shadow: 0 13px 28px rgba(16, 19, 28, 0.10);
+}
+
+.kpi-card-body {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+.kpi-topline {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 16px;
+  margin-bottom: 7px;
+}
+
+.kpi-label {
+  min-width: 0;
+  font-size: 10px;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: .45px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.kpi-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+.kpi-status-blue { background: var(--accent-blue); }
+.kpi-status-amber { background: #e3a008; }
+.kpi-status-red { background: var(--primary-red); }
+
+.kpi-status-pill {
+  margin-left: auto;
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: var(--kpi-accent-soft);
+  color: var(--kpi-accent);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .45px;
+  white-space: nowrap;
+}
+
+.kpi-value {
+  font-size: 25px;
+  line-height: 1.05;
+  font-weight: 850;
+  letter-spacing: -.35px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kpi-money {
+  font-size: 22px;
+}
+
+.kpi-sub {
+  margin-top: 7px;
+  font-size: 10px;
+  line-height: 1.35;
+  color: var(--text-secondary);
+}
+
+.kpi-sub strong {
+  color: var(--text-primary);
+  font-weight: 750;
+}
+
+.kpi-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  background: var(--kpi-accent-soft);
+  color: var(--kpi-accent);
+  position: relative;
+  z-index: 1;
+}
+
+.kpi-icon-svg svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.kpi-blue  { --kpi-accent: var(--accent-blue); --kpi-accent-soft: rgba(30,136,229,.11); }
+.kpi-green { --kpi-accent: #3b9d55; --kpi-accent-soft: rgba(59,157,85,.11); }
+.kpi-amber { --kpi-accent: #d99500; --kpi-accent-soft: rgba(217,149,0,.12); }
+.kpi-red   { --kpi-accent: var(--primary-red); --kpi-accent-soft: rgba(198,40,40,.10); }
+
+.kpi-income-card {
+  min-width: 0;
+}
+
+.kpi-income-util {
+  margin-top: 9px;
+  width: 100%;
+}
+
+.kpi-income-util-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 9px;
+  line-height: 1.2;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+}
+
+.kpi-income-util-row strong {
+  color: var(--text-primary);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.kpi-income-progress {
+  width: 100%;
+  height: 5px;
+  background: var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.kpi-income-progress-fill {
+  height: 100%;
+  max-width: 100%;
+  background: var(--kpi-accent);
+  border-radius: inherit;
+  transition: width .35s ease;
+}
+
+@media (max-width: 1450px) {
+  .kpi-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 850px) {
+  .kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 520px) {
+  .kpi-row { grid-template-columns: 1fr; }
+  .kpi-card { min-height: 118px; }
+}
+
+/* ---------- Chart row + cards ----------
+   FIX (dashboard CSS/chart bug): chart-card now gets the same depth as
+   .dashboard-shell .card (previously flat, just a 1px border, which is
+   why the two panels in a chart-row looked mismatched next to each
+   other). align-items:stretch is now explicit so both columns in a row
+   always match height regardless of content length. */
+.chart-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+  align-items: stretch;
+}
+@media (max-width: 1000px) {
+  .chart-row { grid-template-columns: 1fr; }
+}
+
+.chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px 24px;
+  box-shadow: 0 14px 34px rgba(16, 19, 28, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+html[data-theme="dark"] .chart-card {
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+}
+.chart-card h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  color: var(--text-primary);
+}
+.chart-card p.chart-sub {
+  margin: 0 0 16px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* FIX: this is the actual bug — Chart.js keeps its own aspect ratio
+   (default ~2:1) unless maintainAspectRatio:false AND the canvas sits in
+   a parent with an explicit height. Without this wrapper, a chart with
+   only 1-2 bars stretches to fill whatever width the grid gives it,
+   producing the huge near-empty canvas from the screenshot. Every
+   canvas in dashboard.html should now be wrapped in this div, and every
+   Chart() call in dashboard-charts.js should pass maintainAspectRatio:false. */
+.chart-canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  flex: 1;
+}
+.chart-canvas-wrap canvas {
+  max-height: 100% !important;
+}
+
+.chart-empty {
+  padding: 40px 0;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+/* Clickable KPI-style card used for the "Total Fund Income" progress
+   panel — plain <a> wrapper needs the card look reset onto it. */
+a.chart-card {
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+a.chart-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px rgba(16, 19, 28, 0.12);
+}
+.chart-card-total-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 4px 0 14px;
+}
+
+@media (max-width: 700px) {
+  .dash-welcome { flex-direction: column; align-items: flex-start; gap: 10px; }
+}
+
+.kpi-income-card {
+  position: relative;
+}
+
+.kpi-income-util {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.kpi-income-util-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.kpi-income-util-row strong {
+  color: var(--text-primary);
+  font-size: 10px;
+}
+
+.kpi-income-progress {
+  width: 100%;
+  height: 5px;
+  background: #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.kpi-income-progress-fill {
+  height: 100%;
+  background: var(--primary-red, #c62828);
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+/* =========================================================
+   DASHBOARD — FUND HEAD / SUB HEAD INCOME LAYOUT
+   ========================================================= */
+
+/*
+ * One card per Fund Head, plus the Fund Head share pie chart.
+ * With the current two Fund Heads this produces three compact cards
+ * on the same desktop row. Additional Fund Heads wrap naturally.
+ */
+.fund-income-analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+  align-items: stretch;
+}
+
+.fund-subhead-card,
+.fund-share-card {
+  min-width: 0;
+  margin: 0;
+}
+
+.fund-subhead-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 2px;
+}
+
+.fund-subhead-card-head h3 {
+  margin-bottom: 4px;
+}
+
+.fund-subhead-card-head .chart-sub {
+  margin-bottom: 14px;
+}
+
+.fund-head-badge {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--fund-accent) 28%, var(--border));
+  background: color-mix(in srgb, var(--fund-accent) 9%, var(--surface));
+  color: var(--fund-accent);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .55px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.fund-subhead-chart-wrap,
+.income-pie-chart-wrap {
+  position: relative;
+  width: 100%;
+  height: 270px;
+  flex: none;
+}
+
+.fund-subhead-chart-wrap canvas,
+.income-pie-chart-wrap canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Total Fund Income remains the final KPI and keeps its utilization bar. */
+.kpi-income-card {
+  min-width: 0;
+}
+
+.kpi-income-util {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.kpi-income-util-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-size: 9px;
+  line-height: 1.2;
+  color: var(--text-secondary);
+}
+
+.kpi-income-util-row strong {
+  color: var(--text-primary);
+  font-size: 9px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.kpi-income-progress {
+  width: 100%;
+  height: 5px;
+  background: var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.kpi-income-progress-fill {
+  height: 100%;
+  min-width: 0;
+  max-width: 100%;
+  background: var(--primary-red);
+  border-radius: inherit;
+  transition: width 0.3s ease;
+}
+
+@media (max-width: 1250px) {
+  .fund-income-analysis-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1000px) {
+  .fund-income-analysis-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .fund-subhead-chart-wrap,
+  .income-pie-chart-wrap {
+    height: 250px;
+  }
+
+  .fund-subhead-card-head {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+
+/* =========================================================
+   UAMS FIXED APP SHELL
+   Header + Sidebar + Footer stay fixed.
+   Only the page/dashboard content scrolls.
+   ========================================================= */
+:root {
+  --uams-sidebar-width: 260px;
+  --uams-header-height: 73px;
+  --uams-footer-height: 58px;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+}
+
+body {
+  min-height: 100vh;
+}
+
+.app-layout {
+  width: 100%;
+  height: 100vh;
+  min-height: 100vh;
+  display: block;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Fixed left navigation */
+.app-layout > .sidebar,
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: var(--uams-sidebar-width);
+  height: 100vh;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  z-index: 1100;
+  margin: 0;
+  scrollbar-width: thin;
+}
+
+/* Fixed header */
+.main-content > .topbar,
+.topbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: var(--uams-sidebar-width);
+  width: auto;
+  min-height: var(--uams-header-height);
+  z-index: 1050;
+}
+
+/* Main application viewport */
+.main-content {
+  width: calc(100% - var(--uams-sidebar-width));
+  height: 100vh;
+  min-height: 100vh;
+  margin-left: var(--uams-sidebar-width);
+  display: block;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Dashboard/page area is the ONLY normal vertical scroll container */
+.main-content > .dashboard-shell,
+.main-content > .page-content {
+  width: 100%;
+  height: calc(100vh - var(--uams-header-height) - var(--uams-footer-height));
+  min-height: 0;
+  margin-top: var(--uams-header-height);
+  margin-bottom: var(--uams-footer-height);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  position: relative;
+}
+
+/* Fixed footer */
+.main-content > .footer-strip,
+.footer-strip {
+  position: fixed;
+  left: var(--uams-sidebar-width);
+  right: 0;
+  bottom: 0;
+  width: auto;
+  min-height: var(--uams-footer-height);
+  margin: 0;
+  z-index: 1050;
+}
+
+/* Prevent accidental body-level horizontal scrolling */
+.dashboard-shell,
+.page-content,
+.main-content {
+  max-width: 100vw;
+}
+
+/* Keep dashboard background watermark inside the scrolling content */
+.dashboard-shell::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+/* Fixed-shell responsive adjustments */
+@media (max-width: 1100px) {
+  :root {
+    --uams-sidebar-width: 230px;
+    --uams-header-height: 73px;
+    --uams-footer-height: 58px;
+  }
+
+  .sidebar {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+@media (max-width: 700px) {
+  :root {
+    --uams-sidebar-width: 210px;
+    --uams-header-height: 112px;
+    --uams-footer-height: 72px;
+  }
+
+  .topbar {
+    padding: 12px 16px;
+    align-items: flex-start;
+  }
+
+  .footer-strip {
+    padding: 10px 16px;
+  }
+
+  .dashboard-shell,
+  .page-content {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+}

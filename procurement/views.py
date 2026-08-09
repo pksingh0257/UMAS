@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -7,6 +8,49 @@ from requirements_mgmt.models import Requirement
 from .finance_utils import get_fund_balance
 from .models import ProcurementCase, NotingSheet, NotingSheetItem, EAS, ConveningOrder
 from .forms import ( CaseStageDataForm, ReturnCaseForm, NotingSheetForm, NotingSheetItemFormSet, NotingCFADecisionForm, EASForm, EASCFADecisionForm, EASDocumentUploadForm, ConveningOrderForm, )
+
+
+def compute_eas_autofill(noting_sheet):
+    """
+    The 8 EAS fields that auto-fetch from their linked NotingSheet,
+    read-only on the form:
+      file_no          <- noting_sheet.file_no
+      eas_id           <- "EAS-" + Requirement ID, e.g. EAS-REQ-2026-00001
+      dsc_goods        <- item description (first item's, via
+                           NotingSheet.item_name)
+      purpose_broad    <- noting_sheet.paragraph_1 (Purport / Subject)
+      qty_sanctioned   <- SUM of quantities across all item rows
+      amount_sanction  <- noting_sheet.total_amount (all items)
+      cost_per_unit    <- amount_sanction / qty_sanctioned (weighted
+                           average — NotingSheet supports multiple
+                           differently-priced items, so there's no
+                           single "the" cost per unit; this keeps
+                           qty * cost_per_unit == amount_sanction true)
+      sub_details_heads <- the Requirement's Sub Head, stringified
+
+    Called on every GET/POST for both eas_create and eas_edit so the
+    displayed/saved values always reflect the current NotingSheet state,
+    not a stale snapshot from whenever the EAS was first created.
+    """
+    requirement = noting_sheet.requirement
+    items = noting_sheet.items.all()
+
+    total_qty = sum((item.quantity for item in items), 0)
+    total_amount = noting_sheet.total_amount or Decimal("0")
+    cost_per_unit = (total_amount / total_qty) if total_qty else Decimal("0")
+
+    sub_head = getattr(requirement, "sub_head", None)
+
+    return {
+        "file_no": noting_sheet.file_no,
+        "eas_id": f"EAS-{requirement.requirement_id}",
+        "dsc_goods": noting_sheet.item_name,
+        "purpose_broad": noting_sheet.paragraph_1,
+        "qty_sanctioned": total_qty,
+        "amount_sanction": total_amount,
+        "cost_per_unit": cost_per_unit,
+        "sub_details_heads": str(sub_head) if sub_head else "",
+    }
 
 
 # ============================================================
@@ -269,12 +313,16 @@ def eas_create(request, noting_sheet_pk):
         messages.info(request, "An EAS already exists for this noting sheet.")
         return redirect("eas_detail", pk=noting_sheet.eas.pk)
 
+    autofill = compute_eas_autofill(noting_sheet)
+
     if request.method == "POST":
         form = EASForm(request.POST)
         if form.is_valid():
             eas = form.save(commit=False)
             eas.noting_sheet = noting_sheet
             eas.created_by = request.user
+            for field_name, value in autofill.items():
+                setattr(eas, field_name, value)
             eas.save()
             eas.submit_for_approval()
             messages.success(request, "EAS created and sent for CFA approval.")
@@ -285,6 +333,7 @@ def eas_create(request, noting_sheet_pk):
     return render(request, "procurement/eas_form.html", {
         "form": form,
         "noting_sheet": noting_sheet,
+        "autofill": autofill,
         "role": request.user.role,
         "active_nav": "procurement",
     })
@@ -297,10 +346,18 @@ def eas_edit(request, pk):
         messages.error(request, "This EAS can't be edited right now.")
         return redirect("eas_detail", pk=pk)
 
+    # Recomputed live, not just read off the existing eas instance — if
+    # the linked NotingSheet's data ever changed, the auto-fetched fields
+    # stay in sync rather than showing a stale snapshot from creation.
+    autofill = compute_eas_autofill(eas.noting_sheet)
+
     if request.method == "POST":
         form = EASForm(request.POST, instance=eas)
         if form.is_valid():
-            form.save()
+            eas = form.save(commit=False)
+            for field_name, value in autofill.items():
+                setattr(eas, field_name, value)
+            eas.save()
             eas.submit_for_approval()
             messages.success(request, "EAS updated and re-sent for CFA approval.")
             return redirect("eas_detail", pk=pk)
@@ -311,6 +368,7 @@ def eas_edit(request, pk):
         "form": form,
         "noting_sheet": eas.noting_sheet,
         "eas": eas,
+        "autofill": autofill,
         "role": request.user.role,
         "active_nav": "procurement",
     })
@@ -410,140 +468,426 @@ def eas_upload_document(request, pk, doc_type):
     return redirect("eas_detail", pk=pk)
 
 
+# ============================================================
+# CONVENING ORDER
+# Simplified as per official Convening Order format
+# ============================================================
+
+CONVENING_ORDER_CREATOR_ROLES = {
+    "ADMINISTRATOR",
+    "HEAD_CLERK",
+    "ACCOUNTS_CLERK",
+}
+
+
 @login_required
 def convening_order_create(request, eas_pk):
+
     eas = get_object_or_404(EAS, pk=eas_pk)
 
-    if eas.workflow_status != "APPROVED":
-        messages.error(request, "Convening Order can only be created after EAS approval.")
-        return redirect("eas_detail", pk=eas.pk)
+    # --------------------------------------------------------
+    # 1. Permission check
+    # --------------------------------------------------------
+    if request.user.role not in CONVENING_ORDER_CREATOR_ROLES:
 
-    if not (eas.sanction_document and eas.contract_document and eas.invoice_document):
         messages.error(
             request,
-            "Sanction, Contract and Invoice must all be uploaded before creating the Convening Order.",
+            "You are not authorised to create a Convening Order."
         )
-        return redirect("eas_detail", pk=eas.pk)
 
+        return redirect(
+            "eas_detail",
+            pk=eas.pk
+        )
+
+    # --------------------------------------------------------
+    # 2. EAS must already be approved
+    # --------------------------------------------------------
+    if eas.workflow_status != "APPROVED":
+
+        messages.error(
+            request,
+            "Convening Order can only be created after EAS approval."
+        )
+
+        return redirect(
+            "eas_detail",
+            pk=eas.pk
+        )
+
+    # --------------------------------------------------------
+    # 3. Mandatory GeM documents must exist
+    # --------------------------------------------------------
+    if not (
+        eas.sanction_document
+        and eas.contract_document
+        and eas.invoice_document
+    ):
+
+        messages.error(
+            request,
+            "Sanction, Contract and Invoice must be uploaded "
+            "before creating the Convening Order."
+        )
+
+        return redirect(
+            "eas_detail",
+            pk=eas.pk
+        )
+
+    # --------------------------------------------------------
+    # 4. Find linked Procurement Case
+    # --------------------------------------------------------
     try:
-        procurement_case = eas.noting_sheet.requirement.procurement_case
+
+        procurement_case = (
+            eas
+            .noting_sheet
+            .requirement
+            .procurement_case
+        )
+
     except AttributeError:
+
         procurement_case = None
 
     if procurement_case is None:
-        messages.error(request, "No Procurement Case is linked to this EAS.")
-        return redirect("eas_detail", pk=eas.pk)
 
-    existing_order = procurement_case.convening_orders.filter(
-        approval_status="DRAFT"
-    ).first()
-
-    if existing_order:
-        return redirect("convening_order_detail", pk=existing_order.pk)
-
-    if request.method == "POST":
-        form = ConveningOrderForm(request.POST, eas=eas)
-
-        if form.is_valid():
-            order = form.save(commit=False)
-
-            requirement = procurement_case.requirement_item
-
-            order.requirement_id_text = getattr(
-                requirement,
-                "requirement_id",
-                str(requirement.pk),
-            )
-
-            order.financial_year = getattr(
-                requirement,
-                "financial_year",
-                "",
-            ) or ""
-
-            fund_head = getattr(procurement_case, "fund_head", None)
-            order.fund_head_text = str(fund_head) if fund_head else ""
-
-            order.sub_head_text = getattr(requirement, "sub_head", "") or ""
-            order.procurement_mode = getattr(requirement, "procurement_mode", "") or ""
-
-            order.procurement_case = procurement_case
-            order.created_by = request.user
-            order.approval_status = "DRAFT"
-            order.version_number = 1
-            order.save()
-
-            additional_members = form.cleaned_data.get("additional_members")
-            order.additional_members = [user.pk for user in additional_members]
-            order.save(update_fields=["additional_members"])
-
-            uploaded_files = request.FILES.getlist("attachments")
-
-            if len(uploaded_files) > 5:
-                order.delete()
-                messages.error(request, "Maximum 5 attachments are allowed.")
-                return render(request, "procurement/convening_order_form.html", {
-                    "form": form,
-                    "eas": eas,
-                    "noting_sheet": eas.noting_sheet,
-                    "role": request.user.role,
-                    "active_nav": "procurement",
-                })
-
-            for uploaded_file in uploaded_files:
-                if uploaded_file.size > 5 * 1024 * 1024:
-                    order.delete()
-                    messages.error(request, f"{uploaded_file.name} is larger than 5 MB.")
-                    return render(request, "procurement/convening_order_form.html", {
-                        "form": form,
-                        "eas": eas,
-                        "noting_sheet": eas.noting_sheet,
-                        "role": request.user.role,
-                        "active_nav": "procurement",
-                    })
-
-                extension = uploaded_file.name.lower().rsplit(".", 1)[-1]
-
-                if extension not in ["pdf", "jpg", "jpeg", "png"]:
-                    order.delete()
-                    messages.error(request, "Only PDF, JPG and PNG attachments are allowed.")
-                    return render(request, "procurement/convening_order_form.html", {
-                        "form": form,
-                        "eas": eas,
-                        "noting_sheet": eas.noting_sheet,
-                        "role": request.user.role,
-                        "active_nav": "procurement",
-                    })
-
-                ConveningOrderAttachment.objects.create(
-                    convening_order=order,
-                    file=uploaded_file,
-                )
-
-            messages.success(request, f"{order.convening_order_id} created successfully.")
-            return redirect("convening_order_detail", pk=order.pk)
-
-    else:
-        form = ConveningOrderForm(
-            initial={
-                "procurement_case": procurement_case,
-                "order_date": timezone.now().date(),
-                "subject_title": f"CONVENING ORDER FOR {eas.dsc_goods}",
-            },
-            eas=eas,
+        messages.error(
+            request,
+            "No Procurement Case is linked to this EAS."
         )
 
-    return render(request, "procurement/convening_order_form.html", {
-        "form": form,
-        "eas": eas,
-        "noting_sheet": eas.noting_sheet,
-        "role": request.user.role,
-        "active_nav": "procurement",
-    })
+        return redirect(
+            "eas_detail",
+            pk=eas.pk
+        )
+
+    # --------------------------------------------------------
+    # 5. Only one Convening Order per Procurement Case
+    # --------------------------------------------------------
+    try:
+
+        existing_order = (
+            procurement_case
+            .convening_order
+        )
+
+    except ConveningOrder.DoesNotExist:
+
+        existing_order = None
+
+    if existing_order:
+
+        return redirect(
+            "convening_order_detail",
+            pk=existing_order.pk
+        )
+
+    # --------------------------------------------------------
+    # 6. Save submitted form
+    # --------------------------------------------------------
+    if request.method == "POST":
+
+        form = ConveningOrderForm(request.POST)
+
+        if form.is_valid():
+
+            order = form.save(
+                commit=False
+            )
+
+            # Link to Procurement Case
+            order.procurement_case = (
+                procurement_case
+            )
+
+            # Store the user who created it
+            order.created_by = (
+                request.user
+            )
+
+            # Save Convening Order
+            order.save()
+
+            messages.success(
+                request,
+                f"{order.convening_order_id} "
+                "created successfully."
+            )
+
+            return redirect(
+                "convening_order_detail",
+                pk=order.pk
+            )
+
+        else:
+
+            print(
+                "CONVENING ORDER FORM ERRORS:"
+            )
+
+            print(
+                form.errors
+            )
+
+    # --------------------------------------------------------
+    # 7. Initial form
+    # --------------------------------------------------------
+    else:
+
+        form = ConveningOrderForm(
+            initial={
+                "order_date": timezone.localdate(),
+                "two_ic_appointment": "2IC",
+            }
+        )
+
+    # --------------------------------------------------------
+    # 8. Show form
+    # --------------------------------------------------------
+    return render(
+        request,
+        "procurement/convening_order_form.html",
+        {
+            "form": form,
+
+            "eas": eas,
+
+            "procurement_case": procurement_case,
+
+            "requirement": (
+                eas
+                .noting_sheet
+                .requirement
+            ),
+
+            # Auto fetched from EAS
+            "file_no": eas.file_no,
+
+            "role": request.user.role,
+
+            "active_nav": "procurement",
+        }
+    )
+@login_required
+def convening_order_detail(request, pk):
+
+    order = get_object_or_404(
+        ConveningOrder.objects.select_related(
+            "procurement_case",
+            "procurement_case__requirement_item",
+        ),
+        pk=pk,
+    )
+
+    return render(
+        request,
+        "procurement/convening_order_detail.html",
+        {
+            "order": order,
+            "role": request.user.role,
+            "active_nav": "procurement",
+        }
+    )
 
 
 @login_required
-def convening_order_detail(request, pk):
+def convening_order_download_docx(request, pk):
+
+    order = get_object_or_404(
+        ConveningOrder,
+        pk=pk
+    )
+
+    # --------------------------------------------------------
+    # Create Word document
+    # --------------------------------------------------------
+
+    document = Document()
+
+    normal_style = document.styles["Normal"]
+
+    normal_style.font.name = (
+        "Times New Roman"
+    )
+
+    normal_style.font.size = Pt(12)
+
+    # --------------------------------------------------------
+    # TITLE
+    # --------------------------------------------------------
+
+    title = document.add_paragraph()
+
+    title.alignment = (
+        WD_ALIGN_PARAGRAPH.CENTER
+    )
+
+    title_run = title.add_run(
+        "CONVENING ORDER"
+    )
+
+    title_run.bold = True
+    title_run.underline = True
+
+    # --------------------------------------------------------
+    # PARA 1
+    # --------------------------------------------------------
+
+    para1 = document.add_paragraph()
+
+    number_run = para1.add_run(
+        "1. "
+    )
+
+    number_run.bold = True
+
+    para1.add_run(
+        order.description.strip()
+    )
+
+    # --------------------------------------------------------
+    # BOARD MEMBERS
+    # --------------------------------------------------------
+
+    document.add_paragraph(
+        f"Presiding Officer : "
+        f"{order.presiding_officer}"
+    )
+
+    document.add_paragraph(
+        f"Members             1. "
+        f"{order.member_1}"
+    )
+
+    document.add_paragraph(
+        f"                    2. "
+        f"{order.member_2}"
+    )
+
+    # --------------------------------------------------------
+    # PARA 2
+    # --------------------------------------------------------
+
+    para2 = document.add_paragraph()
+
+    para2_number = para2.add_run(
+        "2. "
+    )
+
+    para2_number.bold = True
+
+    completion_date = (
+        order
+        .completion_date
+        .strftime("%d %b %Y")
+    )
+
+    para2.add_run(
+        "The bd proceedings duly completed "
+        "in all respect will be submitted "
+        f"to this HQ by {completion_date}."
+    )
+
+    # --------------------------------------------------------
+    # 2IC SIGNATURE BLOCK
+    # --------------------------------------------------------
+
+    signature = document.add_paragraph()
+
+    signature.alignment = (
+        WD_ALIGN_PARAGRAPH.RIGHT
+    )
+
+    signature.add_run(
+        f"({order.two_ic_name})\n"
+        f"{order.two_ic_rank}\n"
+        f"{order.two_ic_appointment}"
+    )
+
+    # --------------------------------------------------------
+    # FILE NUMBER
+    # --------------------------------------------------------
+
+    document.add_paragraph(
+        order.file_no
+        or "FILE NO NOT AVAILABLE"
+    )
+
+    # --------------------------------------------------------
+    # STATIC UNIT ADDRESS
+    # --------------------------------------------------------
+
+    document.add_paragraph(
+        "21 SATA Regt (Plains)"
+    )
+
+    document.add_paragraph(
+        "PIN : 925721"
+    )
+
+    document.add_paragraph(
+        "c/o 56 APO"
+    )
+
+    # --------------------------------------------------------
+    # DATE
+    # --------------------------------------------------------
+
+    order_date = (
+        order
+        .order_date
+        .strftime("%d %b %Y")
+    )
+
+    document.add_paragraph(
+        order_date
+    )
+
+    # --------------------------------------------------------
+    # DISTRIBUTION
+    # --------------------------------------------------------
+
+    document.add_paragraph("")
+
+    document.add_paragraph(
+        "Distr :-"
+    )
+
+    document.add_paragraph(
+        "Normal"
+    )
+
+    # --------------------------------------------------------
+    # SEND WORD FILE TO USER
+    # --------------------------------------------------------
+
+    output = BytesIO()
+
+    document.save(output)
+
+    output.seek(0)
+
+    filename = (
+        f"{order.convening_order_id}.docx"
+    )
+
+    response = HttpResponse(
+        output.getvalue(),
+        content_type=(
+            "application/vnd."
+            "openxmlformats-officedocument."
+            "wordprocessingml.document"
+        ),
+    )
+
+    response["Content-Disposition"] = (
+        f'attachment; filename="{filename}"'
+    )
+
+    return response
+
     order = get_object_or_404(
         ConveningOrder.objects.select_related(
             "procurement_case",
