@@ -353,4 +353,8 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     });
   }
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> prince_dev

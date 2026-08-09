@@ -11,19 +11,7 @@
 <div class="app-layout">
   {% include 'partials/sidebar.html' with active_nav='procurement' %}
   <div class="main-content">
-    <div class="topbar">
-      <div class="brand">
-        <img src="{% static 'images/main-logo.png' %}" alt="Unit Crest" class="brand-icon">
-        <div>
-          <h1>ARMY INTERNAL SYSTEM</h1>
-          <p class="tagline">SECURE &bull; DISCIPLINED &bull; DEDICATED</p>
-        </div>
-      </div>
-      <div class="topbar-right">
-        <button id="theme-toggle-btn" class="theme-toggle">Light Mode</button>
-        <a href="{% url 'logout' %}" class="theme-toggle" style="text-decoration:none;">Log Out</a>
-      </div>
-    </div>
+    {% include 'partials/header.html' with active_nav='procurement' %}
 
     <div class="dashboard-shell">
 
@@ -306,26 +294,24 @@
             <div class="rf-grid-3" style="margin-top:16px;">
 
               <div>
-                <span class="rf-label">File No</span>
-                <p>{{ eas.file_no }}</p>
-              </div>
-
-              <div>
                 <span class="rf-label">EAS ID</span>
                 <p>{{ eas.eas_id }}</p>
               </div>
 
               <div>
-                <span class="rf-label">Case File No</span>
-                <p>{{ eas.case_file_no }}</p>
+                <span class="rf-label">File No</span>
+                <p>{{ eas.file_no }}</p>
               </div>
-
 
               <div>
                 <span class="rf-label">DSC of Goods</span>
                 <p>{{ eas.dsc_goods }}</p>
               </div>
-
+         
+              <div>
+                <span class="rf-label">Sub Details / Heads</span>
+                <p>{{ eas.sub_details_heads }}</p>
+              </div>
               <div>
                 <span class="rf-label">Name of Supplier</span>
                 <p>{{ eas.name_supplier }}</p>
@@ -336,12 +322,10 @@
                 <p>{{ eas.purpose_broad }}</p>
               </div>
 
-
               <div>
-                <span class="rf-label">Designation of CFA</span>
-                <p>{{ eas.designation_cfa }}</p>
+                <span class="rf-label">Cost Per Unit</span>
+                <p>{{ eas.cost_per_unit }}</p>
               </div>
-
               <div>
                 <span class="rf-label">Qty Sanctioned</span>
                 <p>{{ eas.qty_sanctioned }}</p>
@@ -351,13 +335,6 @@
                 <span class="rf-label">Amount Sanction</span>
                 <p>{{ eas.amount_sanction }}</p>
               </div>
-
-
-              <div>
-                <span class="rf-label">Cost Per Unit</span>
-                <p>{{ eas.cost_per_unit }}</p>
-              </div>
-
               <div>
                 <span class="rf-label">Other Charges</span>
                 <p>{{ eas.other_charges|default:"—" }}</p>
@@ -375,9 +352,10 @@
               </div>
 
               <div>
-                <span class="rf-label">Sub Details / Heads</span>
-                <p>{{ eas.sub_details_heads }}</p>
+                <span class="rf-label">Designation of CFA</span>
+                <p>{{ eas.designation_cfa }}</p>
               </div>
+
 
               <div>
                 <span class="rf-label">Reference No</span>
@@ -461,6 +439,7 @@
 
           <!-- SANCTION / CONTRACT / INVOICE -->
           {% if eas.workflow_status == "APPROVED" %}
+              {% if role == "ACCOUNTS_CLERK" or role == "HEAD_CLERK" %}
 
             <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; margin-top:20px;">
 
@@ -584,7 +563,7 @@
               </div>
 
             </div>
-
+              {% endif %}
           {% endif %}
           {% if eas.workflow_status == "APPROVED" and eas.sanction_document and eas.contract_document and eas.invoice_document %}
           <div class="card" style="margin-top:20px;">
@@ -770,30 +749,7 @@
     </div>
 
 
-    <div class="footer-strip">
-
-      <div>
-        <span class="label">PROJECT</span>
-        <span class="item">Project Nexus - Unit Accounts Management</span>
-      </div>
-
-      <div>
-        <span class="label">MODULE</span>
-        <span class="item">Procurement</span>
-      </div>
-
-      <div>
-        <span class="label">VERSION</span>
-        <span class="item">1.0</span>
-      </div>
-
-      <div>
-        <span class="label">CLASSIFICATION</span>
-        <span class="item">CONFIDENTIAL</span>
-      </div>
-
-    </div>
-
+  {% include 'partials/footer.html' with active_nav='procurement' %}
   </div>
 </div>
 
