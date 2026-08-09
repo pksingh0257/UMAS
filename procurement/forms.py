@@ -176,161 +176,61 @@ class EASDocumentUploadForm(forms.Form):
 
 User = get_user_model()
 
-
 class ConveningOrderForm(forms.ModelForm):
-    additional_members = forms.ModelMultipleChoiceField(
-        queryset=User.objects.filter(is_active=True).order_by("username"),
-        required=False,
-        widget=forms.SelectMultiple(attrs={"size": 5}),
-        label="Additional Members",
-    )
-
     class Meta:
         model = ConveningOrder
         fields = [
-            "procurement_case",
-            "order_number",
-            "order_date",
-            "subject_title",
-            "committee_purpose",
-            "place_of_proceedings",
-            "start_date",
-            "completion_due_date",
-            "applicable_authority_rule",
+            "description",
             "presiding_officer",
             "member_1",
             "member_2",
-            "additional_members",
-            "technical_representative",
-            "member_secretary",
-            "convening_authority",
-            "report_submission_to",
-            "terms_of_reference",
-            "special_instructions",
-            "remarks",
+            "completion_date",
+            "two_ic_name",
+            "two_ic_rank",
+            "two_ic_appointment",
+            "order_date",
         ]
-
         widgets = {
+            "description": forms.Textarea(attrs={
+                "rows": 7,
+                "placeholder": "Enter Para 1 exactly as it should appear in the Convening Order.",
+            }),
+            "presiding_officer": forms.TextInput(attrs={
+                "placeholder": "e.g. SS-52548A Lt Nitin Bhandari"
+            }),
+            "member_1": forms.TextInput(attrs={
+                "placeholder": "e.g. JC-288757M Sub Shiv Singh"
+            }),
+            "member_2": forms.TextInput(attrs={
+                "placeholder": "e.g. JC-294912Y Sub Madan Lal"
+            }),
+            "completion_date": forms.DateInput(attrs={"type": "date"}),
+            "two_ic_name": forms.TextInput(attrs={"placeholder": "e.g. Rathan Kumar HS"}),
+            "two_ic_rank": forms.TextInput(attrs={"placeholder": "e.g. Lt Col"}),
+            "two_ic_appointment": forms.TextInput(attrs={"placeholder": "2IC"}),
             "order_date": forms.DateInput(attrs={"type": "date"}),
-            "start_date": forms.DateInput(attrs={"type": "date"}),
-            "completion_due_date": forms.DateInput(attrs={"type": "date"}),
-            "subject_title": forms.TextInput(attrs={"maxlength": 500}),
-            "place_of_proceedings": forms.TextInput(attrs={"maxlength": 250}),
-            "applicable_authority_rule": forms.TextInput(attrs={"maxlength": 250}),
-            "terms_of_reference": forms.Textarea(
-                attrs={"rows": 6, "placeholder": "Enter at least one Terms of Reference."}
-            ),
-            "special_instructions": forms.Textarea(attrs={"rows": 4}),
-            "remarks": forms.Textarea(attrs={"rows": 4, "maxlength": 1000}),
         }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        active_users = User.objects.filter(is_active=True).order_by("username")
-
-        self.fields["presiding_officer"].queryset = active_users
-        self.fields["member_1"].queryset = active_users
-        self.fields["member_2"].queryset = active_users
-        self.fields["technical_representative"].queryset = active_users
-        self.fields["member_secretary"].queryset = active_users
-        self.fields["convening_authority"].queryset = active_users
-        self.fields["report_submission_to"].queryset = active_users
-
-        self.fields["procurement_case"].queryset = (
-            ProcurementCase.objects
-            .filter(is_closed=False, approval_decision__isnull=False)
-            .exclude(approval_decision="")
-            .order_by("-created_at")
-        )
 
     def clean(self):
         cleaned = super().clean()
 
-        procurement_case = cleaned.get("procurement_case")
+        completion = cleaned.get("completion_date")
         order_date = cleaned.get("order_date")
-        start_date = cleaned.get("start_date")
-        completion_due_date = cleaned.get("completion_due_date")
-
-        presiding = cleaned.get("presiding_officer")
-        member_1 = cleaned.get("member_1")
-        member_2 = cleaned.get("member_2")
-        technical = cleaned.get("technical_representative")
-        secretary = cleaned.get("member_secretary")
-        authority = cleaned.get("convening_authority")
-        report_to = cleaned.get("report_submission_to")
-
-        if procurement_case:
-            approval_value = (procurement_case.approval_decision or "").strip().upper()
-
-            if approval_value != "APPROVED":
-                self.add_error(
-                    "procurement_case",
-                    "Procurement case must be approved before creating a Convening Order.",
-                )
-
-            if procurement_case.is_closed:
-                self.add_error(
-                    "procurement_case",
-                    "Only an active procurement case can be selected.",
-                )
-
-        if procurement_case and order_date:
-            try:
-                sanction_date = procurement_case.requirement_item.noting_sheet.eas.date_time
-                if sanction_date and order_date < sanction_date.date():
-                    self.add_error(
-                        "order_date",
-                        "Order Date cannot be before the sanction/EAS date.",
-                    )
-            except (AttributeError, TypeError):
-                pass
-
-        if start_date and completion_due_date and completion_due_date < start_date:
+        if completion and order_date and completion < order_date:
             self.add_error(
-                "completion_due_date",
-                "Completion Due Date must be on or after Start Date.",
+                "completion_date",
+                "Date of Completion cannot be before the Convening Order date.",
             )
 
-        if presiding and member_1 and presiding.pk == member_1.pk:
-            self.add_error("member_1", "The same person cannot occupy multiple committee roles.")
-
-        if presiding and member_2 and presiding.pk == member_2.pk:
-            self.add_error("member_2", "The same person cannot occupy multiple committee roles.")
-
-        if member_1 and member_2 and member_1.pk == member_2.pk:
-            self.add_error("member_2", "Member 1 and Member 2 must be different persons.")
-
-        selected_people = [
-            ("Presiding Officer", presiding),
-            ("Member 1", member_1),
-            ("Member 2", member_2),
-            ("Technical Representative", technical),
-            ("Member Secretary", secretary),
-            ("Convening Authority", authority),
-            ("Report Submission To", report_to),
+        people = [
+            (cleaned.get("presiding_officer") or "").strip().lower(),
+            (cleaned.get("member_1") or "").strip().lower(),
+            (cleaned.get("member_2") or "").strip().lower(),
         ]
-
-        seen = {}
-
-        for role_name, person in selected_people:
-            if not person:
-                continue
-
-            if person.pk in seen:
-                self.add_error(
-                    "convening_authority",
-                    f"{role_name} and {seen[person.pk]} cannot be the same person.",
-                )
-            else:
-                seen[person.pk] = role_name
-
-        tor = cleaned.get("terms_of_reference")
-
-        if not tor or not tor.strip():
-            self.add_error(
-                "terms_of_reference",
-                "At least one Terms of Reference is required.",
+        people = [p for p in people if p]
+        if len(people) != len(set(people)):
+            raise forms.ValidationError(
+                "Presiding Officer, Member 1 and Member 2 must be different."
             )
 
         return cleaned

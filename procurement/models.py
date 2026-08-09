@@ -560,113 +560,33 @@ class EAS(models.Model):
         self.save()
 
 class ConveningOrder(models.Model):
-    PURPOSE_CHOICES = [
-        ("INSPECTION", "Inspection"),
-        ("PURCHASE", "Purchase"),
-        ("BOO", "BOO"),
-        ("OTHER", "Other"),
-    ]
-
-    APPROVAL_STATUS_CHOICES = [
-        ("DRAFT", "Draft"),
-        ("PENDING", "Pending"),
-        ("APPROVED", "Approved"),
-    ]
-
     convening_order_id = models.CharField(max_length=30, unique=True, editable=False)
 
-    procurement_case = models.ForeignKey(
+    procurement_case = models.OneToOneField(
         ProcurementCase,
         on_delete=models.PROTECT,
-        related_name="convening_orders",
+        related_name="convening_order",
     )
 
-    requirement_id_text = models.CharField(max_length=100, editable=False)
-    financial_year = models.CharField(max_length=20, editable=False)
-    fund_head_text = models.CharField(max_length=250, blank=True, editable=False)
-    sub_head_text = models.CharField(max_length=250, blank=True, editable=False)
-    procurement_mode = models.CharField(max_length=50, blank=True, editable=False)
+    description = models.TextField(verbose_name="Convening Order Description")
 
-    order_number = models.CharField(max_length=50, unique=True)
-    order_date = models.DateField(default=timezone.now)
+    presiding_officer = models.CharField(max_length=250)
+    member_1 = models.CharField(max_length=250)
+    member_2 = models.CharField(max_length=250)
 
-    subject_title = models.CharField(max_length=500)
-    committee_purpose = models.CharField(max_length=20, choices=PURPOSE_CHOICES)
-    place_of_proceedings = models.CharField(max_length=250)
+    completion_date = models.DateField(verbose_name="Date of Completion")
 
-    start_date = models.DateField()
-    completion_due_date = models.DateField()
+    two_ic_name = models.CharField(max_length=150)
+    two_ic_rank = models.CharField(max_length=100)
+    two_ic_appointment = models.CharField(max_length=100, default="2IC")
 
-    applicable_authority_rule = models.CharField(max_length=250)
-
-    presiding_officer = models.ForeignKey(
-        "authentication.User",
-        on_delete=models.PROTECT,
-        related_name="convening_orders_presiding",
-    )
-
-    member_1 = models.ForeignKey(
-        "authentication.User",
-        on_delete=models.PROTECT,
-        related_name="convening_orders_member1",
-    )
-
-    member_2 = models.ForeignKey(
-        "authentication.User",
-        on_delete=models.PROTECT,
-        related_name="convening_orders_member2",
-    )
-
-    additional_members = models.JSONField(default=list, blank=True)
-
-    technical_representative = models.ForeignKey(
-        "authentication.User",
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
-        related_name="convening_orders_technical",
-    )
-
-    member_secretary = models.ForeignKey(
-        "authentication.User",
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
-        related_name="convening_orders_secretary",
-    )
-
-    convening_authority = models.ForeignKey(
-        "authentication.User",
-        on_delete=models.PROTECT,
-        related_name="convening_orders_authority",
-    )
-
-    report_submission_to = models.ForeignKey(
-        "authentication.User",
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
-        related_name="convening_orders_report_to",
-    )
-
-    terms_of_reference = models.TextField()
-    special_instructions = models.TextField(blank=True)
-    remarks = models.TextField(max_length=1000, blank=True)
-
-    approval_status = models.CharField(
-        max_length=20,
-        choices=APPROVAL_STATUS_CHOICES,
-        default="DRAFT",
-    )
-
-    version_number = models.PositiveIntegerField(default=1, editable=False)
+    order_date = models.DateField(default=timezone.localdate, verbose_name="Date")
 
     created_by = models.ForeignKey(
         "authentication.User",
         on_delete=models.PROTECT,
         related_name="convening_orders_created",
     )
-
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -686,33 +606,30 @@ class ConveningOrder(models.Model):
                 .order_by("-convening_order_id")
                 .first()
             )
-
             seq = 1
-
             if last:
                 try:
                     seq = int(last.convening_order_id.split("-")[-1]) + 1
-                except ValueError:
+                except (TypeError, ValueError):
                     seq = 1
-
             self.convening_order_id = f"CO-{yr}-{seq:05d}"
-
         super().save(*args, **kwargs)
 
+    @property
+    def requirement(self):
+        return self.procurement_case.requirement_item
 
-class ConveningOrderAttachment(models.Model):
-    convening_order = models.ForeignKey(
-        ConveningOrder,
-        on_delete=models.CASCADE,
-        related_name="attachments",
-    )
+    @property
+    def eas(self):
+        try:
+            return self.requirement.noting_sheet.eas
+        except AttributeError:
+            return None
 
-    file = models.FileField(upload_to="convening_orders/")
-    uploaded_at = models.DateTimeField(auto_now_add=True)
+    @property
+    def file_no(self):
+        return self.eas.file_no if self.eas else ""
 
-    class Meta:
-        db_table = "proc_convening_order_attachments"
-        ordering = ["id"]
-
-    def __str__(self):
-        return self.file.name
+    @property
+    def requirement_id_text(self):
+        return getattr(self.requirement, "requirement_id", "")
