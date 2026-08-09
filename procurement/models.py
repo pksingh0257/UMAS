@@ -261,14 +261,14 @@ class NotingSheet(models.Model):
     financial_year = models.CharField(max_length=20, help_text="e.g. 2026-27")
 
     # ---- Noting / Details ----
-    paragraph_1 = models.CharField(max_length=200, verbose_name="Paragraph 1 (Purport / Subject)")
-    paragraph_2 = models.TextField(max_length=500, verbose_name="Paragraph 2 (Requirement / Justification)")
+    paragraph_1 = models.CharField(max_length=500, verbose_name="Paragraph 1 (Purport / Subject)")
+    paragraph_2 = models.TextField(max_length=1000, verbose_name="Paragraph 2 (Requirement / Justification)")
 
     # ---- Fund Details ----
     amount_allotted = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     amount_released = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     amount_expended = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-    remarks = models.CharField(max_length=200, blank=True)
+    remarks = models.CharField(max_length=500, blank=True)
 
     approval_recipient = models.CharField(
         max_length=100, blank=True,
@@ -319,7 +319,14 @@ class NotingSheet(models.Model):
 
     @property
     def balance_amount(self):
-        return self.amount_allotted - self.amount_expended
+        # CHANGED: was `amount_allotted - amount_expended`. Per
+        # finance_utils.get_fund_balance()'s own docstring, `released` —
+        # not `allotted` — represents the current available balance
+        # (allotted is the gross total ever credited, before subtracting
+        # anything already spent). Balance Held should reflect what's
+        # actually still available, so it's Released minus what this
+        # sheet expends.
+        return self.amount_released - self.amount_expended
 
     @property
     def is_editable(self):
@@ -450,6 +457,12 @@ class EAS(models.Model):
 
     availability_fund = models.CharField(max_length=250, verbose_name="Availability of Fund")
     sub_details_heads = models.CharField(max_length=250, verbose_name="Sub Details / Heads")
+
+    # NEW: plain text, filled in by the user — no choices/lookup, just
+    # free entry per your instruction.
+    major = models.CharField(max_length=150, blank=True, null=True, verbose_name="Major")
+    minor = models.CharField(max_length=150, blank=True, null=True, verbose_name="Minor")
+
     reference_no = models.CharField(max_length=150, verbose_name="Reference No")
     name_paying_agent = models.CharField(max_length=250, verbose_name="Name of Paying Agency")
     date_time = models.DateField(verbose_name="Date")
@@ -574,7 +587,7 @@ class ConveningOrder(models.Model):
     member_1 = models.CharField(max_length=250)
     member_2 = models.CharField(max_length=250)
 
-    completion_date = models.DateField(verbose_name="Date of Completion")
+    completion_date = models.DateField(null=True, blank=True)
 
     two_ic_name = models.CharField(max_length=150)
     two_ic_rank = models.CharField(max_length=100)

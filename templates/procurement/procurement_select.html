@@ -43,10 +43,13 @@
           <div class="rf-grid-3" style="margin-top:14px;">
             <div><span class="rf-label">Item Name</span><p>{{ selected.item_name }}</p></div>
             <div><span class="rf-label">Category</span><p>{{ selected.category }}</p></div>
+            <div><span class="rf-label">Purpose</span><p>{{ selected.purpose }}</p></div>
+            <div><span class="rf-label">Cost Per Unit</span><p>{{ selected.cost_per_unit }}</p></div>
             <div><span class="rf-label">Quantity</span><p>{{ selected.quantity }}</p></div>
             <div><span class="rf-label">Estimated Cost</span><p>{{ selected.estimated_cost }}</p></div>
-            <div><span class="rf-label">Purpose</span><p>{{ selected.purpose }}</p></div>
-            <div><span class="rf-label">Demanded By</span><p>{{ selected.demanded_by }}</p></div>
+            <div><span class="rf-label">purchase mode</span><p>{{ selected.purchase_mode }}</p></div>
+            <div><span class="rf-label">Fund head</span><p>{{ selected.fund_head }}</p></div>
+            <div><span class="rf-label">Sub head</span><p>{{ selected.sub_head }}</p></div>
           </div>
           {% if role == 'ACCOUNTS_CLERK' or role == 'HEAD_CLERK' or role == 'ADMINISTRATOR' %}
           <a href="{% url 'noting_sheet_create' selected.pk %}" class="login-btn" style="width:auto; padding:12px 24px; text-decoration:none; display:inline-block; margin-top:14px;">
@@ -58,12 +61,8 @@
 
     </div>
 
-    <div class="footer-strip">
-      <div><span class="label">PROJECT</span><span class="item">Project Nexus - Unit Accounts Management</span></div>
-      <div><span class="label">MODULE</span><span class="item">Procurement</span></div>
-      <div><span class="label">VERSION</span><span class="item">1.0</span></div>
-      <div><span class="label">CLASSIFICATION</span><span class="item">CONFIDENTIAL</span></div>
-    </div>
+  {% include 'partials/footer.html' with active_nav='procurement' %}
+ 
   </div>
 </div>
 <script src="{% static 'js/theme-toggle.js' %}"></script>

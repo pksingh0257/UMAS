@@ -77,11 +77,15 @@
         <p class="purport-num">1</p>
         <p class="purport-title">{{ noting_sheet.paragraph_1 }}</p>
 
-        <div class="purport-body">
+      <div class="purport-body">
           {% for line in noting_sheet.paragraph_2.splitlines %}
-            <p>{{ line }}</p>
+              {% if forloop.first %}
+                  <p><span>2. </span>{{ line }}</p>
+              {% else %}
+                  <p>{{ line }}</p>
+              {% endif %}
           {% endfor %}
-        </div>
+      </div>
 
         <table class="item-table">
           <thead>
@@ -112,7 +116,10 @@
           </tbody>
         </table>
 
+<<<<<<< HEAD
      
+=======
+>>>>>>> prince_dev
         <p>3. The said amount is within the financial power of {{ noting_sheet.approval_recipient|default:"CFA" }} this unit. Details of fund are as under:-</p>
 
         <table class="fund-table">
@@ -135,10 +142,13 @@
         </table>
 
         {% if noting_sheet.remarks %}
-          <p>{{ noting_sheet.remarks }}</p>
+          <p>Remarks: {{ noting_sheet.remarks }}</p>
         {% endif %}
 
+<<<<<<< HEAD
     
+=======
+>>>>>>> prince_dev
         <p>4. EAS sanction for the item is placed opposite for your perusal and sanction of {{ noting_sheet.approval_recipient|default:"CFA" }} please.</p>
 
       </td>
@@ -158,6 +168,9 @@
     <span>For Approval: {{ noting_sheet.approval_recipient }}</span>
   </div>
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> prince_dev
 </body>
 </html>

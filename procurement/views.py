@@ -1,9 +1,11 @@
+from decimal import Decimal
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from requirements_mgmt.models import Requirement
+from .finance_utils import get_fund_balance
 from .models import ProcurementCase, NotingSheet, NotingSheetItem, EAS, ConveningOrder
 from .forms import ( CaseStageDataForm, ReturnCaseForm, NotingSheetForm, NotingSheetItemFormSet, NotingCFADecisionForm, EASForm, EASCFADecisionForm, EASDocumentUploadForm, ConveningOrderForm, )
 from io import BytesIO
@@ -13,6 +15,49 @@ from django.http import HttpResponse
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Pt
+
+def compute_eas_autofill(noting_sheet):
+    """
+    The 8 EAS fields that auto-fetch from their linked NotingSheet,
+    read-only on the form:
+      file_no          <- noting_sheet.file_no
+      eas_id           <- "EAS-" + Requirement ID, e.g. EAS-REQ-2026-00001
+      dsc_goods        <- item description (first item's, via
+                           NotingSheet.item_name)
+      purpose_broad    <- noting_sheet.paragraph_1 (Purport / Subject)
+      qty_sanctioned   <- SUM of quantities across all item rows
+      amount_sanction  <- noting_sheet.total_amount (all items)
+      cost_per_unit    <- amount_sanction / qty_sanctioned (weighted
+                           average — NotingSheet supports multiple
+                           differently-priced items, so there's no
+                           single "the" cost per unit; this keeps
+                           qty * cost_per_unit == amount_sanction true)
+      sub_details_heads <- the Requirement's Sub Head, stringified
+
+    Called on every GET/POST for both eas_create and eas_edit so the
+    displayed/saved values always reflect the current NotingSheet state,
+    not a stale snapshot from whenever the EAS was first created.
+    """
+    requirement = noting_sheet.requirement
+    items = noting_sheet.items.all()
+
+    total_qty = sum((item.quantity for item in items), 0)
+    total_amount = noting_sheet.total_amount or Decimal("0")
+    cost_per_unit = (total_amount / total_qty) if total_qty else Decimal("0")
+
+    sub_head = getattr(requirement, "sub_head", None)
+
+    return {
+        "file_no": noting_sheet.file_no,
+        "eas_id": f"EAS-{requirement.requirement_id}",
+        "dsc_goods": noting_sheet.item_name,
+        "purpose_broad": noting_sheet.paragraph_1,
+        "qty_sanctioned": total_qty,
+        "amount_sanction": total_amount,
+        "cost_per_unit": cost_per_unit,
+        "sub_details_heads": str(sub_head) if sub_head else "",
+    }
+
 
 # ============================================================
 # EXISTING VIEWS — unchanged
@@ -159,6 +204,12 @@ def noting_sheet_create(request, requirement_pk):
         messages.info(request, "A Noting Sheet already exists for this requirement.")
         return redirect("noting_sheet_detail", pk=requirement.noting_sheet.pk)
 
+    # Computed once, reused for both the initial page load (so the clerk
+    # sees real figures before even touching the form) and the actual
+    # save below — previously this only ran inside the save branch, so
+    # the fields stayed blank until after submission.
+    computed_allotted, computed_released = get_fund_balance(requirement.sub_head)
+
     if request.method == "POST":
         form = NotingSheetForm(request.POST)
         formset = NotingSheetItemFormSet(request.POST)
@@ -166,10 +217,19 @@ def noting_sheet_create(request, requirement_pk):
             noting_sheet = form.save(commit=False)
             noting_sheet.requirement = requirement
             noting_sheet.created_by = request.user
+            noting_sheet.amount_allotted = computed_allotted
+            noting_sheet.amount_released = computed_released
+
             noting_sheet.save()
 
             formset.instance = noting_sheet
             formset.save()
+
+            # Expended = this sheet's own item table total. Needs a
+            # second save since it depends on the items, which can't be
+            # totaled until after formset.save() has written them.
+            noting_sheet.amount_expended = noting_sheet.total_amount
+            noting_sheet.save(update_fields=["amount_expended"])
 
             messages.success(request, f"{noting_sheet.noting_id} created.")
             return redirect("noting_sheet_detail", pk=noting_sheet.pk)
@@ -189,6 +249,8 @@ def noting_sheet_create(request, requirement_pk):
         "form": form,
         "formset": formset,
         "requirement": requirement,
+        "computed_allotted": computed_allotted,
+        "computed_released": computed_released,
         "role": request.user.role,
         "active_nav": "procurement",
     })
@@ -257,12 +319,16 @@ def eas_create(request, noting_sheet_pk):
         messages.info(request, "An EAS already exists for this noting sheet.")
         return redirect("eas_detail", pk=noting_sheet.eas.pk)
 
+    autofill = compute_eas_autofill(noting_sheet)
+
     if request.method == "POST":
         form = EASForm(request.POST)
         if form.is_valid():
             eas = form.save(commit=False)
             eas.noting_sheet = noting_sheet
             eas.created_by = request.user
+            for field_name, value in autofill.items():
+                setattr(eas, field_name, value)
             eas.save()
             eas.submit_for_approval()
             messages.success(request, "EAS created and sent for CFA approval.")
@@ -273,6 +339,7 @@ def eas_create(request, noting_sheet_pk):
     return render(request, "procurement/eas_form.html", {
         "form": form,
         "noting_sheet": noting_sheet,
+        "autofill": autofill,
         "role": request.user.role,
         "active_nav": "procurement",
     })
@@ -285,10 +352,18 @@ def eas_edit(request, pk):
         messages.error(request, "This EAS can't be edited right now.")
         return redirect("eas_detail", pk=pk)
 
+    # Recomputed live, not just read off the existing eas instance — if
+    # the linked NotingSheet's data ever changed, the auto-fetched fields
+    # stay in sync rather than showing a stale snapshot from creation.
+    autofill = compute_eas_autofill(eas.noting_sheet)
+
     if request.method == "POST":
         form = EASForm(request.POST, instance=eas)
         if form.is_valid():
-            form.save()
+            eas = form.save(commit=False)
+            for field_name, value in autofill.items():
+                setattr(eas, field_name, value)
+            eas.save()
             eas.submit_for_approval()
             messages.success(request, "EAS updated and re-sent for CFA approval.")
             return redirect("eas_detail", pk=pk)
@@ -299,6 +374,7 @@ def eas_edit(request, pk):
         "form": form,
         "noting_sheet": eas.noting_sheet,
         "eas": eas,
+        "autofill": autofill,
         "role": request.user.role,
         "active_nav": "procurement",
     })
@@ -396,6 +472,18 @@ def eas_upload_document(request, pk, doc_type):
             messages.error(request, "; ".join(form.errors.get("document", ["Upload failed — PDF files only."])))
 
     return redirect("eas_detail", pk=pk)
+
+# ============================================================
+# CONVENING ORDER
+# Simplified as per official Convening Order format
+# ============================================================
+
+CONVENING_ORDER_CREATOR_ROLES = {
+    "ADMINISTRATOR",
+    "HEAD_CLERK",
+    "ACCOUNTS_CLERK",
+}
+
 
 # ============================================================
 # CONVENING ORDER
@@ -518,9 +606,13 @@ def convening_order_create(request, eas_pk):
     # --------------------------------------------------------
     if request.method == "POST":
 
+<<<<<<< HEAD
         form = ConveningOrderForm(
             request.POST
         )
+=======
+        form = ConveningOrderForm(request.POST)
+>>>>>>> prince_dev
 
         if form.is_valid():
 
@@ -528,14 +620,26 @@ def convening_order_create(request, eas_pk):
                 commit=False
             )
 
+<<<<<<< HEAD
+=======
+            # Link to Procurement Case
+>>>>>>> prince_dev
             order.procurement_case = (
                 procurement_case
             )
 
+<<<<<<< HEAD
+=======
+            # Store the user who created it
+>>>>>>> prince_dev
             order.created_by = (
                 request.user
             )
 
+<<<<<<< HEAD
+=======
+            # Save Convening Order
+>>>>>>> prince_dev
             order.save()
 
             messages.success(
@@ -548,9 +652,22 @@ def convening_order_create(request, eas_pk):
                 "convening_order_detail",
                 pk=order.pk
             )
+<<<<<<< HEAD
         else:
             print("CONVENING ORDER FORM ERRORS:")
             print(form.errors)
+=======
+
+        else:
+
+            print(
+                "CONVENING ORDER FORM ERRORS:"
+            )
+
+            print(
+                form.errors
+            )
+>>>>>>> prince_dev
 
     # --------------------------------------------------------
     # 7. Initial form
@@ -578,7 +695,13 @@ def convening_order_create(request, eas_pk):
             "procurement_case": procurement_case,
 
             "requirement": (
+<<<<<<< HEAD
                 eas.noting_sheet.requirement
+=======
+                eas
+                .noting_sheet
+                .requirement
+>>>>>>> prince_dev
             ),
 
             # Auto fetched from EAS
@@ -589,6 +712,7 @@ def convening_order_create(request, eas_pk):
             "active_nav": "procurement",
         }
     )
+<<<<<<< HEAD
 
 
 @login_required
@@ -614,6 +738,31 @@ def convening_order_detail(request, pk):
 
 
 @login_required
+=======
+@login_required
+def convening_order_detail(request, pk):
+
+    order = get_object_or_404(
+        ConveningOrder.objects.select_related(
+            "procurement_case",
+            "procurement_case__requirement_item",
+        ),
+        pk=pk,
+    )
+
+    return render(
+        request,
+        "procurement/convening_order_detail.html",
+        {
+            "order": order,
+            "role": request.user.role,
+            "active_nav": "procurement",
+        }
+    )
+
+
+@login_required
+>>>>>>> prince_dev
 def convening_order_download_docx(request, pk):
 
     order = get_object_or_404(
