@@ -348,30 +348,6 @@
         "documentation": {}
     },
     {
-        "label": "transaction",
-        "importPath": "django.db",
-        "description": "django.db",
-        "isExtraImport": true,
-        "detail": "django.db",
-        "documentation": {}
-    },
-    {
-        "label": "transaction",
-        "importPath": "django.db",
-        "description": "django.db",
-        "isExtraImport": true,
-        "detail": "django.db",
-        "documentation": {}
-    },
-    {
-        "label": "models",
-        "importPath": "django.db",
-        "description": "django.db",
-        "isExtraImport": true,
-        "detail": "django.db",
-        "documentation": {}
-    },
-    {
         "label": "migrations",
         "importPath": "django.db",
         "description": "django.db",
@@ -997,30 +973,6 @@
         "documentation": {}
     },
     {
-        "label": "Path",
-        "importPath": "pathlib",
-        "description": "pathlib",
-        "isExtraImport": true,
-        "detail": "pathlib",
-        "documentation": {}
-    },
-    {
-        "label": "settings",
-        "importPath": "django.conf",
-        "description": "django.conf",
-        "isExtraImport": true,
-        "detail": "django.conf",
-        "documentation": {}
-    },
-    {
-        "label": "settings",
-        "importPath": "django.conf",
-        "description": "django.conf",
-        "isExtraImport": true,
-        "detail": "django.conf",
-        "documentation": {}
-    },
-    {
         "label": "settings",
         "importPath": "django.conf",
         "description": "django.conf",
@@ -1174,22 +1126,6 @@
         "documentation": {}
     },
     {
-        "label": "MinValueValidator",
-        "importPath": "django.core.validators",
-        "description": "django.core.validators",
-        "isExtraImport": true,
-        "detail": "django.core.validators",
-        "documentation": {}
-    },
-    {
-        "label": "FileExtensionValidator",
-        "importPath": "django.core.validators",
-        "description": "django.core.validators",
-        "isExtraImport": true,
-        "detail": "django.core.validators",
-        "documentation": {}
-    },
-    {
         "label": "FileExtensionValidator",
         "importPath": "django.core.validators",
         "description": "django.core.validators",
@@ -1248,14 +1184,6 @@
         "documentation": {}
     },
     {
-        "label": "forms",
-        "importPath": "django",
-        "description": "django",
-        "isExtraImport": true,
-        "detail": "django",
-        "documentation": {}
-    },
-    {
         "label": "ValidationError",
         "importPath": "django.core.exceptions",
         "description": "django.core.exceptions",
@@ -1373,38 +1301,6 @@
         "description": "django.core.exceptions",
         "isExtraImport": true,
         "detail": "django.core.exceptions",
-        "documentation": {}
-    },
-    {
-        "label": "ValidationError",
-        "importPath": "django.core.exceptions",
-        "description": "django.core.exceptions",
-        "isExtraImport": true,
-        "detail": "django.core.exceptions",
-        "documentation": {}
-    },
-    {
-        "label": "ValidationError",
-        "importPath": "django.core.exceptions",
-        "description": "django.core.exceptions",
-        "isExtraImport": true,
-        "detail": "django.core.exceptions",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
         "documentation": {}
     },
     {
@@ -1552,38 +1448,6 @@
         "documentation": {}
     },
     {
-        "label": "DecimalField",
-        "importPath": "django.db.models",
-        "description": "django.db.models",
-        "isExtraImport": true,
-        "detail": "django.db.models",
-        "documentation": {}
-    },
-    {
-        "label": "Q",
-        "importPath": "django.db.models",
-        "description": "django.db.models",
-        "isExtraImport": true,
-        "detail": "django.db.models",
-        "documentation": {}
-    },
-    {
-        "label": "Sum",
-        "importPath": "django.db.models",
-        "description": "django.db.models",
-        "isExtraImport": true,
-        "detail": "django.db.models",
-        "documentation": {}
-    },
-    {
-        "label": "Value",
-        "importPath": "django.db.models",
-        "description": "django.db.models",
-        "isExtraImport": true,
-        "detail": "django.db.models",
-        "documentation": {}
-    },
-    {
         "label": "FileResponse",
         "importPath": "django.http",
         "description": "django.http",
@@ -1593,6 +1457,14 @@
     },
     {
         "label": "Http404",
+        "importPath": "django.http",
+        "description": "django.http",
+        "isExtraImport": true,
+        "detail": "django.http",
+        "documentation": {}
+    },
+    {
+        "label": "HttpResponse",
         "importPath": "django.http",
         "description": "django.http",
         "isExtraImport": true,
@@ -1640,30 +1512,6 @@
         "documentation": {}
     },
     {
-        "label": "Decimal",
-        "importPath": "decimal",
-        "description": "decimal",
-        "isExtraImport": true,
-        "detail": "decimal",
-        "documentation": {}
-    },
-    {
-        "label": "Decimal",
-        "importPath": "decimal",
-        "description": "decimal",
-        "isExtraImport": true,
-        "detail": "decimal",
-        "documentation": {}
-    },
-    {
-        "label": "CoreModel",
-        "importPath": "core_base.models",
-        "description": "core_base.models",
-        "isExtraImport": true,
-        "detail": "core_base.models",
-        "documentation": {}
-    },
-    {
         "label": "CoreModel",
         "importPath": "core_base.models",
         "description": "core_base.models",
@@ -1733,14 +1581,6 @@
         "description": "masterdata.models",
         "isExtraImport": true,
         "detail": "masterdata.models",
-        "documentation": {}
-    },
-    {
-        "label": "Coalesce",
-        "importPath": "django.db.models.functions",
-        "description": "django.db.models.functions",
-        "isExtraImport": true,
-        "detail": "django.db.models.functions",
         "documentation": {}
     },
     {
@@ -1776,30 +1616,6 @@
         "documentation": {}
     },
     {
-        "label": "inlineformset_factory",
-        "importPath": "django.forms",
-        "description": "django.forms",
-        "isExtraImport": true,
-        "detail": "django.forms",
-        "documentation": {}
-    },
-    {
-        "label": "FinancialYear",
-        "importPath": "finance.models",
-        "description": "finance.models",
-        "isExtraImport": true,
-        "detail": "finance.models",
-        "documentation": {}
-    },
-    {
-        "label": "FundTransaction",
-        "importPath": "finance.models",
-        "description": "finance.models",
-        "isExtraImport": true,
-        "detail": "finance.models",
-        "documentation": {}
-    },
-    {
         "label": "requirements_mgmt.models",
         "kind": 6,
         "isExtraImport": true,
@@ -1822,6 +1638,38 @@
         "description": "requirements_mgmt.models",
         "isExtraImport": true,
         "detail": "requirements_mgmt.models",
+        "documentation": {}
+    },
+    {
+        "label": "BytesIO",
+        "importPath": "io",
+        "description": "io",
+        "isExtraImport": true,
+        "detail": "io",
+        "documentation": {}
+    },
+    {
+        "label": "Document",
+        "importPath": "docx",
+        "description": "docx",
+        "isExtraImport": true,
+        "detail": "docx",
+        "documentation": {}
+    },
+    {
+        "label": "WD_ALIGN_PARAGRAPH",
+        "importPath": "docx.enum.text",
+        "description": "docx.enum.text",
+        "isExtraImport": true,
+        "detail": "docx.enum.text",
+        "documentation": {}
+    },
+    {
+        "label": "Pt",
+        "importPath": "docx.shared",
+        "description": "docx.shared",
+        "isExtraImport": true,
+        "detail": "docx.shared",
         "documentation": {}
     },
     {
@@ -2943,658 +2791,10 @@
     {
         "label": "Migration",
         "kind": 6,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.migrations.0006_amended_phase1_foundation",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.migrations.0006_amended_phase1_foundation",
-        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        (\"procurement\", \"0005_eas_contract_document_eas_invoice_document_and_more\"),\n        migrations.swappable_dependency(settings.AUTH_USER_MODEL),\n    ]\n    operations = [\n        migrations.CreateModel(\n            name=\"GeMSurvey\",\n            fields=[\n                (",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.migrations.0006_amended_phase1_foundation",
-        "documentation": {}
-    },
-    {
-        "label": "link_existing_records",
-        "kind": 2,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.migrations.0006_amended_phase1_foundation",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.migrations.0006_amended_phase1_foundation",
-        "peekOfCode": "def link_existing_records(apps, schema_editor):\n    ProcurementCase = apps.get_model(\"procurement\", \"ProcurementCase\")\n    NotingSheet = apps.get_model(\"procurement\", \"NotingSheet\")\n    EAS = apps.get_model(\"procurement\", \"EAS\")\n    for noting in NotingSheet.objects.all():\n        case = ProcurementCase.objects.filter(\n            requirement_item_id=noting.requirement_id\n        ).first()\n        if case:\n            noting.procurement_case_id = case.pk",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.migrations.0006_amended_phase1_foundation",
-        "documentation": {}
-    },
-    {
-        "label": "GeMSurveyForm",
-        "kind": 6,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "peekOfCode": "class GeMSurveyForm(forms.ModelForm):\n    class Meta:\n        model = GeMSurvey\n        fields = [\n            \"survey_date\",\n            \"search_keywords\",\n            \"survey_notes\",\n        ]\n        widgets = {\n            \"survey_date\": forms.DateInput(attrs={\"type\": \"date\"}),",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "documentation": {}
-    },
-    {
-        "label": "GeMSurveyItemForm",
-        "kind": 6,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "peekOfCode": "class GeMSurveyItemForm(forms.ModelForm):\n    class Meta:\n        model = GeMSurveyItem\n        fields = [\n            \"serial_number\",\n            \"product_name\",\n            \"gem_product_id\",\n            \"seller_name\",\n            \"make\",\n            \"model\",",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "documentation": {}
-    },
-    {
-        "label": "NotingSheetPhase1Form",
-        "kind": 6,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "peekOfCode": "class NotingSheetPhase1Form(forms.ModelForm):\n    class Meta:\n        model = NotingSheet\n        fields = [\n            \"file_number\",\n            \"sheet_number\",\n            \"branch\",\n            \"noting_date\",\n            \"financial_year\",\n            \"unit_name\",",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "documentation": {}
-    },
-    {
-        "label": "EASPhase1Form",
-        "kind": 6,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "peekOfCode": "class EASPhase1Form(forms.ModelForm):\n    class Meta:\n        model = EAS\n        fields = [\n            \"file_no\",\n            \"eas_id\",\n            \"financial_year\",\n            \"sanction_date\",\n            \"unit\",\n            \"station\",",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "documentation": {}
-    },
-    {
-        "label": "EASItemForm",
-        "kind": 6,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "peekOfCode": "class EASItemForm(forms.ModelForm):\n    class Meta:\n        model = EASItem\n        fields = [\n            \"serial_number\",\n            \"item_description\",\n            \"unit_of_measure\",\n            \"quantity\",\n            \"unit_price\",\n        ]",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "documentation": {}
-    },
-    {
-        "label": "GeMSurveyItemFormSet",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "peekOfCode": "GeMSurveyItemFormSet = inlineformset_factory(\n    GeMSurvey,\n    GeMSurveyItem,\n    form=GeMSurveyItemForm,\n    extra=3,\n    can_delete=True,\n    min_num=1,\n    validate_min=True,\n)\nclass NotingSheetPhase1Form(forms.ModelForm):",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "documentation": {}
-    },
-    {
-        "label": "EASItemFormSet",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "peekOfCode": "EASItemFormSet = inlineformset_factory(\n    EAS,\n    EASItem,\n    form=EASItemForm,\n    extra=1,\n    can_delete=True,\n    min_num=1,\n    validate_min=True,\n)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.forms_phase1",
-        "documentation": {}
-    },
-    {
-        "label": "TwoLevelApprovalMixin",
-        "kind": 6,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "class TwoLevelApprovalMixin(models.Model):\n    \"\"\"Reusable AO review -> CFA final approval workflow.\"\"\"\n    WORKFLOW_CHOICES = [\n        (\"DRAFT\", \"Draft\"),\n        (\"PENDING_AO\", \"Pending Account Officer\"),\n        (\"AO_RETURNED\", \"Returned by Account Officer\"),\n        (\"PENDING_CFA\", \"Pending CFA\"),\n        (\"CFA_RETURNED\", \"Returned by CFA\"),\n        (\"REJECTED\", \"Rejected\"),\n        (\"APPROVED\", \"Approved\"),",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "GeMSurvey",
-        "kind": 6,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "class GeMSurvey(CoreModel):\n    \"\"\"One structured market survey per Procurement Case.\"\"\"\n    STATUS_CHOICES = [\n        (\"DRAFT\", \"Draft\"),\n        (\"COMPLETED\", \"Completed\"),\n    ]\n    case = models.OneToOneField(\n        \"procurement.ProcurementCase\",\n        on_delete=models.PROTECT,\n        related_name=\"gem_survey\",",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "GeMSurveyItem",
-        "kind": 6,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "class GeMSurveyItem(CoreModel):\n    \"\"\"Repeatable GeM products compared during market survey.\"\"\"\n    survey = models.ForeignKey(\n        GeMSurvey,\n        on_delete=models.CASCADE,\n        related_name=\"items\",\n    )\n    serial_number = models.PositiveIntegerField(default=1)\n    product_name = models.CharField(max_length=250)\n    gem_product_id = models.CharField(max_length=100, blank=True)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "EASItem",
-        "kind": 6,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "class EASItem(CoreModel):\n    \"\"\"Repeatable item table corresponding to EAS paragraphs 7.1/7.2.\"\"\"\n    eas = models.ForeignKey(\n        \"procurement.EAS\",\n        on_delete=models.CASCADE,\n        related_name=\"items\",\n    )\n    serial_number = models.PositiveIntegerField(default=1)\n    item_description = models.TextField()\n    unit_of_measure = models.CharField(max_length=50, verbose_name=\"A/U\")",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "NOTING_SHEET_PHASE1_FIELDS",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "NOTING_SHEET_PHASE1_FIELDS = r\"\"\"\nprocurement_case = models.OneToOneField(\n    ProcurementCase,\n    on_delete=models.PROTECT,\n    related_name=\"noting_sheet\",\n)\nfile_number = models.CharField(max_length=100)\nsheet_number = models.CharField(max_length=30, blank=True)\nbranch = models.CharField(max_length=150)\nnoting_date = models.DateField(default=timezone.localdate)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "procurement_case",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "procurement_case = models.OneToOneField(\n    ProcurementCase,\n    on_delete=models.PROTECT,\n    related_name=\"noting_sheet\",\n)\nfile_number = models.CharField(max_length=100)\nsheet_number = models.CharField(max_length=30, blank=True)\nbranch = models.CharField(max_length=150)\nnoting_date = models.DateField(default=timezone.localdate)\nfinancial_year = models.CharField(max_length=9)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "file_number",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "file_number = models.CharField(max_length=100)\nsheet_number = models.CharField(max_length=30, blank=True)\nbranch = models.CharField(max_length=150)\nnoting_date = models.DateField(default=timezone.localdate)\nfinancial_year = models.CharField(max_length=9)\nunit_name = models.CharField(max_length=200)\nstation = models.CharField(max_length=150)\nsubject = models.CharField(max_length=500)\nrequirement_summary = models.TextField()\ndetailed_justification = models.TextField()",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "sheet_number",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "sheet_number = models.CharField(max_length=30, blank=True)\nbranch = models.CharField(max_length=150)\nnoting_date = models.DateField(default=timezone.localdate)\nfinancial_year = models.CharField(max_length=9)\nunit_name = models.CharField(max_length=200)\nstation = models.CharField(max_length=150)\nsubject = models.CharField(max_length=500)\nrequirement_summary = models.TextField()\ndetailed_justification = models.TextField()\nurgency_reason = models.TextField(blank=True)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "branch",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "branch = models.CharField(max_length=150)\nnoting_date = models.DateField(default=timezone.localdate)\nfinancial_year = models.CharField(max_length=9)\nunit_name = models.CharField(max_length=200)\nstation = models.CharField(max_length=150)\nsubject = models.CharField(max_length=500)\nrequirement_summary = models.TextField()\ndetailed_justification = models.TextField()\nurgency_reason = models.TextField(blank=True)\nproposal_text = models.TextField()",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "noting_date",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "noting_date = models.DateField(default=timezone.localdate)\nfinancial_year = models.CharField(max_length=9)\nunit_name = models.CharField(max_length=200)\nstation = models.CharField(max_length=150)\nsubject = models.CharField(max_length=500)\nrequirement_summary = models.TextField()\ndetailed_justification = models.TextField()\nurgency_reason = models.TextField(blank=True)\nproposal_text = models.TextField()\nrecommendation_text = models.TextField()",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "financial_year",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "financial_year = models.CharField(max_length=9)\nunit_name = models.CharField(max_length=200)\nstation = models.CharField(max_length=150)\nsubject = models.CharField(max_length=500)\nrequirement_summary = models.TextField()\ndetailed_justification = models.TextField()\nurgency_reason = models.TextField(blank=True)\nproposal_text = models.TextField()\nrecommendation_text = models.TextField()\nselected_survey_item = models.ForeignKey(",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "unit_name",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "unit_name = models.CharField(max_length=200)\nstation = models.CharField(max_length=150)\nsubject = models.CharField(max_length=500)\nrequirement_summary = models.TextField()\ndetailed_justification = models.TextField()\nurgency_reason = models.TextField(blank=True)\nproposal_text = models.TextField()\nrecommendation_text = models.TextField()\nselected_survey_item = models.ForeignKey(\n    GeMSurveyItem,",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "station",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "station = models.CharField(max_length=150)\nsubject = models.CharField(max_length=500)\nrequirement_summary = models.TextField()\ndetailed_justification = models.TextField()\nurgency_reason = models.TextField(blank=True)\nproposal_text = models.TextField()\nrecommendation_text = models.TextField()\nselected_survey_item = models.ForeignKey(\n    GeMSurveyItem,\n    on_delete=models.PROTECT,",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "subject",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "subject = models.CharField(max_length=500)\nrequirement_summary = models.TextField()\ndetailed_justification = models.TextField()\nurgency_reason = models.TextField(blank=True)\nproposal_text = models.TextField()\nrecommendation_text = models.TextField()\nselected_survey_item = models.ForeignKey(\n    GeMSurveyItem,\n    on_delete=models.PROTECT,\n    related_name=\"noting_sheets\",",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "requirement_summary",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "requirement_summary = models.TextField()\ndetailed_justification = models.TextField()\nurgency_reason = models.TextField(blank=True)\nproposal_text = models.TextField()\nrecommendation_text = models.TextField()\nselected_survey_item = models.ForeignKey(\n    GeMSurveyItem,\n    on_delete=models.PROTECT,\n    related_name=\"noting_sheets\",\n)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "detailed_justification",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "detailed_justification = models.TextField()\nurgency_reason = models.TextField(blank=True)\nproposal_text = models.TextField()\nrecommendation_text = models.TextField()\nselected_survey_item = models.ForeignKey(\n    GeMSurveyItem,\n    on_delete=models.PROTECT,\n    related_name=\"noting_sheets\",\n)\nfund_head_snapshot = models.CharField(max_length=250)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "urgency_reason",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "urgency_reason = models.TextField(blank=True)\nproposal_text = models.TextField()\nrecommendation_text = models.TextField()\nselected_survey_item = models.ForeignKey(\n    GeMSurveyItem,\n    on_delete=models.PROTECT,\n    related_name=\"noting_sheets\",\n)\nfund_head_snapshot = models.CharField(max_length=250)\nsub_head_snapshot = models.CharField(max_length=250)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "proposal_text",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "proposal_text = models.TextField()\nrecommendation_text = models.TextField()\nselected_survey_item = models.ForeignKey(\n    GeMSurveyItem,\n    on_delete=models.PROTECT,\n    related_name=\"noting_sheets\",\n)\nfund_head_snapshot = models.CharField(max_length=250)\nsub_head_snapshot = models.CharField(max_length=250)\nfund_allotted = models.DecimalField(max_digits=15, decimal_places=2)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "recommendation_text",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "recommendation_text = models.TextField()\nselected_survey_item = models.ForeignKey(\n    GeMSurveyItem,\n    on_delete=models.PROTECT,\n    related_name=\"noting_sheets\",\n)\nfund_head_snapshot = models.CharField(max_length=250)\nsub_head_snapshot = models.CharField(max_length=250)\nfund_allotted = models.DecimalField(max_digits=15, decimal_places=2)\nfund_released = models.DecimalField(max_digits=15, decimal_places=2)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "selected_survey_item",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "selected_survey_item = models.ForeignKey(\n    GeMSurveyItem,\n    on_delete=models.PROTECT,\n    related_name=\"noting_sheets\",\n)\nfund_head_snapshot = models.CharField(max_length=250)\nsub_head_snapshot = models.CharField(max_length=250)\nfund_allotted = models.DecimalField(max_digits=15, decimal_places=2)\nfund_released = models.DecimalField(max_digits=15, decimal_places=2)\nprevious_expenditure = models.DecimalField(max_digits=15, decimal_places=2)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "fund_head_snapshot",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "fund_head_snapshot = models.CharField(max_length=250)\nsub_head_snapshot = models.CharField(max_length=250)\nfund_allotted = models.DecimalField(max_digits=15, decimal_places=2)\nfund_released = models.DecimalField(max_digits=15, decimal_places=2)\nprevious_expenditure = models.DecimalField(max_digits=15, decimal_places=2)\ncurrent_case_amount = models.DecimalField(max_digits=15, decimal_places=2)\nexpenditure_including_case = models.DecimalField(max_digits=15, decimal_places=2)\nprojected_balance = models.DecimalField(max_digits=15, decimal_places=2)\nfund_position_as_on = models.DateField(default=timezone.localdate)\ngenerated_docx = models.FileField(",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "sub_head_snapshot",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "sub_head_snapshot = models.CharField(max_length=250)\nfund_allotted = models.DecimalField(max_digits=15, decimal_places=2)\nfund_released = models.DecimalField(max_digits=15, decimal_places=2)\nprevious_expenditure = models.DecimalField(max_digits=15, decimal_places=2)\ncurrent_case_amount = models.DecimalField(max_digits=15, decimal_places=2)\nexpenditure_including_case = models.DecimalField(max_digits=15, decimal_places=2)\nprojected_balance = models.DecimalField(max_digits=15, decimal_places=2)\nfund_position_as_on = models.DateField(default=timezone.localdate)\ngenerated_docx = models.FileField(\n    upload_to=\"procurement/generated/noting/docx/%Y/%m/\",",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "fund_allotted",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "fund_allotted = models.DecimalField(max_digits=15, decimal_places=2)\nfund_released = models.DecimalField(max_digits=15, decimal_places=2)\nprevious_expenditure = models.DecimalField(max_digits=15, decimal_places=2)\ncurrent_case_amount = models.DecimalField(max_digits=15, decimal_places=2)\nexpenditure_including_case = models.DecimalField(max_digits=15, decimal_places=2)\nprojected_balance = models.DecimalField(max_digits=15, decimal_places=2)\nfund_position_as_on = models.DateField(default=timezone.localdate)\ngenerated_docx = models.FileField(\n    upload_to=\"procurement/generated/noting/docx/%Y/%m/\",\n    blank=True,",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "fund_released",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "fund_released = models.DecimalField(max_digits=15, decimal_places=2)\nprevious_expenditure = models.DecimalField(max_digits=15, decimal_places=2)\ncurrent_case_amount = models.DecimalField(max_digits=15, decimal_places=2)\nexpenditure_including_case = models.DecimalField(max_digits=15, decimal_places=2)\nprojected_balance = models.DecimalField(max_digits=15, decimal_places=2)\nfund_position_as_on = models.DateField(default=timezone.localdate)\ngenerated_docx = models.FileField(\n    upload_to=\"procurement/generated/noting/docx/%Y/%m/\",\n    blank=True,\n    null=True,",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "previous_expenditure",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "previous_expenditure = models.DecimalField(max_digits=15, decimal_places=2)\ncurrent_case_amount = models.DecimalField(max_digits=15, decimal_places=2)\nexpenditure_including_case = models.DecimalField(max_digits=15, decimal_places=2)\nprojected_balance = models.DecimalField(max_digits=15, decimal_places=2)\nfund_position_as_on = models.DateField(default=timezone.localdate)\ngenerated_docx = models.FileField(\n    upload_to=\"procurement/generated/noting/docx/%Y/%m/\",\n    blank=True,\n    null=True,\n)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "current_case_amount",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "current_case_amount = models.DecimalField(max_digits=15, decimal_places=2)\nexpenditure_including_case = models.DecimalField(max_digits=15, decimal_places=2)\nprojected_balance = models.DecimalField(max_digits=15, decimal_places=2)\nfund_position_as_on = models.DateField(default=timezone.localdate)\ngenerated_docx = models.FileField(\n    upload_to=\"procurement/generated/noting/docx/%Y/%m/\",\n    blank=True,\n    null=True,\n)\ngenerated_pdf = models.FileField(",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "expenditure_including_case",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "expenditure_including_case = models.DecimalField(max_digits=15, decimal_places=2)\nprojected_balance = models.DecimalField(max_digits=15, decimal_places=2)\nfund_position_as_on = models.DateField(default=timezone.localdate)\ngenerated_docx = models.FileField(\n    upload_to=\"procurement/generated/noting/docx/%Y/%m/\",\n    blank=True,\n    null=True,\n)\ngenerated_pdf = models.FileField(\n    upload_to=\"procurement/generated/noting/pdf/%Y/%m/\",",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "projected_balance",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "projected_balance = models.DecimalField(max_digits=15, decimal_places=2)\nfund_position_as_on = models.DateField(default=timezone.localdate)\ngenerated_docx = models.FileField(\n    upload_to=\"procurement/generated/noting/docx/%Y/%m/\",\n    blank=True,\n    null=True,\n)\ngenerated_pdf = models.FileField(\n    upload_to=\"procurement/generated/noting/pdf/%Y/%m/\",\n    blank=True,",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "fund_position_as_on",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "fund_position_as_on = models.DateField(default=timezone.localdate)\ngenerated_docx = models.FileField(\n    upload_to=\"procurement/generated/noting/docx/%Y/%m/\",\n    blank=True,\n    null=True,\n)\ngenerated_pdf = models.FileField(\n    upload_to=\"procurement/generated/noting/pdf/%Y/%m/\",\n    blank=True,\n    null=True,",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "generated_docx",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "generated_docx = models.FileField(\n    upload_to=\"procurement/generated/noting/docx/%Y/%m/\",\n    blank=True,\n    null=True,\n)\ngenerated_pdf = models.FileField(\n    upload_to=\"procurement/generated/noting/pdf/%Y/%m/\",\n    blank=True,\n    null=True,\n)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "generated_pdf",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "generated_pdf = models.FileField(\n    upload_to=\"procurement/generated/noting/pdf/%Y/%m/\",\n    blank=True,\n    null=True,\n)\ndocument_version = models.PositiveIntegerField(default=1)\n\"\"\"\n# ----------------------------------------------------------------------\n# Add/merge the following fields into the EXISTING EAS model.\n# Do not create a second EAS class.",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "document_version",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "document_version = models.PositiveIntegerField(default=1)\n\"\"\"\n# ----------------------------------------------------------------------\n# Add/merge the following fields into the EXISTING EAS model.\n# Do not create a second EAS class.\n# ----------------------------------------------------------------------\nEAS_PHASE1_FIELDS = r\"\"\"\nprocurement_case = models.OneToOneField(\n    ProcurementCase,\n    on_delete=models.PROTECT,",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "EAS_PHASE1_FIELDS",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "EAS_PHASE1_FIELDS = r\"\"\"\nprocurement_case = models.OneToOneField(\n    ProcurementCase,\n    on_delete=models.PROTECT,\n    related_name=\"eas\",\n)\nfinancial_year = models.CharField(max_length=9)\nsanction_date = models.DateField(default=timezone.localdate)\ndfpds_authority_reference = models.CharField(max_length=250)\nschedule_reference = models.CharField(max_length=250, blank=True)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "procurement_case",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "procurement_case = models.OneToOneField(\n    ProcurementCase,\n    on_delete=models.PROTECT,\n    related_name=\"eas\",\n)\nfinancial_year = models.CharField(max_length=9)\nsanction_date = models.DateField(default=timezone.localdate)\ndfpds_authority_reference = models.CharField(max_length=250)\nschedule_reference = models.CharField(max_length=250, blank=True)\nsub_schedule_reference = models.CharField(max_length=250, blank=True)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "financial_year",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "financial_year = models.CharField(max_length=9)\nsanction_date = models.DateField(default=timezone.localdate)\ndfpds_authority_reference = models.CharField(max_length=250)\nschedule_reference = models.CharField(max_length=250, blank=True)\nsub_schedule_reference = models.CharField(max_length=250, blank=True)\nsupplier_address = models.TextField(blank=True)\nquantity_in_words = models.CharField(max_length=250)\nsubtotal = models.DecimalField(max_digits=15, decimal_places=2)\nfreight_charges = models.DecimalField(\n    max_digits=15,",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "sanction_date",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "sanction_date = models.DateField(default=timezone.localdate)\ndfpds_authority_reference = models.CharField(max_length=250)\nschedule_reference = models.CharField(max_length=250, blank=True)\nsub_schedule_reference = models.CharField(max_length=250, blank=True)\nsupplier_address = models.TextField(blank=True)\nquantity_in_words = models.CharField(max_length=250)\nsubtotal = models.DecimalField(max_digits=15, decimal_places=2)\nfreight_charges = models.DecimalField(\n    max_digits=15,\n    decimal_places=2,",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "dfpds_authority_reference",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "dfpds_authority_reference = models.CharField(max_length=250)\nschedule_reference = models.CharField(max_length=250, blank=True)\nsub_schedule_reference = models.CharField(max_length=250, blank=True)\nsupplier_address = models.TextField(blank=True)\nquantity_in_words = models.CharField(max_length=250)\nsubtotal = models.DecimalField(max_digits=15, decimal_places=2)\nfreight_charges = models.DecimalField(\n    max_digits=15,\n    decimal_places=2,\n    default=0,",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "schedule_reference",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "schedule_reference = models.CharField(max_length=250, blank=True)\nsub_schedule_reference = models.CharField(max_length=250, blank=True)\nsupplier_address = models.TextField(blank=True)\nquantity_in_words = models.CharField(max_length=250)\nsubtotal = models.DecimalField(max_digits=15, decimal_places=2)\nfreight_charges = models.DecimalField(\n    max_digits=15,\n    decimal_places=2,\n    default=0,\n)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "sub_schedule_reference",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "sub_schedule_reference = models.CharField(max_length=250, blank=True)\nsupplier_address = models.TextField(blank=True)\nquantity_in_words = models.CharField(max_length=250)\nsubtotal = models.DecimalField(max_digits=15, decimal_places=2)\nfreight_charges = models.DecimalField(\n    max_digits=15,\n    decimal_places=2,\n    default=0,\n)\nother_charges_amount = models.DecimalField(",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "supplier_address",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "supplier_address = models.TextField(blank=True)\nquantity_in_words = models.CharField(max_length=250)\nsubtotal = models.DecimalField(max_digits=15, decimal_places=2)\nfreight_charges = models.DecimalField(\n    max_digits=15,\n    decimal_places=2,\n    default=0,\n)\nother_charges_amount = models.DecimalField(\n    max_digits=15,",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "quantity_in_words",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "quantity_in_words = models.CharField(max_length=250)\nsubtotal = models.DecimalField(max_digits=15, decimal_places=2)\nfreight_charges = models.DecimalField(\n    max_digits=15,\n    decimal_places=2,\n    default=0,\n)\nother_charges_amount = models.DecimalField(\n    max_digits=15,\n    decimal_places=2,",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "subtotal",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "subtotal = models.DecimalField(max_digits=15, decimal_places=2)\nfreight_charges = models.DecimalField(\n    max_digits=15,\n    decimal_places=2,\n    default=0,\n)\nother_charges_amount = models.DecimalField(\n    max_digits=15,\n    decimal_places=2,\n    default=0,",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "freight_charges",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "freight_charges = models.DecimalField(\n    max_digits=15,\n    decimal_places=2,\n    default=0,\n)\nother_charges_amount = models.DecimalField(\n    max_digits=15,\n    decimal_places=2,\n    default=0,\n)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "other_charges_amount",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "other_charges_amount = models.DecimalField(\n    max_digits=15,\n    decimal_places=2,\n    default=0,\n)\ntotal_sanction_amount = models.DecimalField(\n    max_digits=15,\n    decimal_places=2,\n)\nmajor_head = models.CharField(max_length=100)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "total_sanction_amount",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "total_sanction_amount = models.DecimalField(\n    max_digits=15,\n    decimal_places=2,\n)\nmajor_head = models.CharField(max_length=100)\nminor_head = models.CharField(max_length=100)\nsub_head_account = models.CharField(max_length=100)\ndetailed_head = models.CharField(max_length=100)\ncgda_code_head = models.CharField(max_length=100)\nifa_applicable = models.BooleanField(default=False)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "major_head",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "major_head = models.CharField(max_length=100)\nminor_head = models.CharField(max_length=100)\nsub_head_account = models.CharField(max_length=100)\ndetailed_head = models.CharField(max_length=100)\ncgda_code_head = models.CharField(max_length=100)\nifa_applicable = models.BooleanField(default=False)\nifa_concurrence_reference = models.CharField(\n    max_length=250,\n    blank=True,\n)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "minor_head",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "minor_head = models.CharField(max_length=100)\nsub_head_account = models.CharField(max_length=100)\ndetailed_head = models.CharField(max_length=100)\ncgda_code_head = models.CharField(max_length=100)\nifa_applicable = models.BooleanField(default=False)\nifa_concurrence_reference = models.CharField(\n    max_length=250,\n    blank=True,\n)\nifa_not_applicable_reason = models.TextField(blank=True)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "sub_head_account",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "sub_head_account = models.CharField(max_length=100)\ndetailed_head = models.CharField(max_length=100)\ncgda_code_head = models.CharField(max_length=100)\nifa_applicable = models.BooleanField(default=False)\nifa_concurrence_reference = models.CharField(\n    max_length=250,\n    blank=True,\n)\nifa_not_applicable_reason = models.TextField(blank=True)\ngenerated_docx = models.FileField(",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "detailed_head",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "detailed_head = models.CharField(max_length=100)\ncgda_code_head = models.CharField(max_length=100)\nifa_applicable = models.BooleanField(default=False)\nifa_concurrence_reference = models.CharField(\n    max_length=250,\n    blank=True,\n)\nifa_not_applicable_reason = models.TextField(blank=True)\ngenerated_docx = models.FileField(\n    upload_to=\"procurement/generated/eas/docx/%Y/%m/\",",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "cgda_code_head",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "cgda_code_head = models.CharField(max_length=100)\nifa_applicable = models.BooleanField(default=False)\nifa_concurrence_reference = models.CharField(\n    max_length=250,\n    blank=True,\n)\nifa_not_applicable_reason = models.TextField(blank=True)\ngenerated_docx = models.FileField(\n    upload_to=\"procurement/generated/eas/docx/%Y/%m/\",\n    blank=True,",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "ifa_applicable",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "ifa_applicable = models.BooleanField(default=False)\nifa_concurrence_reference = models.CharField(\n    max_length=250,\n    blank=True,\n)\nifa_not_applicable_reason = models.TextField(blank=True)\ngenerated_docx = models.FileField(\n    upload_to=\"procurement/generated/eas/docx/%Y/%m/\",\n    blank=True,\n    null=True,",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "ifa_concurrence_reference",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "ifa_concurrence_reference = models.CharField(\n    max_length=250,\n    blank=True,\n)\nifa_not_applicable_reason = models.TextField(blank=True)\ngenerated_docx = models.FileField(\n    upload_to=\"procurement/generated/eas/docx/%Y/%m/\",\n    blank=True,\n    null=True,\n)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "ifa_not_applicable_reason",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "ifa_not_applicable_reason = models.TextField(blank=True)\ngenerated_docx = models.FileField(\n    upload_to=\"procurement/generated/eas/docx/%Y/%m/\",\n    blank=True,\n    null=True,\n)\ngenerated_pdf = models.FileField(\n    upload_to=\"procurement/generated/eas/pdf/%Y/%m/\",\n    blank=True,\n    null=True,",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "generated_docx",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "generated_docx = models.FileField(\n    upload_to=\"procurement/generated/eas/docx/%Y/%m/\",\n    blank=True,\n    null=True,\n)\ngenerated_pdf = models.FileField(\n    upload_to=\"procurement/generated/eas/pdf/%Y/%m/\",\n    blank=True,\n    null=True,\n)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "generated_pdf",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "generated_pdf = models.FileField(\n    upload_to=\"procurement/generated/eas/pdf/%Y/%m/\",\n    blank=True,\n    null=True,\n)\ndocument_version = models.PositiveIntegerField(default=1)\n\"\"\"\nclass EASItem(CoreModel):\n    \"\"\"Repeatable item table corresponding to EAS paragraphs 7.1/7.2.\"\"\"\n    eas = models.ForeignKey(",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "document_version",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "peekOfCode": "document_version = models.PositiveIntegerField(default=1)\n\"\"\"\nclass EASItem(CoreModel):\n    \"\"\"Repeatable item table corresponding to EAS paragraphs 7.1/7.2.\"\"\"\n    eas = models.ForeignKey(\n        \"procurement.EAS\",\n        on_delete=models.CASCADE,\n        related_name=\"items\",\n    )\n    serial_number = models.PositiveIntegerField(default=1)",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.phase1_models",
-        "documentation": {}
-    },
-    {
-        "label": "get_active_financial_year",
-        "kind": 2,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "peekOfCode": "def get_active_financial_year():\n    financial_year = FinancialYear.objects.filter(\n        is_active=True,\n        is_closed=False,\n    ).first()\n    if financial_year is None:\n        raise ValidationError(\n            \"No active financial year is configured.\"\n        )\n    return financial_year",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "documentation": {}
-    },
-    {
-        "label": "get_sub_head_fund_snapshot",
-        "kind": 2,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "peekOfCode": "def get_sub_head_fund_snapshot(sub_head, financial_year=None):\n    \"\"\"Return a ledger-derived snapshot for Noting Sheet creation.\"\"\"\n    financial_year = financial_year or get_active_financial_year()\n    qs = FundTransaction.objects.filter(\n        sub_head=sub_head,\n        financial_year=financial_year,\n        is_reversed=False,\n    )\n    totals = qs.aggregate(\n        total_credit=Coalesce(",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "documentation": {}
-    },
-    {
-        "label": "get_selected_survey_item",
-        "kind": 2,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "peekOfCode": "def get_selected_survey_item(case):\n    try:\n        survey = case.gem_survey\n    except AttributeError as exc:\n        raise ValidationError(\n            \"Complete the GeM survey before creating the Noting Sheet.\"\n        ) from exc\n    if survey.status != \"COMPLETED\":\n        raise ValidationError(\n            \"The GeM survey must be marked Completed.\"",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "documentation": {}
-    },
-    {
-        "label": "build_noting_initial_data",
-        "kind": 2,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "peekOfCode": "def build_noting_initial_data(case):\n    requirement = case.requirement_item\n    if requirement.sub_head_id is None:\n        raise ValidationError(\n            \"Requirement must have a Sub Head before Noting creation.\"\n        )\n    selected = get_selected_survey_item(case)\n    snapshot = get_sub_head_fund_snapshot(requirement.sub_head)\n    case_amount = selected.total_price\n    including = snapshot[\"previous_expenditure\"] + case_amount",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "documentation": {}
-    },
-    {
-        "label": "DECIMAL_FIELD",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "peekOfCode": "DECIMAL_FIELD = DecimalField(max_digits=15, decimal_places=2)\nZERO = Value(Decimal(\"0.00\"), output_field=DECIMAL_FIELD)\nCREDIT_TYPES = [\n    \"OPENING\",\n    \"CREDIT\",\n    \"EXPENDITURE_REVERSAL\",\n    \"ADJUSTMENT_CREDIT\",\n]\nDEBIT_TYPES = [\n    \"EXPENDITURE\",",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "documentation": {}
-    },
-    {
-        "label": "ZERO",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "peekOfCode": "ZERO = Value(Decimal(\"0.00\"), output_field=DECIMAL_FIELD)\nCREDIT_TYPES = [\n    \"OPENING\",\n    \"CREDIT\",\n    \"EXPENDITURE_REVERSAL\",\n    \"ADJUSTMENT_CREDIT\",\n]\nDEBIT_TYPES = [\n    \"EXPENDITURE\",\n    \"CREDIT_REVERSAL\",",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "documentation": {}
-    },
-    {
-        "label": "CREDIT_TYPES",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "peekOfCode": "CREDIT_TYPES = [\n    \"OPENING\",\n    \"CREDIT\",\n    \"EXPENDITURE_REVERSAL\",\n    \"ADJUSTMENT_CREDIT\",\n]\nDEBIT_TYPES = [\n    \"EXPENDITURE\",\n    \"CREDIT_REVERSAL\",\n    \"ADJUSTMENT_DEBIT\",",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "documentation": {}
-    },
-    {
-        "label": "DEBIT_TYPES",
-        "kind": 5,
-        "importPath": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "description": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
-        "peekOfCode": "DEBIT_TYPES = [\n    \"EXPENDITURE\",\n    \"CREDIT_REVERSAL\",\n    \"ADJUSTMENT_DEBIT\",\n]\ndef get_active_financial_year():\n    financial_year = FinancialYear.objects.filter(\n        is_active=True,\n        is_closed=False,\n    ).first()",
-        "detail": "procurement.UAMS_Procurement_Amended_Phase1.procurement.services_phase1",
+        "importPath": "procurement.migrations.0008_remove_conveningorder_additional_members_and_more",
+        "description": "procurement.migrations.0008_remove_conveningorder_additional_members_and_more",
+        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('procurement', '0007_conveningorder_conveningorderattachment'),\n    ]\n    operations = [\n        migrations.RemoveField(\n            model_name='conveningorder',\n            name='additional_members',\n        ),\n        migrations.RemoveField(",
+        "detail": "procurement.migrations.0008_remove_conveningorder_additional_members_and_more",
         "documentation": {}
     },
     {
@@ -3701,7 +2901,7 @@
         "kind": 6,
         "importPath": "procurement.forms",
         "description": "procurement.forms",
-        "peekOfCode": "class EASDocumentUploadForm(forms.Form):\n    \"\"\"Single-file upload used for Sanction / Contract / Invoice — the\n    doc_type (which model field it writes to) is chosen in the view, not\n    here (see eas_upload_document / EAS_DOCUMENT_FIELDS).\"\"\"\n    document = forms.FileField(\n        validators=[FileExtensionValidator(allowed_extensions=[\"pdf\"])]\n    )\nUser = get_user_model()\nclass ConveningOrderForm(forms.ModelForm):\n    additional_members = forms.ModelMultipleChoiceField(",
+        "peekOfCode": "class EASDocumentUploadForm(forms.Form):\n    \"\"\"Single-file upload used for Sanction / Contract / Invoice — the\n    doc_type (which model field it writes to) is chosen in the view, not\n    here (see eas_upload_document / EAS_DOCUMENT_FIELDS).\"\"\"\n    document = forms.FileField(\n        validators=[FileExtensionValidator(allowed_extensions=[\"pdf\"])]\n    )\nUser = get_user_model()\nclass ConveningOrderForm(forms.ModelForm):\n    class Meta:",
         "detail": "procurement.forms",
         "documentation": {}
     },
@@ -3710,7 +2910,7 @@
         "kind": 6,
         "importPath": "procurement.forms",
         "description": "procurement.forms",
-        "peekOfCode": "class ConveningOrderForm(forms.ModelForm):\n    additional_members = forms.ModelMultipleChoiceField(\n        queryset=User.objects.filter(is_active=True).order_by(\"username\"),\n        required=False,\n        widget=forms.SelectMultiple(attrs={\"size\": 5}),\n        label=\"Additional Members\",\n    )\n    class Meta:\n        model = ConveningOrder\n        fields = [",
+        "peekOfCode": "class ConveningOrderForm(forms.ModelForm):\n    class Meta:\n        model = ConveningOrder\n        fields = [\n            \"description\",\n            \"presiding_officer\",\n            \"member_1\",\n            \"member_2\",\n            \"completion_date\",\n            \"two_ic_name\",",
         "detail": "procurement.forms",
         "documentation": {}
     },
@@ -3728,7 +2928,7 @@
         "kind": 5,
         "importPath": "procurement.forms",
         "description": "procurement.forms",
-        "peekOfCode": "User = get_user_model()\nclass ConveningOrderForm(forms.ModelForm):\n    additional_members = forms.ModelMultipleChoiceField(\n        queryset=User.objects.filter(is_active=True).order_by(\"username\"),\n        required=False,\n        widget=forms.SelectMultiple(attrs={\"size\": 5}),\n        label=\"Additional Members\",\n    )\n    class Meta:\n        model = ConveningOrder",
+        "peekOfCode": "User = get_user_model()\nclass ConveningOrderForm(forms.ModelForm):\n    class Meta:\n        model = ConveningOrder\n        fields = [\n            \"description\",\n            \"presiding_officer\",\n            \"member_1\",\n            \"member_2\",\n            \"completion_date\",",
         "detail": "procurement.forms",
         "documentation": {}
     },
@@ -3782,16 +2982,7 @@
         "kind": 6,
         "importPath": "procurement.models",
         "description": "procurement.models",
-        "peekOfCode": "class ConveningOrder(models.Model):\n    PURPOSE_CHOICES = [\n        (\"INSPECTION\", \"Inspection\"),\n        (\"PURCHASE\", \"Purchase\"),\n        (\"BOO\", \"BOO\"),\n        (\"OTHER\", \"Other\"),\n    ]\n    APPROVAL_STATUS_CHOICES = [\n        (\"DRAFT\", \"Draft\"),\n        (\"PENDING\", \"Pending\"),",
-        "detail": "procurement.models",
-        "documentation": {}
-    },
-    {
-        "label": "ConveningOrderAttachment",
-        "kind": 6,
-        "importPath": "procurement.models",
-        "description": "procurement.models",
-        "peekOfCode": "class ConveningOrderAttachment(models.Model):\n    convening_order = models.ForeignKey(\n        ConveningOrder,\n        on_delete=models.CASCADE,\n        related_name=\"attachments\",\n    )\n    file = models.FileField(upload_to=\"convening_orders/\")\n    uploaded_at = models.DateTimeField(auto_now_add=True)\n    class Meta:\n        db_table = \"proc_convening_order_attachments\"",
+        "peekOfCode": "class ConveningOrder(models.Model):\n    convening_order_id = models.CharField(max_length=30, unique=True, editable=False)\n    procurement_case = models.OneToOneField(\n        ProcurementCase,\n        on_delete=models.PROTECT,\n        related_name=\"convening_order\",\n    )\n    description = models.TextField(verbose_name=\"Convening Order Description\")\n    presiding_officer = models.CharField(max_length=250)\n    member_1 = models.CharField(max_length=250)",
         "detail": "procurement.models",
         "documentation": {}
     },
@@ -3935,7 +3126,7 @@
         "kind": 2,
         "importPath": "procurement.views",
         "description": "procurement.views",
-        "peekOfCode": "def convening_order_create(request, eas_pk):\n    eas = get_object_or_404(EAS, pk=eas_pk)\n    if eas.workflow_status != \"APPROVED\":\n        messages.error(request, \"Convening Order can only be created after EAS approval.\")\n        return redirect(\"eas_detail\", pk=eas.pk)\n    if not (eas.sanction_document and eas.contract_document and eas.invoice_document):\n        messages.error(\n            request,\n            \"Sanction, Contract and Invoice must all be uploaded before creating the Convening Order.\",\n        )",
+        "peekOfCode": "def convening_order_create(request, eas_pk):\n    eas = get_object_or_404(EAS, pk=eas_pk)\n    # --------------------------------------------------------\n    # 1. Permission check\n    # --------------------------------------------------------\n    if request.user.role not in CONVENING_ORDER_CREATOR_ROLES:\n        messages.error(\n            request,\n            \"You are not authorised to create a Convening Order.\"\n        )",
         "detail": "procurement.views",
         "documentation": {}
     },
@@ -3944,7 +3135,16 @@
         "kind": 2,
         "importPath": "procurement.views",
         "description": "procurement.views",
-        "peekOfCode": "def convening_order_detail(request, pk):\n    order = get_object_or_404(\n        ConveningOrder.objects.select_related(\n            \"procurement_case\",\n            \"presiding_officer\",\n            \"member_1\",\n            \"member_2\",\n            \"technical_representative\",\n            \"member_secretary\",\n            \"convening_authority\",",
+        "peekOfCode": "def convening_order_detail(request, pk):\n    order = get_object_or_404(\n        ConveningOrder.objects.select_related(\n            \"procurement_case\",\n            \"procurement_case__requirement_item\",\n        ),\n        pk=pk,\n    )\n    return render(\n        request,",
+        "detail": "procurement.views",
+        "documentation": {}
+    },
+    {
+        "label": "convening_order_download_docx",
+        "kind": 2,
+        "importPath": "procurement.views",
+        "description": "procurement.views",
+        "peekOfCode": "def convening_order_download_docx(request, pk):\n    order = get_object_or_404(\n        ConveningOrder,\n        pk=pk\n    )\n    # --------------------------------------------------------\n    # Create Word document\n    # --------------------------------------------------------\n    document = Document()\n    normal_style = document.styles[\"Normal\"]",
         "detail": "procurement.views",
         "documentation": {}
     },
@@ -3954,6 +3154,15 @@
         "importPath": "procurement.views",
         "description": "procurement.views",
         "peekOfCode": "EAS_DOCUMENT_FIELDS = {\n    \"sanction\": \"sanction_document\",\n    \"contract\": \"contract_document\",\n    \"invoice\": \"invoice_document\",\n}\n@login_required\ndef eas_upload_document(request, pk, doc_type):\n    eas = get_object_or_404(EAS, pk=pk)\n    field_name = EAS_DOCUMENT_FIELDS.get(doc_type)\n    if field_name is None:",
+        "detail": "procurement.views",
+        "documentation": {}
+    },
+    {
+        "label": "CONVENING_ORDER_CREATOR_ROLES",
+        "kind": 5,
+        "importPath": "procurement.views",
+        "description": "procurement.views",
+        "peekOfCode": "CONVENING_ORDER_CREATOR_ROLES = {\n    \"ADMINISTRATOR\",\n    \"HEAD_CLERK\",\n    \"ACCOUNTS_CLERK\",\n}\n@login_required\ndef convening_order_create(request, eas_pk):\n    eas = get_object_or_404(EAS, pk=eas_pk)\n    # --------------------------------------------------------\n    # 1. Permission check",
         "detail": "procurement.views",
         "documentation": {}
     },

@@ -1621,3 +1621,34 @@ table.shd-table tbody tr:hover {
   }
   .co-table td { padding: 0 0 18px; }
 }
+
+.co-simple-section {
+  border-top:1px solid var(--border);
+  padding-top:20px;
+  margin-top:20px;
+}
+
+.co-simple-section h3 {
+  margin-top:0;
+}
+
+.co-simple-section .field input,
+.co-simple-section .field textarea {
+  width:100%;
+  box-sizing:border-box;
+}
+
+.co-static-preview {
+  border:1px dashed var(--border);
+  background:var(--bg);
+  color:var(--text-secondary);
+  border-radius:8px;
+  padding:14px;
+  line-height:1.7;
+}
+
+.co-error {
+  color:#d32f2f;
+  font-size:12px;
+  margin-top:5px;
+}
