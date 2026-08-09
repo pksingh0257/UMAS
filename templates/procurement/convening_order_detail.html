@@ -31,7 +31,7 @@
     {% include 'partials/header.html' %}
 
     <div class="dashboard-shell">
-
+      {% include 'partials/procurement_workflow_steps.html' with noting_sheet=order.requirement.noting_sheet eas=order.eas convening_order=order %}
 
       <!-- HEADER -->
 

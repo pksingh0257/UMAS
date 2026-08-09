@@ -1,0 +1,133 @@
+{% comment %}
+Shared 6-step workflow bar: Noting Sheet -> EAS -> Sanction -> Contract
+-> Invoice -> Convening Order. Include with:
+
+  {% include 'partials/procurement_workflow_steps.html' with noting_sheet=noting_sheet eas=eas convening_order=convening_order %}
+
+All three context vars can usually be reached via template dot-lookup
+from whatever single object each page already has (safe even if the
+related object doesn't exist yet — Django templates treat a missing
+OneToOne reverse lookup as empty/falsy, not an error):
+
+  noting_sheet_detail.html:
+    eas=noting_sheet.eas
+    convening_order=noting_sheet.requirement.procurement_case.convening_order
+
+  eas_detail.html (already has noting_sheet + eas in its own context):
+    convening_order=noting_sheet.requirement.procurement_case.convening_order
+
+  convening_order_detail.html (only has `order` in context):
+    noting_sheet=order.requirement.noting_sheet
+    eas=order.eas
+    convening_order=order
+{% endcomment %}
+
+<div class="card" style="padding:24px 20px; margin-bottom:20px;">
+  <div style="display:flex; align-items:center; width:100%;">
+
+    <!-- 1. NOTING SHEET -->
+    <div style="flex:1; text-align:center;">
+      {% if noting_sheet.workflow_status == "APPROVED" %}
+        <div style="width:32px; height:32px; border-radius:50%; background:#198754; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">✓</div>
+        <div style="font-size:13px; font-weight:600; color:#198754;">Noting Sheet</div>
+        <div style="font-size:11px; color:#198754; margin-top:3px;">Approved</div>
+      {% else %}
+        <div style="width:32px; height:32px; border-radius:50%; background:#0d6efd; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">1</div>
+        <div style="font-size:13px; font-weight:600; color:#0d6efd;">Noting Sheet</div>
+        <div style="font-size:11px; color:#0d6efd; margin-top:3px;">Active</div>
+      {% endif %}
+    </div>
+
+    <div style="height:2px; flex:1; background:{% if noting_sheet.workflow_status == "APPROVED" %}#198754{% else %}#d9dee5{% endif %};"></div>
+
+    <!-- 2. EAS -->
+    <div style="flex:1; text-align:center;">
+      {% if eas.workflow_status == "APPROVED" %}
+        <div style="width:32px; height:32px; border-radius:50%; background:#198754; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">✓</div>
+        <div style="font-size:13px; font-weight:600; color:#198754;">EAS</div>
+        <div style="font-size:11px; color:#198754; margin-top:3px;">Approved</div>
+      {% else %}
+        <div style="width:32px; height:32px; border-radius:50%; background:#0d6efd; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">2</div>
+        <div style="font-size:13px; font-weight:600; color:#0d6efd;">EAS</div>
+        <div style="font-size:11px; color:#0d6efd; margin-top:3px;">Active</div>
+      {% endif %}
+    </div>
+
+    <div style="height:2px; flex:1; background:{% if eas.workflow_status == "APPROVED" %}#198754{% else %}#d9dee5{% endif %};"></div>
+
+    <!-- 3. SANCTION -->
+    <div style="flex:1; text-align:center;">
+      {% if eas.sanction_document %}
+        <div style="width:32px; height:32px; border-radius:50%; background:#198754; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">✓</div>
+        <div style="font-size:13px; font-weight:600; color:#198754;">Sanction</div>
+        <div style="font-size:11px; color:#198754; margin-top:3px;">Uploaded</div>
+      {% elif eas.workflow_status == "APPROVED" %}
+        <div style="width:32px; height:32px; border-radius:50%; background:#0d6efd; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">3</div>
+        <div style="font-size:13px; font-weight:600; color:#0d6efd;">Sanction</div>
+        <div style="font-size:11px; color:#0d6efd; margin-top:3px;">Active</div>
+      {% else %}
+        <div style="width:32px; height:32px; border-radius:50%; background:#e9ecef; color:#6c757d; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">3</div>
+        <div style="font-size:13px; font-weight:600; color:#6c757d;">Sanction</div>
+        <div style="font-size:11px; color:#6c757d; margin-top:3px;">Pending</div>
+      {% endif %}
+    </div>
+
+    <div style="height:2px; flex:1; background:{% if eas.sanction_document %}#198754{% else %}#d9dee5{% endif %};"></div>
+
+    <!-- 4. CONTRACT -->
+    <div style="flex:1; text-align:center;">
+      {% if eas.contract_document %}
+        <div style="width:32px; height:32px; border-radius:50%; background:#198754; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">✓</div>
+        <div style="font-size:13px; font-weight:600; color:#198754;">Contract</div>
+        <div style="font-size:11px; color:#198754; margin-top:3px;">Uploaded</div>
+      {% elif eas.sanction_document %}
+        <div style="width:32px; height:32px; border-radius:50%; background:#0d6efd; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">4</div>
+        <div style="font-size:13px; font-weight:600; color:#0d6efd;">Contract</div>
+        <div style="font-size:11px; color:#0d6efd; margin-top:3px;">Active</div>
+      {% else %}
+        <div style="width:32px; height:32px; border-radius:50%; background:#e9ecef; color:#6c757d; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">4</div>
+        <div style="font-size:13px; font-weight:600; color:#6c757d;">Contract</div>
+        <div style="font-size:11px; color:#6c757d; margin-top:3px;">Pending</div>
+      {% endif %}
+    </div>
+
+    <div style="height:2px; flex:1; background:{% if eas.contract_document %}#198754{% else %}#d9dee5{% endif %};"></div>
+
+    <!-- 5. INVOICE -->
+    <div style="flex:1; text-align:center;">
+      {% if eas.invoice_document %}
+        <div style="width:32px; height:32px; border-radius:50%; background:#198754; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">✓</div>
+        <div style="font-size:13px; font-weight:600; color:#198754;">Invoice</div>
+        <div style="font-size:11px; color:#198754; margin-top:3px;">Uploaded</div>
+      {% elif eas.contract_document %}
+        <div style="width:32px; height:32px; border-radius:50%; background:#0d6efd; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">5</div>
+        <div style="font-size:13px; font-weight:600; color:#0d6efd;">Invoice</div>
+        <div style="font-size:11px; color:#0d6efd; margin-top:3px;">Active</div>
+      {% else %}
+        <div style="width:32px; height:32px; border-radius:50%; background:#e9ecef; color:#6c757d; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">5</div>
+        <div style="font-size:13px; font-weight:600; color:#6c757d;">Invoice</div>
+        <div style="font-size:11px; color:#6c757d; margin-top:3px;">Pending</div>
+      {% endif %}
+    </div>
+
+    <div style="height:2px; flex:1; background:{% if eas.invoice_document %}#198754{% else %}#d9dee5{% endif %};"></div>
+
+    <!-- 6. CONVENING ORDER -->
+    <div style="flex:1; text-align:center;">
+      {% if convening_order %}
+        <div style="width:32px; height:32px; border-radius:50%; background:#198754; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">✓</div>
+        <div style="font-size:13px; font-weight:600; color:#198754;">Convening Order</div>
+        <div style="font-size:11px; color:#198754; margin-top:3px;">Created</div>
+      {% elif eas.invoice_document %}
+        <div style="width:32px; height:32px; border-radius:50%; background:#0d6efd; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">6</div>
+        <div style="font-size:13px; font-weight:600; color:#0d6efd;">Convening Order</div>
+        <div style="font-size:11px; color:#0d6efd; margin-top:3px;">Active</div>
+      {% else %}
+        <div style="width:32px; height:32px; border-radius:50%; background:#e9ecef; color:#6c757d; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:bold;">6</div>
+        <div style="font-size:13px; font-weight:600; color:#6c757d;">Convening Order</div>
+        <div style="font-size:11px; color:#6c757d; margin-top:3px;">Pending</div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
